@@ -1,0 +1,17 @@
+# Never add .kiro or any of its sub-folders here: the hackathon rules require it in the repo.
+node_modules/
+dist/
+.env
+.env.*
+*.log
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.hypothesis/
+
+# Raw FIRMS downloads
+pipeline/cache/

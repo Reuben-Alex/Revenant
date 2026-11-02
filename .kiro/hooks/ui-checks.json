@@ -1,0 +1,11 @@
+{
+  "version": "v1",
+  "hooks": [{
+    "name": "Lint and typecheck UI on save",
+    "trigger": "PostFileSave",
+    "matcher": "^src/.*\\.(ts|tsx|css)$",
+    "action": { "type": "command", "command": "npm run lint --silent && npm run typecheck --silent" },
+    "timeout": 90,
+    "enabled": false
+  }]
+}

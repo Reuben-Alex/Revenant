@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "hooks": [{
+    "name": "Keep the Kiro log",
+    "description": "Builds the 'how we used Kiro' writeup as we go.",
+    "trigger": "Stop",
+    "action": { "type": "agent", "prompt": "Append to docs/KIRO_LOG.md (create if missing) a dated entry of at most 3 lines: what changed this turn, which Kiro feature drove it (spec task, hook, steering, MCP, skill), and anything worth showing in the demo." }
+  }]
+}

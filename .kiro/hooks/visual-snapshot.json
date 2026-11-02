@@ -1,0 +1,11 @@
+{
+  "version": "v1",
+  "hooks": [{
+    "name": "Visual snapshots after UI tasks",
+    "description": "Playwright screenshots of daylight, nightfall, a rising and the verdict into snapshots/. Enable once npm run snap exists.",
+    "trigger": "PostTaskExec",
+    "action": { "type": "command", "command": "npm run snap --silent" },
+    "timeout": 300,
+    "enabled": false
+  }]
+}

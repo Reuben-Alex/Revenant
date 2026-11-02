@@ -1,0 +1,12 @@
+{
+  "version": "v1",
+  "hooks": [{
+    "name": "Pipeline tests on save",
+    "description": "Run pytest when pipeline code changes so the zombie rule can't silently regress.",
+    "trigger": "PostFileSave",
+    "matcher": "^pipeline/.*\\.py$",
+    "action": { "type": "command", "command": "uv run --python 3.12 pytest -q pipeline" },
+    "timeout": 120,
+    "enabled": false
+  }]
+}

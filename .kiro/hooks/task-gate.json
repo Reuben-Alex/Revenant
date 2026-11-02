@@ -1,0 +1,11 @@
+{
+  "version": "v1",
+  "hooks": [{
+    "name": "Green after every spec task",
+    "description": "Every finished task must leave rule tests, UI tests and the build green. Enable once specs 01 and 03 are scaffolded.",
+    "trigger": "PostTaskExec",
+    "action": { "type": "command", "command": "uv run --python 3.12 pytest -q pipeline && npm test --silent && npm run build --silent" },
+    "timeout": 300,
+    "enabled": false
+  }]
+}
