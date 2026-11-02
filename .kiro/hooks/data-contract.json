@@ -1,11 +1,16 @@
 {
   "version": "v1",
-  "hooks": [{
-    "name": "Validate data contract",
-    "description": "Schema-check generated data so the UI never renders a broken season.",
-    "trigger": "PostFileSave",
-    "matcher": "^public/data/.*\\.json$",
-    "action": { "type": "command", "command": "node scripts/validate-data.mjs" },
-    "enabled": false
-  }]
+  "hooks": [
+    {
+      "name": "Validate data contract",
+      "description": "Schema-check generated data so the UI never renders a broken season.",
+      "trigger": "PostFileSave",
+      "matcher": "^public/data/.*\\.json$",
+      "action": {
+        "type": "command",
+        "command": "node scripts/validate-data.mjs"
+      },
+      "enabled": true
+    }
+  ]
 }
