@@ -1,0 +1,16 @@
+[project]
+name = "revenant-pipeline"
+version = "0.1.0"
+description = "Revenant data pipeline and zombie-fire rule engine"
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest", "hypothesis"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["pipeline"]
