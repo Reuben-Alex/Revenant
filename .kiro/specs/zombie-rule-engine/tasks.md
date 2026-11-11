@@ -37,10 +37,10 @@ purity check. Each test task is written before the code it covers is considered 
 - [x] 3.2 Write `test_melt.py` examples: exactly 0.15 is snow; 2 vs 3 valid days; missing start day skipped; window cut at series end; all-missing → None; snowy day inside window blocks it
   - _Requirements: 2.1–2.5_
 
-- [ ] 4. Rising
-- [ ] 4.1 Implement `find_rise()` and `early_hits()` in `pipeline/rules/risen.py` (window melt…min(melt+50, n−1); `on_scar` only; location = `math.fsum` mean of that day's hits)
+- [x] 4. Rising
+- [x] 4.1 Implement `find_rise()` and `early_hits()` in `pipeline/rules/risen.py` (window melt…min(melt+50, n−1); `on_scar` only; location = `math.fsum` mean of that day's hits)
   - _Requirements: 3.1–3.6, 3.8_
-- [ ] 4.2 Write `test_risen.py` examples: rise on melt day; at melt+50 rises, at melt+51 does not; pre-melt hit ignored but counted as early hit; off-scar hit ignored; two hits on rise day averaged; melt None → no rise
+- [x] 4.2 Write `test_risen.py` examples: rise on melt day; at melt+50 rises, at melt+51 does not; pre-melt hit ignored but counted as early hit; off-scar hit ignored; two hits on rise day averaged; melt None → no rise
   - _Requirements: 3.1–3.8_
 
 - [ ] 5. States and season summary
