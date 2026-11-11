@@ -47,6 +47,10 @@ after the snow leaves that scar and within 50 days of it, is a revenant.
 7. IF the chance baseline is outside [0, 1] or NaN, THEN THE Engine SHALL raise a `ValueError`.
 8. IF two graves in a season share an id, THEN THE Engine SHALL raise a `ValueError`.
 9. THE Engine SHALL NOT read files, the network, the clock or environment variables, and SHALL NOT mutate its inputs.
+10. IF a hotspot's day is not an `int` (a `bool`, `float` or `str` does not count), THEN THE Engine SHALL raise a `ValueError` naming the grave id.
+11. IF a snow value is neither `None` nor a real number (`int` or `float`, not `bool`), THEN THE Engine SHALL raise a `ValueError` naming the grave id and day.
+12. IF a hotspot's x or y is not a finite real number (`int` or `float`, not `bool`), THEN THE Engine SHALL raise a `ValueError` naming the grave id and day.
+13. IF the season length is not an `int` of at least 1, THEN THE Engine SHALL raise a `ValueError`.
 
 ### Requirement 2: Melt day
 

@@ -201,7 +201,10 @@ the full [0, 1] range, and hotspots on and off scar across the whole season.
 ## Error handling
 
 `validate.py` runs once at the top of `classify_season` / `classify_grave` and raises `ValueError` with the grave id and day
-(Requirements 1.4–1.8, 5.4). The rule functions assume validated input and do not catch exceptions. Clouds and swath gaps
+(Requirements 1.4–1.8, 1.10–1.13, 5.4). Type checks run before range checks, so a value parsed wrongly from CSV
+(e.g. day `"12"` or `12.0`, a NaN coordinate) fails loudly at the boundary instead of reaching published JSON, where `NaN`
+is not valid. `bool` is rejected wherever a number is expected, because Python treats it as an `int`.
+The rule functions assume validated input and do not catch exceptions. Clouds and swath gaps
 reach the Engine as `None`; they are handled by Requirement 2.5, never as zero snow.
 
 ## Testing strategy

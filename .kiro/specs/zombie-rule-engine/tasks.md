@@ -25,6 +25,9 @@ purity check. Each test task is written before the code it covers is considered 
   - _Requirements: 1.4, 1.5, 1.6, 1.7, 1.8, 5.4_
 - [x] 2.3 Write `pipeline/tests/rules/test_validate.py` with one failing-input example per check
   - _Requirements: 1.4–1.8, 5.4_
+- [x] 2.4 Add type checks to `validate.py` with one failing-input example each in `test_validate.py`
+  - Hotspot day must be `int` (not `bool`); snow values must be `None` or a real number (not `bool`); hotspot x/y must be finite real numbers; season length must be an `int` ≥ 1
+  - _Requirements: 1.10, 1.11, 1.12, 1.13_
 
 - [x] 3. Melt day
 - [x] 3.1 Implement `melt_day()` in `pipeline/rules/melt.py` (valid snow-free start day; window d…d+6 cut at series end; ≥ 3 valid; all valid < 0.15)

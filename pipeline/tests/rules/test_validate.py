@@ -61,3 +61,42 @@ def test_duplicate_grave_ids() -> None:
 def test_empty_season() -> None:
     with pytest.raises(ValueError, match="no graves"):
         validate_season([], chance=0.2, season_length=N)
+
+
+# Requirement 1.10: hotspot day must be an int (not bool, float or str).
+@pytest.mark.parametrize("day", [2.0, "2", True])
+def test_hotspot_day_not_int(day) -> None:
+    g = grave("G-04", hotspots=[Hotspot(day=day, x=0.0, y=0.0, on_scar=True)])
+    with pytest.raises(ValueError, match=r"G-04.*not an int"):
+        validate_grave(g, N)
+
+
+# Requirement 1.11: snow value must be None or a real number (not bool or str).
+@pytest.mark.parametrize("bad", ["0.1", True])
+def test_snow_value_not_number(bad) -> None:
+    g = grave("G-05", snow=(0.5, bad, None, 0.1, 0.0))
+    with pytest.raises(ValueError, match=r"G-05.*day 1.*not a number"):
+        validate_grave(g, N)
+
+
+def test_int_snow_values_are_accepted() -> None:  # 1.11: int counts as a real number
+    validate_grave(grave(snow=(0, 1, None, 0, 1)), N)
+
+
+# Requirement 1.12: hotspot x and y must be finite real numbers.
+@pytest.mark.parametrize(
+    "x, y", [(math.nan, 0.0), (0.0, math.inf), ("1", 0.0), (0.0, False)]
+)
+def test_hotspot_coordinate_not_finite_number(x, y) -> None:
+    g = grave("G-06", hotspots=[Hotspot(day=1, x=x, y=y, on_scar=True)])
+    with pytest.raises(ValueError, match=r"G-06.*day 1.*not a finite number"):
+        validate_grave(g, N)
+
+
+# Requirement 1.13: season length must be an int >= 1.
+@pytest.mark.parametrize("length", [0, -1, 5.0, True])
+def test_bad_season_length(length) -> None:
+    with pytest.raises(ValueError, match="season length"):
+        validate_season([grave()], chance=0.2, season_length=length)
+    with pytest.raises(ValueError, match="season length"):
+        validate_grave(grave(), length)
