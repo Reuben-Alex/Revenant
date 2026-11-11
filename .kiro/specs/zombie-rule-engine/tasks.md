@@ -82,10 +82,10 @@ purity check. Each test task is written before the code it covers is considered 
   - Assert `data/seasons.json` file hash is unchanged after the run
   - _Requirements: 6.1, 6.2, 6.3, 6.4_
 
-- [ ] 8. Purity check and final run
-- [ ] 8.1 Write `test_purity.py`: AST scan of `pipeline/rules/*.py` fails on imports of `os`, `io`, `pathlib`, `json`, `socket`, `requests`, `urllib`, `time`, `datetime`, `random`
+- [x] 8. Purity check and final run
+- [x] 8.1 Write `test_purity.py`: AST scan of `pipeline/rules/*.py` fails on imports of `os`, `io`, `pathlib`, `json`, `socket`, `requests`, `urllib`, `time`, `datetime`, `random`
   - _Requirements: 1.9_
-- [ ] 8.2 Run `uv run --python 3.12 pytest -q pipeline` with `HYPOTHESIS_PROFILE=ci`; all green. Add a 3-line entry to `docs/KIRO_LOG.md` (spec 01 done, which properties caught bugs, if any)
+- [x] 8.2 Run `uv run --python 3.12 pytest -q pipeline` with `HYPOTHESIS_PROFILE=ci`; all green. Add a 3-line entry to `docs/KIRO_LOG.md` (spec 01 done, which properties caught bugs, if any)
   - _Requirements: 6.1–6.3_
 
 ## Task Dependency Graph
