@@ -51,23 +51,23 @@ purity check. Each test task is written before the code it covers is considered 
 - [x] 5.3 Write `test_states.py` and `test_season.py` examples: Buried → Risen on melt day; window open at series end stays Waking; LaidToRest from melt+51; never-melting grave Buried all season; zombie threshold just above and just below 1.4 × chance
   - _Requirements: 4.1–4.7, 5.1–5.5_
 
-- [ ] 6. Property-based test suite (Hypothesis)
-- [ ] 6.1 Write `pipeline/tests/rules/strategies.py` and Hypothesis profiles in `conftest.py`
+- [x] 6. Property-based test suite (Hypothesis)
+- [x] 6.1 Write `pipeline/tests/rules/strategies.py` and Hypothesis profiles in `conftest.py`
   - Season lengths 1–120; snow values from `None`, boundary values 0.149/0.15/0.151 and `floats(0, 1)`; hotspots across the season, on and off scar; `dev` profile 200 examples, `ci` profile 1000, chosen by `HYPOTHESIS_PROFILE`
   - _Requirements: 1.1–1.3_
-- [ ] 6.2 Write property tests for monotonic states, no rise before melt, and Risen implies a window hotspot
+- [x] 6.2 Write property tests for monotonic states, no rise before melt, and Risen implies a window hotspot
   - **Property 1: States are monotonic** · **Property 2: Never rises before melt** · **Property 3: Risen implies a hotspot in the window**
   - **Validates: Requirements 3.1, 3.3, 3.4, 4.1–4.4**
-- [ ] 6.3 Write property tests for no-hotspots and time shift
+- [x] 6.3 Write property tests for no-hotspots and time shift
   - **Property 4: No hotspots, no risings** · **Property 5: Time shift**
   - **Validates: Requirements 2.1, 2.5, 3.1, 3.5, 5.1**
-- [ ] 6.4 Write property tests for melt correctness against a brute-force oracle, strict threshold and missing data
+- [x] 6.4 Write property tests for melt correctness against a brute-force oracle, strict threshold and missing data
   - **Property 6: Melt day is the first qualifying day** · **Property 7: Threshold is strict** · **Property 8: Missing data never creates a melt**
   - **Validates: Requirements 2.1–2.5**
-- [ ] 6.5 Write property tests for hotspot order, inert hotspots and laid-to-rest timing
+- [x] 6.5 Write property tests for hotspot order, inert hotspots and laid-to-rest timing
   - **Property 9: Hotspot order does not matter** · **Property 10: Out-of-window and off-scar hotspots are inert** · **Property 11: Laid to rest only after the window closes**
   - **Validates: Requirements 3.3–3.8, 4.3, 4.6**
-- [ ] 6.6 Write property tests for the season summary, zombie-flag monotonicity and purity of results
+- [x] 6.6 Write property tests for the season summary, zombie-flag monotonicity and purity of results
   - **Property 12: Season summary agrees with graves** · **Property 13: Zombie flag is monotone in risings and chance** · **Property 14: Inputs are not mutated, results are deterministic**
   - **Validates: Requirements 1.9, 4.5, 4.7, 5.1–5.3, 5.5**
 
