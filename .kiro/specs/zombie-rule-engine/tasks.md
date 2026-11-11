@@ -43,12 +43,12 @@ purity check. Each test task is written before the code it covers is considered 
 - [x] 4.2 Write `test_risen.py` examples: rise on melt day; at melt+50 rises, at melt+51 does not; pre-melt hit ignored but counted as early hit; off-scar hit ignored; two hits on rise day averaged; melt None → no rise
   - _Requirements: 3.1–3.8_
 
-- [ ] 5. States and season summary
-- [ ] 5.1 Implement `state_on()` and the per-day timeline in `pipeline/rules/states.py`
+- [x] 5. States and season summary
+- [x] 5.1 Implement `state_on()` and the per-day timeline in `pipeline/rules/states.py`
   - _Requirements: 4.1–4.7_
-- [ ] 5.2 Implement `classify_grave()`, `classify_season()` and `is_zombie_year()` in `pipeline/rules/season.py`; re-export the public API from `pipeline/rules/__init__.py`
+- [x] 5.2 Implement `classify_grave()`, `classify_season()` and `is_zombie_year()` in `pipeline/rules/season.py`; re-export the public API from `pipeline/rules/__init__.py`
   - _Requirements: 5.1–5.5, 1.9_
-- [ ] 5.3 Write `test_states.py` and `test_season.py` examples: Buried → Risen on melt day; window open at series end stays Waking; LaidToRest from melt+51; never-melting grave Buried all season; zombie threshold just above and just below 1.4 × chance
+- [x] 5.3 Write `test_states.py` and `test_season.py` examples: Buried → Risen on melt day; window open at series end stays Waking; LaidToRest from melt+51; never-melting grave Buried all season; zombie threshold just above and just below 1.4 × chance
   - _Requirements: 4.1–4.7, 5.1–5.5_
 
 - [ ] 6. Property-based test suite (Hypothesis)
