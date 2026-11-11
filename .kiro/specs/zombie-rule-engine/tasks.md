@@ -71,11 +71,11 @@ purity check. Each test task is written before the code it covers is considered 
   - **Property 12: Season summary agrees with graves** · **Property 13: Zombie flag is monotone in risings and chance** · **Property 14: Inputs are not mutated, results are deterministic**
   - **Validates: Requirements 1.9, 4.5, 4.7, 5.1–5.3, 5.5**
 
-- [ ] 7. Research fixtures from `data/seasons.json`
-- [ ] 7.1 Write the read-only fixture loader in `conftest.py` (percent → fraction, −1 → None, `G-` ids, stored rise point as the only hotspot, chance 0.347 / 0.365 / 0.201 cited to `docs/method.md`)
+- [x] 7. Research fixtures from `data/seasons.json`
+- [x] 7.1 Write the read-only fixture loader in `conftest.py` (percent → fraction, −1 → None, `G-` ids, stored rise point as the only hotspot, chance 0.347 / 0.365 / 0.201 cited to `docs/method.md`)
   - Do not fabricate hotspot dates for `early_hits`; the data stores only a count
   - _Requirements: 6.4_
-- [ ] 7.2 Write `test_research_fixtures.py`
+- [x] 7.2 Write `test_research_fixtures.py`
   - Risen counts 15 (2024), 8 (2025), 4 (2026); stored rise day and point reproduced for every risen grave
   - Stored melt reproduced for 70 of 72 graves; assert the two known exceptions exactly: 2024 G-16 21→22, 2025 G-10 54→59 (rounded series); do not loosen the 0.15 threshold
   - Zombie flags: 2024 true, 2025 false, 2026 false
