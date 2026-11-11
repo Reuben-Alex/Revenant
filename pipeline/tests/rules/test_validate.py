@@ -100,3 +100,18 @@ def test_bad_season_length(length) -> None:
         validate_season([grave()], chance=0.2, season_length=length)
     with pytest.raises(ValueError, match="season length"):
         validate_grave(grave(), length)
+
+
+# Requirement 1.14: on_scar must be a bool ("False" is truthy in Python).
+@pytest.mark.parametrize("flag", ["False", 1, None])
+def test_on_scar_not_bool(flag) -> None:
+    g = grave("G-08", hotspots=[Hotspot(day=3, x=0.0, y=0.0, on_scar=flag)])
+    with pytest.raises(ValueError, match=r"G-08.*day 3.*not a bool"):
+        validate_grave(g, N)
+
+
+# Requirement 1.15: chance must be a real number (not bool or str).
+@pytest.mark.parametrize("chance", ["0.3", True, None])
+def test_chance_not_number(chance) -> None:
+    with pytest.raises(ValueError, match="chance.*not a number"):
+        validate_season([grave()], chance=chance, season_length=N)

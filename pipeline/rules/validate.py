@@ -45,6 +45,10 @@ def validate_grave(g: GraveInput, season_length: int) -> None:
             raise ValueError(
                 f"grave {g.id}, day {h.day}: hotspot day is outside [0, {season_length - 1}]"
             )
+        if not isinstance(h.on_scar, bool):
+            raise ValueError(
+                f"grave {g.id}, day {h.day}: hotspot on_scar {h.on_scar!r} is not a bool"
+            )
         for name, c in (("x", h.x), ("y", h.y)):
             if not _is_real(c) or not math.isfinite(c):
                 raise ValueError(
@@ -54,6 +58,8 @@ def validate_grave(g: GraveInput, season_length: int) -> None:
 
 def validate_chance(chance: float) -> None:
     """Check the chance baseline is a number in [0, 1]. NaN fails both comparisons."""
+    if not _is_real(chance):
+        raise ValueError(f"chance baseline {chance!r} is not a number")
     if not 0.0 <= chance <= 1.0:
         raise ValueError(f"chance baseline {chance!r} is not in [0, 1]")
 

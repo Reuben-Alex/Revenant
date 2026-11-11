@@ -51,6 +51,8 @@ after the snow leaves that scar and within 50 days of it, is a revenant.
 11. IF a snow value is neither `None` nor a real number (`int` or `float`, not `bool`), THEN THE Engine SHALL raise a `ValueError` naming the grave id and day.
 12. IF a hotspot's x or y is not a finite real number (`int` or `float`, not `bool`), THEN THE Engine SHALL raise a `ValueError` naming the grave id and day.
 13. IF the season length is not an `int` of at least 1, THEN THE Engine SHALL raise a `ValueError`.
+14. IF a hotspot's `on_scar` is not a `bool` (e.g. the string `"False"`, which Python reads as true), THEN THE Engine SHALL raise a `ValueError` naming the grave id and day.
+15. IF the chance baseline is not a real number (`int` or `float`, not `bool`), THEN THE Engine SHALL raise a `ValueError`.
 
 ### Requirement 2: Melt day
 
