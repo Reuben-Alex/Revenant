@@ -77,12 +77,12 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
 - [x] 8.5 Update `docs/method.md` (schema additions, −1 melt, `tonight.json`, FIRMS/NBAC build method)
   - _Requirements: 8.5_
 
-- [ ] 9. Tonight
+- [x] 9. Tonight
 - [x] 9.1 Write `pipeline/keyframe.py` (cloud score, > 5 % black skipped) and `build_tonight` in `pipeline/build.py`
   - _Requirements: 9.1–9.4_
 - [x] 9.2 Add the `tonight` command (`--today YYYY-MM-DD`, default UTC today) and tests for 14-day hits, 3-day snow max, clusters and stale-frame keep
   - _Requirements: 9.1–9.5_
-- [ ] 9.3 Live run: `uv run python -m pipeline tonight`; confirm the validator passes; report counts to the user
+- [x] 9.3 Live run: `uv run python -m pipeline tonight`; confirm the validator passes; report counts to the user
   - _Requirements: 9.1–9.5_
 
 - [ ] 10. Comparison with the research
