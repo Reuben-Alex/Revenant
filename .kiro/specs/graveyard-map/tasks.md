@@ -40,20 +40,20 @@ These tasks build the night graveyard scene of `reference/design/Main.dc.html` i
   - **Property 1** display states monotonic · **Property 2** counts add up · **Property 3** crossfade partition · **Property 4** callout on the map · **Property 5** list order · **Property 6** timeline drips · **Property 7** chart geometry · **Property 8** no number without a source
   - **Validates: Requirements 4.2, 5.1, 5.2, 7.3, 8.1, 8.2, 10.1, 12.4, 15.3, 19.1**
 
-- [ ] 5. Page shell
-- [ ] 5.1 `useGraveyard` (useReducer, initial state as the board constructor, season switch reset) and `Graveyard.tsx` layout: header, headline band, map + aside, footer
+- [x] 5. Page shell
+- [x] 5.1 `useGraveyard` (useReducer, initial state as the board constructor, season switch reset) and `Graveyard.tsx` layout: header, headline band, map + aside, footer
   - _Requirements: 3.1, 3.4_
-- [ ] 5.2 `IronButton` (btn(on)), `SeasonTabs`, the brand, and the Lantern, Before / after and Night view buttons. Headline band with counts.
+- [x] 5.2 `IronButton` (btn(on)), `SeasonTabs`, the brand, and the Lantern, Before / after and Night view buttons. Headline band with counts.
   - _Requirements: 3.2, 3.3, 8.1–8.3, 17.2_
 
-- [ ] 6. Map stack and tombstones
-- [ ] 6.1 `MapStack`: crossfading keyframes, grade, scar mask, fog, border line and labels, snowfall, grain, vignette, credit chip, Night view toggle
+- [x] 6. Map stack and tombstones
+- [x] 6.1 `MapStack`: crossfading keyframes, grade, scar mask, fog, border line and labels, snowfall, grain, vignette, credit chip, Night view toggle
   - _Requirements: 4.1–4.5_
-- [ ] 6.2 `Tombstone` (all state visuals) and `Candle` (new fires), plus the hit buttons
+- [x] 6.2 `Tombstone` (all state visuals) and `Candle` (new fires), plus the hit buttons
   - _Requirements: 5.1–5.6, 6.1, 17.1_
-- [ ] 6.3 `Callout` and `Tooltip`; selection and hover
+- [x] 6.3 `Callout` and `Tooltip`; selection and hover
   - _Requirements: 6.2, 7.1–7.5_
-- [ ] 6.4 **Checkpoint:** run `npm run dev`, give the user the link, and take a Playwright screenshot at 1440 × 1000 to compare with the board values. Fix or report differences over 4 px before going on.
+- [x] 6.4 **Checkpoint:** run `npm run dev`, give the user the link, and take a Playwright screenshot at 1440 × 1000 to compare with the board values. Fix or report differences over 4 px before going on.
   - _Requirements: 20.1, 20.2_
 
 - [ ] 7. Right column
