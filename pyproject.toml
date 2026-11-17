@@ -3,7 +3,14 @@ name = "revenant-pipeline"
 version = "0.1.0"
 description = "Revenant data pipeline and zombie-fire rule engine"
 requires-python = ">=3.12,<3.13"
-dependencies = []
+dependencies = [
+    "numpy>=2.5.5",
+    "pillow>=13.0.0",
+    "pyproj>=3.8.0",
+    "pyshp>=3.1.9",
+    "requests>=2.34.2",
+    "shapely>=2.2.0",
+]
 
 [dependency-groups]
 dev = ["pytest", "hypothesis"]

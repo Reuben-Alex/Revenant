@@ -11,12 +11,12 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
 
 ## Tasks
 
-- [ ] 1. Dependencies, config and grid
-- [ ] 1.1 Add runtime dependencies to `pyproject.toml`: `requests`, `numpy`, `shapely`, `pyproj`, `pyshp`, `pillow`; run `uv lock`; update `.kiro/steering/tech.md` to list `pyshp` and `pillow`
+- [x] 1. Dependencies, config and grid
+- [x] 1.1 Add runtime dependencies to `pyproject.toml`: `requests`, `numpy`, `shapely`, `pyproj`, `pyshp`, `pillow`; run `uv lock`; update `.kiro/steering/tech.md` to list `pyshp` and `pillow`
   - _Requirements: 3.2, 5.1_
-- [ ] 1.2 Write `pipeline/config.py`: bbox, grid size, season dates (Mar 21, 103 days), FIRMS sources per period, thresholds (1000 m, 15 px, 2000 px, 5 % black), and `firms_key()` (env, then `.env`, else exit message naming both)
+- [x] 1.2 Write `pipeline/config.py`: bbox, grid size, season dates (Mar 21, 103 days), FIRMS sources per period, thresholds (1000 m, 15 px, 2000 px, 5 % black), and `firms_key()` (env, then `.env`, else exit message naming both)
   - _Requirements: 1.1, 1.2, 1.8_
-- [ ] 1.3 Write `pipeline/grid.py` (lon/lat ↔ grid, EPSG:3978 transformer) and `test_grid.py`, including **Property 1: Grid round trip**
+- [x] 1.3 Write `pipeline/grid.py` (lon/lat ↔ grid, EPSG:3978 transformer) and `test_grid.py`, including **Property 1: Grid round trip**
   - _Requirements: 3.1_
 
 - [ ] 2. Fetch layer (offline-tested)

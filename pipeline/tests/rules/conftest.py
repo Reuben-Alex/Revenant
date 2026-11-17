@@ -1,21 +1,13 @@
-"""Shared test setup for the rule engine: Hypothesis profiles (task 6.1) and research fixtures (task 7.1)."""
+"""Rule-engine test setup: research fixtures (task 7.1). Hypothesis profiles live in pipeline/tests/conftest.py."""
 
 import hashlib
 import json
-import os
 from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
-from hypothesis import settings
 
 from pipeline.rules.types import GraveInput, Hotspot
-
-# dev: quick local runs (200 examples). ci: thorough runs (1000). Pick with HYPOTHESIS_PROFILE.
-# deadline=None: example timing varies on Windows and is not part of the spec.
-settings.register_profile("dev", max_examples=200, deadline=None)
-settings.register_profile("ci", max_examples=1000, deadline=None)
-settings.load_profile(os.environ.get("HYPOTHESIS_PROFILE", "dev"))
 
 
 # --- Research fixtures from data/seasons.json (Requirement 6) ----------------------------------
