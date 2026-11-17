@@ -17,7 +17,7 @@ points and NBAC polygons. That gives a real 1 km "on the scar" test instead of ~
 - **SP / NRT:** FIRMS standard processing (archive) and near-real-time sources.
 - **Scar:** a burned-area polygon for one fire year. **Grave:** one of the 24 largest scars of year Y−1, used for season Y.
 - **Grid:** the 1060×716 design grid; x = (lon + 126) / 17 · 1060, y = (60 − lat) / 6 · 716.
-- **Recurring cell:** a 375 m cell (point rounded to 0.004°) with cleaned SP detections in ≥ 3 of the last 4 complete calendar years; used to remove static heat (gas flares, industry) from NRT points, which carry no `type`.
+- **Recurring cell:** a 375 m cell (point rounded to 0.004°) with SP detections inside the bbox (counted before the confidence and `type` filters, so FIRMS-flagged flares count) in ≥ 3 of the last 4 complete calendar years; used to remove static heat (gas flares, industry) from NRT points, which carry no `type`.
 - **Season day:** day 0 = Mar 21 (UTC) of the season year; days 0–102.
 
 ## Requirements

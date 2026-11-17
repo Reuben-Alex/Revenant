@@ -164,7 +164,9 @@ on the ground. That was kept by decision on 2026-11-11, and the writeup and UI s
 
 - **SP rows:** drop `type` 2 (static land source) and 3 (offshore). This is FIRMS's own flag.
 - **NRT rows (no `type`):** drop points in a *recurring cell*. That is a 375 m cell, approximated as the point rounded to
-  0.004° lat/lon, with cleaned SP detections in ≥ 3 of the last 4 complete calendar years. For Tonight 2026 those years
+  0.004° lat/lon, with SP detections in ≥ 3 of the last 4 complete calendar years. The SP points are only clipped to
+  the bbox, *before* the confidence and `type` filters, so the `type` 2 flares FIRMS has already flagged count towards
+  recurrence (decided 2026-11-11). For Tonight 2026 those years
   are 2022–2025.
   - Building those years needs one full-year SP download per source: about 800 pages.
   - Those pages are cached forever, so this happens once.

@@ -87,7 +87,11 @@ def dedupe(points: Iterable[Point]) -> list[Point]:
 
 
 def recurring_cells(points: Iterable[Point], years: Iterable[int], min_years: int = RECUR_MIN_YEARS) -> set[Cell]:
-    """Cells with detections in at least `min_years` of `years` (NRT static filter, firms-points skill)."""
+    """Cells with detections in at least `min_years` of `years` (NRT static filter, firms-points skill).
+
+    Pass SP points clipped to the bbox but *not* cleaned: FIRMS-flagged type 2 flares must count here,
+    or the filter would miss the very flares it exists for (design.md, Static sources).
+    """
     wanted = set(years)
     seen: defaultdict[Cell, set[int]] = defaultdict(set)
     for p in points:

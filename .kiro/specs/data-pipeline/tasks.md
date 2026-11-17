@@ -30,7 +30,7 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
   - _Requirements: 1.3–1.8_
 
 - [x] 3. Points
-- [x] 3.1 Write `pipeline/points.py`: `parse`, `dedupe`, `recurring_cells` (≥ 3 of the last 4 complete years, from cleaned SP), `clean` (confidence n/h, SP type 2/3, bbox, NRT recurring cells)
+- [x] 3.1 Write `pipeline/points.py`: `parse`, `dedupe`, `recurring_cells` (≥ 3 of the last 4 complete years, from SP points clipped to the bbox, before the confidence and `type` filters), `clean` (confidence n/h, SP type 2/3, bbox, NRT recurring cells)
   - _Requirements: 2.1–2.6_
 - [x] 3.2 Tests from CSV snippets (SP with `type`, NRT without), including **Property 3: Dedupe is idempotent and order-free** and **Property 4: Cleaning only removes**
   - _Requirements: 2.1–2.5_
