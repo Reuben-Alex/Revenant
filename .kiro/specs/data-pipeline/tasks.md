@@ -64,11 +64,11 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
   - _Requirements: 10.4_
 
 - [ ] 8. Build and publish the replay seasons
-- [ ] 8.1 Write `pipeline/build.py` (`build_season`) and `pipeline/publish.py` (temp file → validator → atomic replace; mask PNGs)
+- [x] 8.1 Write `pipeline/build.py` (`build_season`) and `pipeline/publish.py` (temp file → validator → atomic replace; mask PNGs)
   - _Requirements: 3.6, 5.5, 8.1–8.4_
-- [ ] 8.2 Write `pipeline/__main__.py` with the `seasons` command
+- [x] 8.2 Write `pipeline/__main__.py` with the `seasons` command
   - _Requirements: 8.3, 8.4_
-- [ ] 8.3 Tests: **Property 9: Published grave rows match the engine**; a golden test of `build_season(2024)` on a small recorded cache fixture
+- [x] 8.3 Tests: **Property 9: Published grave rows match the engine**; a golden test of `build_season(2024)` on a small recorded cache fixture
   - _Requirements: 8.1–8.3_
 - [ ] 8.4 Live run: check `budget()`, run `uv run python -m pipeline seasons`, confirm the validator passes; report risen / chance / zombie per season to the user before committing
   - _Requirements: 1.5, 8.3, 8.4_
