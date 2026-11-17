@@ -31,12 +31,12 @@ These tasks build the night graveyard scene of `reference/design/Main.dc.html` i
 - [x] 3.3 `src/data/format.ts` (dates from Mar 21, ISO dates, coordinates, km², region by x = 374, number words) and `src/data/state.ts` (`displayState`), with unit tests
   - _Requirements: 2.4_
 
-- [ ] 4. Derivations and copy (pure, tested)
-- [ ] 4.1 `src/copy/graveyard.ts`: every string and template for the scene, with the board's research-only claims corrected (design.md, "Board-to-app decisions")
+- [x] 4. Derivations and copy (pure, tested)
+- [x] 4.1 `src/copy/graveyard.ts`: every string and template for the scene, with the board's research-only claims corrected (design.md, "Board-to-app decisions")
   - _Requirements: 19.1, 19.2, 19.3_
-- [ ] 4.2 `src/data/derive.ts`: one pure function per region, ported from `renderVals()`. The regions are tabs, grave views, fires, callout, tooltip, headline/counts, list, register, legend, crossfade, flakes, candle, band, rise marks, lantern and exhumation.
+- [x] 4.2 `src/data/derive.ts`: one pure function per region, ported from `renderVals()`. The regions are tabs, grave views, fires, callout, tooltip, headline/counts, list, register, legend, crossfade, flakes, candle, band, rise marks, lantern and exhumation.
   - _Requirements: 4.2, 4.4, 5.1–5.6, 6.1, 6.2, 7.2–7.4, 8.1–8.3, 9.1–9.3, 10.1, 10.2, 11.1, 11.2, 12.3, 12.4, 13.2, 15.1–15.4, 16.1–16.3_
-- [ ] 4.3 Property tests (fast-check) for Properties 1–8 in design.md
+- [x] 4.3 Property tests (fast-check) for Properties 1–8 in design.md
   - **Property 1** display states monotonic · **Property 2** counts add up · **Property 3** crossfade partition · **Property 4** callout on the map · **Property 5** list order · **Property 6** timeline drips · **Property 7** chart geometry · **Property 8** no number without a source
   - **Validates: Requirements 4.2, 5.1, 5.2, 7.3, 8.1, 8.2, 10.1, 12.4, 15.3, 19.1**
 
