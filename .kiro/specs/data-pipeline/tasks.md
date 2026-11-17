@@ -49,10 +49,10 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
 - [x] 5.2 Tests with synthetic snow and cloud RGBA frames, including **Property 6: Snow fraction is a fraction of the known scar pixels**
   - _Requirements: 5.2–5.4_
 
-- [ ] 6. Chance and new fires
-- [ ] 6.1 Write `pipeline/chance.py` (offsets, acceptance, `find_rise` per offset, seeded RNG) and `pipeline/newfires.py` (15 px test, 3 px clustering, top 24)
+- [x] 6. Chance and new fires
+- [x] 6.1 Write `pipeline/chance.py` (offsets, acceptance, `find_rise` per offset, seeded RNG) and `pipeline/newfires.py` (15 px test, 3 px clustering, top 24)
   - _Requirements: 6.1–6.3, 7.1–7.3_
-- [ ] 6.2 Tests, including **Property 7: Chance is a reproducible rate** and **Property 8: New fires are far from scars**
+- [x] 6.2 Tests, including **Property 7: Chance is a reproducible rate** and **Property 8: New fires are far from scars**
   - _Requirements: 6.1–6.3, 7.1, 7.2_
 
 - [ ] 7. Data contract validator

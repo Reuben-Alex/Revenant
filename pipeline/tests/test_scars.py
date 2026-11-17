@@ -18,16 +18,7 @@ from pipeline.rules import Hotspot
 from pipeline.scars import build_scar, rank, rasterise, scars_from_nbac, top_graves, union_mask
 
 
-def grid_box_3978(x0, y0, x1, y1):
-    """A polygon covering grid x in [x0, x1], y in [y0, y1], in EPSG:3978."""
-    lon0, lat1 = grid_to_lonlat(x0, y0)
-    lon1, lat0 = grid_to_lonlat(x1, y1)
-    return reproject(shapely.segmentize(box(float(lon0), float(lat0), float(lon1), float(lat1)), 0.005), to_3978())
-
-
-def pt_at(x, y, d=date(2024, 4, 20)):
-    lon, lat = grid_to_lonlat(x, y)
-    return Point(d, 1000, float(lat), float(lon), "VIIRS_SNPP_SP", "N", "n", 0, float(x), float(y))
+from pipeline.tests.geo import grid_box_3978, pt_at  # noqa: E402
 
 
 # --- scars -------------------------------------------------------------------------------------
