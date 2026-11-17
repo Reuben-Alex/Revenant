@@ -116,7 +116,8 @@ export function Graveyard({ data, tonight }: Props) {
         </aside>
       </div>
 
-      <footer style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18, padding: '14px 28px 18px', borderTop: '1px solid #172120', boxSizing: 'border-box', background: 'linear-gradient(180deg, #080C0B, #040605)' }}>
+      {/* overflowX clip: the flame's 140 px glow is centred on the playhead and would widen the page at Jul 1 */}
+      <footer style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18, padding: '14px 28px 18px', borderTop: '1px solid #172120', boxSizing: 'border-box', background: 'linear-gradient(180deg, #080C0B, #040605)', overflowX: 'clip' }}>
         {isT ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 'none', minWidth: 160 }}>
             <span style={{ fontFamily: 'var(--font-fell-sc)', fontSize: 24 }}>{copy.footer.tonightDate(tonight!.asOf)}</span>

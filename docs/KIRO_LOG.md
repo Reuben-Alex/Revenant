@@ -10,3 +10,17 @@ Feeds the "how Kiro was used" write-up. Newest entries last.
 - **Spec 01 zombie-rule-engine done** (Kiro spec, 8 tasks): pure Python rule engine in `pipeline/rules/`, 108 tests green under `HYPOTHESIS_PROFILE=ci` (Hypothesis, 1000 examples per property). It reproduces the research results: Risen 15/8/4, every stored rise, 70/72 stored melt days (the 2 rounding exceptions asserted), zombie flags 2024 yes / 2025 and 2026 no.
 - **PBT:** no property failed on the real code. To check the properties weren't vacuous, 14 rule bugs were planted one at a time and 13 were caught. The 14th (`>` vs `>=` on the start day) changes nothing, because the window check also covers the start day. One gap found this way: random hotspot days missed the window edges, so Property 10 now aims at melt−1 and melt+51.
 - **Demo-worthy:** the spec grew Requirements 1.10–1.15 mid-build, so CSV values that were parsed wrongly fail loudly. For example, `on_scar="False"` is truthy in Python and would have faked a Risen grave. `guard-data` and `pipeline-tests` hooks active.
+## 2026-11-17
+- **Spec 03 graveyard-map done** (Kiro spec, 11 tasks): the night graveyard from `reference/design/Main.dc.html`, rebuilt in React 19 + Vite + TypeScript and wired to `public/data/*.json`. It has four seasons (Spring 2024, 2025, 2026, Tonight), tombstone states, new-fire candles, the Parish Register, grave cards, the candle timeline, the exhumation panel, lantern mode and the before/after slider. 27 Vitest tests pass, including fast-check properties on the derivations.
+- **Honesty:** each of the board's research-only claims was replaced with a published value:
+  - The Register footnote is built from the `zombie` flags.
+  - The static-source count is `seasons.static` (591).
+  - "≈ 1 km" comes from `meta.proximity_km`.
+  - Scars are credited to NBAC.
+  - Tonight's late heat always says "crews confirm".
+- **Fidelity loop:** every visible part was screenshotted with Playwright at 1440 × 1000 and checked against the board. This caught graves drifting off their scars when the aside was taller than the map. The map now keeps its own height (`align-self: flex-start`) and the aside scrolls inside it.
+- **Final pass (task 11):**
+  - **Keyboard:** every control is a native button or input with an accessible name and a 40 px target (new fires are 28 px, as on the board). Escape closes the exhumation panel and returns focus to the grave or card that opened it, and toggles expose `aria-pressed`.
+  - **Contrast:** a probe flagged "Here lies" on the grave cards at 3.9:1 against the card's lightest stop, so it was raised to `--ash-3`.
+  - **Reduced motion:** Playwright with `reducedMotion: 'reduce'` found no running `rv-*` animation and every one-shot element in its final state.
+  - **Overflow:** the screenshots showed the flame glow widening the page by 42 px on Jul 1, so the footer now clips it.

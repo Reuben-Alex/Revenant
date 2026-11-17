@@ -13,7 +13,7 @@ export function GraveCard({ c, selected, onPick }: { c: CardView; selected: bool
       boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), 0 5px 0 -2px #030404' + glow,
       ...(selected ? { outline: '1px solid #ECE6D6', outlineOffset: -5 } : null),
     }}>
-      <span style={{ fontFamily: 'var(--font-fell-sc)', fontSize: 11, letterSpacing: 5, color: '#7C8884' }}>{copy.list.here}</span>
+      <span style={{ fontFamily: 'var(--font-fell-sc)', fontSize: 11, letterSpacing: 5, color: 'var(--ash-3)' }}>{copy.list.here}</span>
       <span style={{ fontFamily: 'var(--font-fell-sc)', fontSize: 24, lineHeight: 1, color: '#D6D0C0', textShadow: '0 -1px 0 #000, 0 1px 0 rgba(255,255,255,0.09)' }}>{c.id}</span>
       <span style={{ fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 13.5, lineHeight: 1.35, color: '#A9B2AD' }}>{c.epitaph}</span>
       <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10, width: '100%', marginTop: 2 }}>

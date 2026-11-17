@@ -80,12 +80,12 @@ These tasks build the night graveyard scene of `reference/design/Main.dc.html` i
 - [x] 10.1 Tonight states, warm scars, cluster glows, watch list, Tonight callout/epitaph/checks with the "crews confirm" caveat
   - _Requirements: 16.1–16.4_
 
-- [ ] 11. Accessibility, reduced motion and the final check
-- [ ] 11.1 Keyboard pass (tab order, Escape, focus return, aria-pressed, names, 40 px targets) and a contrast check
+- [x] 11. Accessibility, reduced motion and the final check
+- [x] 11.1 Keyboard pass (tab order, Escape, focus return, aria-pressed, names, 40 px targets) and a contrast check
   - _Requirements: 17.1–17.4_
-- [ ] 11.2 Reduced-motion pass with Playwright (`emulateMedia reducedMotion: 'reduce'`): no rv-* animation runs, and every element is in its final state
+- [x] 11.2 Reduced-motion pass with Playwright (`emulateMedia reducedMotion: 'reduce'`): no rv-* animation runs, and every element is in its final state
   - _Requirements: 18.1, 18.2_
-- [ ] 11.3 **Final checkpoint:** `npm run gate` green, screenshots of every season, link for the user, and a `docs/KIRO_LOG.md` entry
+- [x] 11.3 **Final checkpoint:** `npm run gate` green, screenshots of every season, link for the user, and a `docs/KIRO_LOG.md` entry
   - _Requirements: 20.1, 20.2_
 
 ## Task Dependency Graph
