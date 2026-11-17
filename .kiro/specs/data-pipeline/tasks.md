@@ -43,10 +43,10 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
 - [x] 4.3 Tests on tiny polygons and point grids, including **Property 5: Proximity agrees with distance**
   - _Requirements: 3.3–3.5, 4.1, 4.2_
 
-- [ ] 5. Snow
-- [ ] 5.1 Write `pipeline/snow.py`: snow/cloud/clear per scar pixel (snow wins); fraction = snow ÷ (snow + clear); > 50 % cloud → None for that scar; snow frame < 2000 px or a failed frame → None for all
+- [x] 5. Snow
+- [x] 5.1 Write `pipeline/snow.py`: snow/cloud/clear per scar pixel (snow wins); fraction = snow ÷ (snow + clear); > 50 % cloud → None for that scar; snow frame < 2000 px or a failed frame → None for all
   - _Requirements: 5.1–5.5_
-- [ ] 5.2 Tests with synthetic snow and cloud RGBA frames, including **Property 6: Snow fraction is a fraction of the known scar pixels**
+- [x] 5.2 Tests with synthetic snow and cloud RGBA frames, including **Property 6: Snow fraction is a fraction of the known scar pixels**
   - _Requirements: 5.2–5.4_
 
 - [ ] 6. Chance and new fires
