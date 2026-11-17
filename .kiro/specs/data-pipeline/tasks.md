@@ -19,14 +19,14 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
 - [x] 1.3 Write `pipeline/grid.py` (lon/lat ↔ grid, EPSG:3978 transformer) and `test_grid.py`, including **Property 1: Grid round trip**
   - _Requirements: 3.1_
 
-- [ ] 2. Fetch layer (offline-tested)
-- [ ] 2.1 Write `pipeline/http.py`: one session, 1 request/s throttle, 3 retries (2, 8, 30 s), key redaction in every message
+- [x] 2. Fetch layer (offline-tested)
+- [x] 2.1 Write `pipeline/http.py`: one session, 1 request/s throttle, 3 retries (2, 8, 30 s), key redaction in every message
   - _Requirements: 1.5, 1.6, 1.7_
-- [ ] 2.2 Write `pipeline/firms.py`: `fetch_range`, `fetch_period` (5-day pages), every page cached and never re-fetched, NRT only for completed UTC days, `budget()`; reject bodies without a CSV header
+- [x] 2.2 Write `pipeline/firms.py`: `fetch_range`, `fetch_period` (5-day pages), every page cached and never re-fetched, NRT only for completed UTC days, `budget()`; reject bodies without a CSV header
   - _Requirements: 1.1–1.5, 1.7_
-- [ ] 2.3 Write `pipeline/gibs.py` (`frame()` with cache, None on error) and `pipeline/nbac.py` (download + cache the annual zip, read with pyshp, reproject to EPSG:3978)
+- [x] 2.3 Write `pipeline/gibs.py` (`frame()` with cache, None on error) and `pipeline/nbac.py` (download + cache the annual zip, read with pyshp, reproject to EPSG:3978)
   - _Requirements: 3.2, 3.7, 5.1_
-- [ ] 2.4 Tests with a fake session: paging, caching (no re-fetch), NRT completed-days rule, header check, retries, budget stop; **Property 2: Paging covers the period exactly once**; **Property 10: The key never leaks**
+- [x] 2.4 Tests with a fake session: paging, caching (no re-fetch), NRT completed-days rule, header check, retries, budget stop; **Property 2: Paging covers the period exactly once**; **Property 10: The key never leaks**
   - _Requirements: 1.3–1.8_
 
 - [ ] 3. Points

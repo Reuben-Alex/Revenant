@@ -155,7 +155,9 @@ def build_tonight(today: date) -> dict
 ### Proximity (on_scar)
 
 A point is on a scar when its distance to the scar polygon, in EPSG:3978 metres, is ≤ 1000 m. That is the 1 km test in
-honesty.md. Buffers are computed once per scar with shapely. Only on-scar points are passed to the engine as
+honesty.md. Buffers are computed once per scar with shapely.
+EPSG:3978 shrinks distances in this region (scale 0.984 at 54° N to 0.972 at 60° N), so 1000 map metres is 1017–1029 m
+on the ground. That was kept by decision on 2026-11-11, and the writeup and UI say "≈1 km". Only on-scar points are passed to the engine as
 `Hotspot(day, x, y, on_scar=True)`. Off-scar points have no effect on the rule (spec 01, Requirement 3.5).
 
 ### Static sources (firms-points skill)

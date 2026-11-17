@@ -84,6 +84,10 @@ N_CLUSTERS = 30
 # --- HTTP ------------------------------------------------------------------------------------
 REQUEST_INTERVAL_S = 1.0
 RETRY_WAITS_S = (2, 8, 30)
+HTTP_TIMEOUT_S = 60
+BUDGET_CHECK_EVERY = 25  # re-check the FIRMS key status every 25 freshly fetched pages
+BUDGET_MARGIN = 250  # stop when fewer than this many transactions remain in the 10-minute window
+GIBS_FRESH_DAYS = 2  # frames this recent are not cached: GIBS may still be adding swaths
 
 CREDIT = "NASA FIRMS · NASA GIBS/VIIRS · NBAC (NRCan) · Scholten et al. 2021"
 

@@ -6,7 +6,9 @@ docs/method.md: x -> lon = -126 + x/1060 * 17 ; y -> lat = 60 - y/716 * 6.
 from functools import lru_cache
 
 import numpy as np
+import shapely
 from pyproj import Transformer
+from shapely.geometry import Polygon, box
 
 from .config import EAST, GRID_H, GRID_W, NORTH, SOUTH, WEST
 
@@ -42,3 +44,13 @@ def to_3978() -> Transformer:
 @lru_cache(maxsize=1)
 def from_3978() -> Transformer:
     return Transformer.from_crs("EPSG:3978", "EPSG:4326", always_xy=True)
+
+
+def bbox_lonlat(step_deg: float = 0.05) -> Polygon:
+    """The Revenant bbox as a lon/lat polygon with vertices every `step_deg`, so it stays exact once projected."""
+    return shapely.segmentize(box(WEST, SOUTH, EAST, NORTH), step_deg)
+
+
+def reproject(geom, transformer: Transformer):
+    """Apply a pyproj transformer (always_xy) to every coordinate of a shapely geometry."""
+    return shapely.transform(geom, lambda xy: np.column_stack(transformer.transform(xy[:, 0], xy[:, 1])))
