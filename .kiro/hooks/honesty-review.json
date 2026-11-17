@@ -1,9 +1,15 @@
 {
   "version": "v1",
-  "hooks": [{
-    "name": "Honesty review for in-character copy",
-    "trigger": "PostFileSave",
-    "matcher": "^src/copy/.*",
-    "action": { "type": "agent", "prompt": "Review the copy just saved against .kiro/steering/honesty.md and gravekeeper-voice.md. Flag any line that states a number, date, place or prediction not backed by public/data or a cited source, and propose a truthful rewrite in the same voice." }
-  }]
+  "hooks": [
+    {
+      "name": "honesty-review",
+      "trigger": "PostFileSave",
+      "description": "Review in-character copy against honesty.md whenever a src/copy file is saved (uses credits each run).",
+      "matcher": "src/copy/.*",
+      "action": {
+        "type": "agent",
+        "prompt": "Review the copy file just saved against .kiro/steering/honesty.md and the gravekeeper-voice steering. Flag any line that states a number, date, place or prediction not backed by public/data or a cited source, and propose a truthful rewrite in the same voice. If everything is fine, say so in one line."
+      }
+    }
+  ]
 }

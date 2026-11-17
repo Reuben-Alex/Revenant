@@ -8,13 +8,13 @@ These tasks build the night graveyard scene of `reference/design/Main.dc.html` i
 
 ## Tasks
 
-- [ ] 1. Scaffold the app and turn on the UI hooks
-- [ ] 1.1 Create the Vite + React 19 + TypeScript (strict) project in the repo root. `public/` stays the public dir. Add ESLint, Vitest, fast-check and @testing-library/react.
+- [x] 1. Scaffold the app and turn on the UI hooks
+- [x] 1.1 Create the Vite + React 19 + TypeScript (strict) project in the repo root. `public/` stays the public dir. Add ESLint, Vitest, fast-check and @testing-library/react.
   - npm scripts: `dev`, `build`, `test` (`vitest run`), `lint`, `typecheck` (`tsc --noEmit`), `check` (lint then typecheck), `gate` (test then build)
   - _Requirements: 1.1, 1.2, 1.4_
-- [ ] 1.2 Add `index.html` with the Google Fonts link from the board helmet (IM Fell English ital, IM Fell English SC, Inter 400/500/600, JetBrains Mono 400/500)
+- [x] 1.2 Add `index.html` with the Google Fonts link from the board helmet (IM Fell English ital, IM Fell English SC, Inter 400/500/600, JetBrains Mono 400/500)
   - _Requirements: 3.2_
-- [ ] 1.3 Turn on the `ui-checks` hook (`npm run check --silent` on `src/.*\.(ts|tsx|css)$`) and the `task-gate` hook (`npm run gate --silent`, PostTaskExec) with the createHook tool. Delete the two drafts in `revenant-kit/kiro-drafts/.kiro/hooks/`.
+- [x] 1.3 Turn on the `ui-checks` hook (`npm run check --silent` on `src/.*\.(ts|tsx|css)$`) and the `task-gate` hook (`npm run gate --silent`, PostTaskExec) with the createHook tool. Delete the two drafts in `revenant-kit/kiro-drafts/.kiro/hooks/`.
   - _Requirements: 1.3_
 
 - [ ] 2. Styles
