@@ -76,8 +76,8 @@ These tasks build the night graveyard scene of `reference/design/Main.dc.html` i
 - [x] 9.2 `Lantern` (veil, clipped true colour, ring, icon, names, keyboard focus follows) and `Compare` (split, divider, tags, range input)
   - _Requirements: 13.1–13.4, 14.1–14.3_
 
-- [ ] 10. Tonight tab (basic)
-- [ ] 10.1 Tonight states, warm scars, cluster glows, watch list, Tonight callout/epitaph/checks with the "crews confirm" caveat
+- [x] 10. Tonight tab (basic)
+- [x] 10.1 Tonight states, warm scars, cluster glows, watch list, Tonight callout/epitaph/checks with the "crews confirm" caveat
   - _Requirements: 16.1–16.4_
 
 - [ ] 11. Accessibility, reduced motion and the final check

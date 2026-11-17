@@ -75,8 +75,9 @@ export const callout = {
   fire1: (year: number, day: number) => `First heat ${fmtDay(day, year)}, ${year}`,
   fire2: (year: number) => `More than ~15 km from any ${year - 1} scar`,
   tonight1: (year: number, lastBurn: string) => `Burned ${year} · last heat ${fmtIso(lastBurn)}`,
+  // Late heat comes first and always carries the caveat (honesty.md: slash piles; crews confirm).
   tonight2: (snow: number, late: number) =>
-    snow < 0 ? 'Snow on the scar: unseen (cloud)' : snow >= 15 ? `Snow on the scar: ${snow}%` : late > 0 ? `${late} hotspots here in the last 2 weeks` : 'No snow on the scar yet',
+    late > 0 ? `${late} late hotspots · crews confirm` : snow < 0 ? 'Snow on the scar: unseen (cloud)' : snow >= 15 ? `Snow on the scar: ${snow}%` : 'No snow on the scar yet',
 };
 
 export const tooltip = {
@@ -220,7 +221,7 @@ export const exhume = {
   tonightAxis: ['0%', 'snow on scar', '100%'] as const,
   tonightEpitaph: (o: { size: number; cx: number; lastBurn: string; late: number; snow: number }) =>
     `Here lies some ${km2(o.size)} km² of ${region(o.cx)}, burned this year until ${fmtIso(o.lastBurn)}. ` +
-    (o.late > 0 ? 'It was still warm in the last two weeks. ' : 'It went cold before the snow. ') +
+    (o.late > 0 ? 'It was still warm in the last two weeks; crews confirm whether that was fire or slash piles. ' : 'It went cold before the snow. ') +
     (o.snow < 0 ? 'Cloud hides whether the snow has it.' : o.snow >= 15 ? 'The snow has it now.' : 'The snow has not reached it yet.'),
   tonightCheck1: (year: number, lastBurn: string) => ({ title: `Burned in ${year}`, detail: `Fire seen here until ${fmtIso(lastBurn)}.` }),
   tonightCheck2: (late: number) =>

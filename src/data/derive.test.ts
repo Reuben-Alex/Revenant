@@ -5,7 +5,7 @@ import seasonsRaw from '../../public/data/seasons.json';
 import tonightRaw from '../../public/data/tonight.json';
 import * as copy from '../copy/graveyard';
 import {
-  CALLOUT_H, CALLOUT_W, H, W, calloutBox, cardList, countStates, crossfade, exhumation, graveViews, headlineFor,
+  CALLOUT_H, CALLOUT_W, H, W, calloutBox, cardList, countStates, crossfade, exhumation, graveCallout, graveViews, headlineFor,
   registerNote, registerRows, riseMarks, snowCurve, tonightViews,
 } from './derive';
 import { parseSeasons, parseTonight } from './load';
@@ -156,5 +156,20 @@ describe('published data examples', () => {
   });
   it('snow curve skips missing days', () => {
     expect(snowCurve([100, -1, 0])).toBe('M0.0 8.0 L5.9 58.0');
+  });
+});
+
+describe('Tonight caveat (Requirement 16.3)', () => {
+  it('every warm scar says crews confirm in its callout, epitaph and checks', () => {
+    const views = tonightViews(TONIGHT);
+    const warm = views.filter((v) => v.warm);
+    expect(warm.length).toBeGreaterThan(0);
+    for (const v of warm) {
+      const c = graveCallout(v, 2026);
+      const ex = exhumation(v, 'tonight', 0, 2026, TONIGHT, 1);
+      expect(c.line2).toContain('crews confirm');
+      expect(ex.epitaph).toContain('crews confirm');
+      expect(ex.checks.some((k) => k.detail.includes('crews confirm'))).toBe(true);
+    }
   });
 });
