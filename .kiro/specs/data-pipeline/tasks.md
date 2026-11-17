@@ -72,7 +72,7 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
   - _Requirements: 8.3, 8.4_
 - [x] 8.3 Tests: **Property 9: Published grave rows match the engine**; a golden test of `build_season(2024)` on a small recorded cache fixture
   - _Requirements: 8.1–8.3_
-- [ ] 8.4 Live run: check `budget()`, run `uv run python -m pipeline seasons`, confirm the validator passes; report risen / chance / zombie per season to the user before committing
+- [x] 8.4 Live run: check `budget()`, run `uv run python -m pipeline seasons`, confirm the validator passes; report risen / chance / zombie per season to the user before committing
   - _Requirements: 1.5, 8.3, 8.4_
 - [ ] 8.5 Update `docs/method.md` (schema additions, −1 melt, `tonight.json`, FIRMS/NBAC build method)
   - _Requirements: 8.5_
