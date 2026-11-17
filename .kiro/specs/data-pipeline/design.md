@@ -237,6 +237,7 @@ class Point:
     lat: float; lon: float; x: float; y: float          # grid x/y from grid.py
     acq_date: date; acq_time: int                        # UTC
     source: str                                          # e.g. "VIIRS_NOAA20_SP"
+    satellite: str                                       # FIRMS `satellite` column (Requirement 2.1)
     confidence: Literal["l", "n", "h"]
     type: int | None                                     # SP only
 
