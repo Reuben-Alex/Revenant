@@ -1,0 +1,13 @@
+/* Daylight ("Boreal Fire Watch") interaction styles (spec 04 Requirement 8.1). The night focus ring is bone on
+   black; in daylight it is the brand blue on white. */
+.rv-day-btn:focus-visible {
+  outline: 2px solid var(--day-brand);
+  outline-offset: 2px;
+}
+.rv-day-btn:hover {
+  filter: brightness(0.97);
+}
+/* The map is a size container so the 60 km scale bar can be a share of its width (cqw). */
+.rv-day-map {
+  container-type: inline-size;
+}

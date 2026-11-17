@@ -1,10 +1,10 @@
-// Loads the published data, then shows the graveyard. On a load failure it shows an error stone
+// Loads the published data, then shows the opening (daylight → nightfall → graveyard, spec 04). On a load failure it shows an error stone
 // instead of rendering invented values (spec 03, Requirement 2.2).
 import { useEffect, useState } from 'react';
 import * as copy from './copy/graveyard';
 import { DataError, loadSeasons, loadTonight } from './data/load';
 import type { SeasonsFile, TonightFile } from './data/types';
-import { Graveyard } from './scenes/Graveyard';
+import { Opening } from './scenes/Opening';
 
 type Loaded = { data: SeasonsFile; tonight: TonightFile | null };
 
@@ -31,5 +31,5 @@ export function App() {
     );
   }
   if (!loaded) return <main aria-busy="true" style={{ minHeight: '100vh', background: '#050807' }} />;
-  return <Graveyard data={loaded.data} tonight={loaded.tonight} />;
+  return <Opening data={loaded.data} tonight={loaded.tonight} />;
 }

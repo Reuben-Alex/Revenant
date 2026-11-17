@@ -28,12 +28,12 @@ These tasks add the daylight viewer, nightfall and the title card in front of th
 - [x] 3.1 `src/audio/context.ts`, `wind.ts`, `drone.ts`, using the board's `startAudio` / `playDrone` values. All calls guarded; silent when there is no AudioContext; `startWind()` is idempotent.
   - _Requirements: 7.2–7.4_
 
-- [ ] 4. Daylight screen
-- [ ] 4.1 `src/scenes/Daylight.tsx` and `src/styles/daylight.css`: header, map (image, scar mask, border and labels, markers, layers card, zoom, scale bar, image credit), aside (status, stat cards, rows, night-shift card, credit). No sound toggle. Inert parts are text; 40 px buttons; AA colours; daylight focus outline.
+- [x] 4. Daylight screen
+- [x] 4.1 `src/scenes/Daylight.tsx` and `src/styles/daylight.css`: header, map (image, scar mask, border and labels, markers, layers card, zoom, scale bar, image credit), aside (status, stat cards, rows, night-shift card, credit). No sound toggle. Inert parts are text; 40 px buttons; AA colours; daylight focus outline.
   - _Requirements: 2.1–2.5, 7.1, 8.1, 8.2, 8.4_
-- [ ] 4.2 `src/scenes/Opening.tsx` and the `App.tsx` change: the scene by phase, sound started in the Night shift click, and a data failure still showing the error stone
+- [x] 4.2 `src/scenes/Opening.tsx` and the `App.tsx` change: the scene by phase, sound started in the Night shift click, and a data failure still showing the error stone
   - _Requirements: 1.1, 1.4, 7.2, 7.4_
-- [ ] 4.3 **Checkpoint:** run `npm run dev`, give the user the link, and compare a 1440 × 1000 Playwright screenshot of the daylight view with the board values. Fix or report differences over 4 px.
+- [x] 4.3 **Checkpoint:** run `npm run dev`, give the user the link, and compare a 1440 × 1000 Playwright screenshot of the daylight view with the board values. Fix or report differences over 4 px.
   - _Requirements: 10.1_
 
 - [ ] 5. Nightfall and title card
