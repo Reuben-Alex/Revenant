@@ -8,12 +8,12 @@ These tasks add the daylight viewer, nightfall and the title card in front of th
 
 ## Tasks
 
-- [ ] 1. Daylight copy and derivations (pure, tested)
-- [ ] 1.1 `src/copy/daylight.ts`: every daylight and title-card string, with the board claims corrected (design.md, "Board-to-app decisions")
+- [x] 1. Daylight copy and derivations (pure, tested)
+- [x] 1.1 `src/copy/daylight.ts`: every daylight and title-card string, with the board claims corrected (design.md, "Board-to-app decisions")
   - _Requirements: 3.1, 3.4–3.9, 5.2, 5.3_
-- [ ] 1.2 `src/data/daylight.ts`: `daylightView()` (dots, rows, area snow, average, covered, re-ignited, clear, date label, credits) and `SCALE_60KM_PCT`
+- [x] 1.2 `src/data/daylight.ts`: `daylightView()` (dots, rows, area snow, average, covered, re-ignited, clear, date label, credits) and `SCALE_60KM_PCT`
   - _Requirements: 2.3, 2.4, 3.1–3.6_
-- [ ] 1.3 Property tests (fast-check) for Properties 1, 2, 3 and 5, plus the example tests for the date and scale
+- [x] 1.3 Property tests (fast-check) for Properties 1, 2, 3 and 5, plus the example tests for the date and scale
   - **Property 1** area snow · **Property 2** average ignores missing · **Property 3** all clear · **Property 5** no number without a source
   - **Validates: Requirements 3.2–3.6, 3.9**
 
