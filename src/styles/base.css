@@ -1,0 +1,45 @@
+/* Page basics and shared interaction styles (Main.dc.html helmet L12, L100–102). */
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--bone);
+  font-family: var(--font-ui);
+}
+
+a {
+  color: var(--teal);
+}
+a:hover {
+  color: #b8f0e6;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.rv-hit:focus-visible,
+.rv-card:focus-visible,
+.rv-btn:focus-visible,
+.rv-tab:focus-visible {
+  outline: 2px solid var(--bone);
+  outline-offset: 2px;
+}
+.rv-range:focus-visible + .rv-knob {
+  box-shadow: 0 0 0 3px var(--bone);
+}
+.rv-tab:hover,
+.rv-btn:hover {
+  border-color: #6f6250 !important;
+  color: #f4eee2 !important;
+}
+
+.rv-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

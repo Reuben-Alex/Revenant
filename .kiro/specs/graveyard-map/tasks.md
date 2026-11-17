@@ -17,18 +17,18 @@ These tasks build the night graveyard scene of `reference/design/Main.dc.html` i
 - [x] 1.3 Turn on the `ui-checks` hook (`npm run check --silent` on `src/.*\.(ts|tsx|css)$`) and the `task-gate` hook (`npm run gate --silent`, PostTaskExec) with the createHook tool. Delete the two drafts in `revenant-kit/kiro-drafts/.kiro/hooks/`.
   - _Requirements: 1.3_
 
-- [ ] 2. Styles
-- [ ] 2.1 `src/styles/tokens.css`: CSS variables for every token in `docs/design-reference.md`
+- [x] 2. Styles
+- [x] 2.1 `src/styles/tokens.css`: CSS variables for every token in `docs/design-reference.md`
   - _Requirements: 3.1_
-- [ ] 2.2 `src/styles/motion.css`: the rv-* keyframes this scene uses, plus the board's `prefers-reduced-motion` block, verbatim (helmet L18–101). `src/styles/base.css`: body, links, focus-visible, tab/button hover.
+- [x] 2.2 `src/styles/motion.css`: the rv-* keyframes this scene uses, plus the board's `prefers-reduced-motion` block, verbatim (helmet L18–101). `src/styles/base.css`: body, links, focus-visible, tab/button hover.
   - _Requirements: 18.1, 17.1_
 
-- [ ] 3. Data
-- [ ] 3.1 `src/data/types.ts` and `src/data/load.ts`: fetch both files, check their shape, parse the rows into objects, assign `G-nn`/`F-nn` ids
+- [x] 3. Data
+- [x] 3.1 `src/data/types.ts` and `src/data/load.ts`: fetch both files, check their shape, parse the rows into objects, assign `G-nn`/`F-nn` ids
   - _Requirements: 2.1, 2.2_
-- [ ] 3.2 `src/data/imagery.ts`: keyframes, masks and the Tonight frame, citing `public/img/README.md` and `reference/design/blob-map.json`
+- [x] 3.2 `src/data/imagery.ts`: keyframes, masks and the Tonight frame, citing `public/img/README.md` and `reference/design/blob-map.json`
   - _Requirements: 2.3_
-- [ ] 3.3 `src/data/format.ts` (dates from Mar 21, ISO dates, coordinates, km², region by x = 374, number words) and `src/data/state.ts` (`displayState`), with unit tests
+- [x] 3.3 `src/data/format.ts` (dates from Mar 21, ISO dates, coordinates, km², region by x = 374, number words) and `src/data/state.ts` (`displayState`), with unit tests
   - _Requirements: 2.4_
 
 - [ ] 4. Derivations and copy (pure, tested)

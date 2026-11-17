@@ -1,0 +1,46 @@
+/* Design tokens: docs/design-reference.md ("Tokens"), values from reference/design/Main.dc.html. */
+:root {
+  /* night */
+  --bg: #050807;
+  --bg-header: #060a09;
+  --panel: #070c0b;
+  --panel-2: #0a110f;
+  --rule: #172120;
+  --bone: #ece6d6;
+  --bone-bright: #f4eee2;
+  --ash: #a3ada8;
+  --ash-2: #7c8884;
+  --ash-3: #8e9994;
+  --mist: #c7cfcb;
+  --stone-line: #c9d2d1;
+
+  /* accents */
+  --ember: #ff6b2c;
+  --ember-deep: #6e1e12;
+  --teal: #7fe0cf;
+  --candle: #f2c14e;
+  --flame: #ffb86b;
+  --flame-core: #fff1c9;
+  --warm: #e8a07a;
+
+  /* parchment */
+  --ink-1: #e6d6ae;
+  --ink-2: #d8c8a0;
+  --ink-3: #b8a880;
+  --paper-1: #2a2418;
+  --paper-2: #18140d;
+  --paper-3: #100d08;
+  --paper-edge: #3a3022;
+
+  /* daylight (spec 04) */
+  --day-bg: #f3f5f7;
+  --day-brand: #0f5c8c;
+  --day-ok: #17734a;
+  --day-ok-bg: #e9f6ef;
+
+  /* type */
+  --font-fell: 'IM Fell English', Georgia, serif;
+  --font-fell-sc: 'IM Fell English SC', Georgia, serif;
+  --font-ui: Inter, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}

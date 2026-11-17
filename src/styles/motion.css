@@ -1,0 +1,99 @@
+/* Motion: the rv-* keyframes and their reduced-motion fallback, as defined in
+   reference/design/Main.dc.html (helmet L15–103). Values are the board's; mask URLs point to public/img
+   (reference/design/blob-map.json). */
+
+.rv-scars{position:absolute;inset:0;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;pointer-events:none;transition:opacity .6s}
+.rv-m2023{-webkit-mask-image:url(/img/scars-2023.png);mask-image:url(/img/scars-2023.png)}
+.rv-m2024{-webkit-mask-image:url(/img/scars-2024.png);mask-image:url(/img/scars-2024.png)}
+.rv-m2025{-webkit-mask-image:url(/img/scars-2025.png);mask-image:url(/img/scars-2025.png)}
+.rv-m2026{-webkit-mask-image:url(/img/scars-2026.png);mask-image:url(/img/scars-2026.png)}
+.rv-img{position:absolute;inset:0;width:100%;height:100%;display:block;transition:opacity .9s ease}
+
+@keyframes rv-pulse{0%{opacity:.85;transform:scale(.6)}70%{opacity:0;transform:scale(1.3)}100%{opacity:0}}
+.rv-pulse{animation:rv-pulse 2.6s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes rv-breathe{0%,100%{opacity:.45}50%{opacity:1}}
+.rv-breathe{animation:rv-breathe 4.8s ease-in-out infinite}
+@keyframes rv-ember{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(-70px);opacity:0}}
+.rv-ember{animation:rv-ember 3.2s ease-out infinite}
+@keyframes rv-smoke{0%{transform:translateY(0);opacity:0}30%{opacity:.45}100%{transform:translateY(-50px);opacity:0}}
+.rv-smoke{animation:rv-smoke 5s ease-out infinite}
+@keyframes rv-rise{0%{transform:translateY(16px);opacity:0}35%{opacity:1}70%{transform:translateY(-3px)}100%{transform:translateY(0);opacity:1}}
+.rv-rise{animation:rv-rise 1.6s cubic-bezier(.2,.8,.3,1) .5s 1 both;transform-box:fill-box}
+@keyframes rv-crack{0%{stroke-dashoffset:40;opacity:0}20%{opacity:1}100%{stroke-dashoffset:0;opacity:1}}
+.rv-crack{stroke-dasharray:40;animation:rv-crack .6s ease-out 1 both}
+@keyframes rv-hand{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.rv-hand{animation:rv-hand 3s ease-in-out 2.2s infinite}
+@keyframes rv-thaw{0%{opacity:.9;transform:translateY(0)}100%{opacity:0;transform:translateY(-18px)}}
+.rv-thaw{animation:rv-thaw 2.4s ease-out infinite;transform-box:fill-box}
+@keyframes rv-drip{0%{transform:translateY(0);opacity:0}20%{opacity:1}100%{transform:translateY(12px);opacity:0}}
+.rv-drip{animation:rv-drip 1.4s ease-in infinite}
+@keyframes rv-candle{0%,100%{opacity:1;transform:scale(1)}30%{opacity:.7;transform:scale(.92)}60%{opacity:1;transform:scale(1.06)}80%{opacity:.8}}
+.rv-candle{animation:rv-candle 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center bottom}
+@keyframes rv-appear{0%{transform:scale(0);opacity:0}60%{transform:scale(1.4)}100%{transform:scale(1);opacity:1}}
+.rv-appear{animation:rv-appear .6s ease-out 1 both;transform-box:fill-box;transform-origin:center}
+@keyframes rv-flicker{0%,92%,100%{opacity:1}94%{opacity:.35}96%{opacity:.9}97%{opacity:.45}}
+.rv-flicker{animation:rv-flicker 5s linear infinite}
+@keyframes rv-snow{0%{transform:translate(0,-30px)}100%{transform:translate(-40px,780px)}}
+.rv-snow{animation:rv-snow linear infinite}
+@keyframes rv-fog{0%{transform:translateX(-12%)}100%{transform:translateX(12%)}}
+.rv-fog{animation:rv-fog 38s ease-in-out infinite alternate}
+@keyframes rv-shake{0%,100%{transform:translate(0,0)}10%{transform:translate(-6px,3px)}20%{transform:translate(5px,-4px)}30%{transform:translate(-4px,-2px)}40%{transform:translate(4px,4px)}50%{transform:translate(-2px,2px)}60%{transform:translate(2px,-2px)}}
+.rv-shake{animation:rv-shake .7s ease-out 1}
+@keyframes rv-flash{0%{opacity:0}12%{opacity:1}100%{opacity:0}}
+.rv-flash{animation:rv-flash 4.5s ease-out 1 forwards}
+@keyframes rv-sting{0%{opacity:0;letter-spacing:40px;filter:blur(8px)}14%{opacity:1;letter-spacing:8px;filter:blur(0)}85%{opacity:1}100%{opacity:0;letter-spacing:12px}}
+.rv-sting{animation:rv-sting 4.5s ease-out 1 forwards}
+@keyframes rv-line{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
+.rv-line{opacity:0;animation:rv-line .6s ease-out forwards}
+@keyframes rv-slide{0%{transform:translateX(40px);opacity:0}100%{transform:translateX(0);opacity:1}}
+.rv-slide{animation:rv-slide .45s cubic-bezier(.2,.8,.3,1) 1 both}
+@keyframes rv-beat{0%{opacity:0;transform:translate(-50%,14px)}100%{opacity:1;transform:translate(-50%,0)}}
+.rv-beat{animation:rv-beat .5s ease-out 1 both}
+@keyframes rv-say{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:translateY(0)}}
+.rv-say{animation:rv-say .5s ease-out 1 both}
+@keyframes rv-introfade{0%,88%{opacity:1}100%{opacity:0}}
+.rv-intro{animation:rv-introfade 6.5s ease-in 1 forwards}
+@keyframes rv-cursor{0%,49%{opacity:1}50%,100%{opacity:0}}
+.rv-cursor{animation:rv-cursor 1s steps(1) infinite}
+@keyframes rv-tick{0%{opacity:0;transform:scale(.4)}100%{opacity:1;transform:scale(1)}}
+.rv-tick{animation:rv-tick .4s ease-out 1 both}
+@keyframes rv-fissure{0%{stroke-dashoffset:60;opacity:0}15%{opacity:1}100%{stroke-dashoffset:0;opacity:1}}
+.rv-fissure,.rv-fissure2{stroke-dasharray:60;animation:rv-fissure 1s cubic-bezier(.3,.7,.3,1) .55s 1 both}
+@keyframes rv-glowup{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}30%{opacity:.9}55%{opacity:.6}70%{opacity:1}100%{opacity:.85;transform:translate(-50%,-50%) scale(1)}}
+.rv-underglow{animation:rv-glowup 1.6s ease-out .4s 1 both}
+@keyframes rv-heave{0%{opacity:0;transform:scale(.3)}10%{opacity:1}100%{opacity:0;transform:scale(2.6)}}
+.rv-heave{animation:rv-heave 1.3s ease-out 1.25s 1 both;transform-box:fill-box;transform-origin:center}
+@keyframes rv-burst{0%{opacity:0;transform:translateY(16px) scaleY(.6)}40%{opacity:1}70%{transform:translateY(-3px) scaleY(1.05)}100%{opacity:1;transform:translateY(0) scaleY(1)}}
+.rv-burst{animation:rv-burst .9s cubic-bezier(.2,.9,.3,1.2) 1.45s 1 both;transform-box:fill-box;transform-origin:center bottom}
+@keyframes rv-spark{0%{opacity:0;transform:translate(0,0)}10%{opacity:1}100%{opacity:0;transform:translate(-5px,-34px)}}
+.rv-spark{animation:rv-spark 1.3s ease-out 1.5s infinite both}
+.rv-spark2{animation-delay:1.8s;animation-duration:1.6s}
+.rv-spark3{animation-delay:2.1s;animation-duration:1.1s}
+@keyframes rv-lbt{0%{transform:translateY(-100%)}100%{transform:translateY(0)}}
+@keyframes rv-lbb{0%{transform:translateY(100%)}100%{transform:translateY(0)}}
+.rv-lbt{animation:rv-lbt .6s ease-out 1 both}
+.rv-lbb{animation:rv-lbb .6s ease-out 1 both}
+@keyframes rv-eyes{0%,46%,50%,100%{transform:scaleY(1)}48%{transform:scaleY(.1)}}
+.rv-eyes{animation:rv-eyes 5.5s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes rv-duskk{0%{filter:none}35%{filter:saturate(.75) sepia(.35) brightness(.85)}70%{filter:grayscale(.9) sepia(.2) brightness(.35) contrast(1.2)}100%{filter:grayscale(1) brightness(0)}}
+.rv-dusk{animation:rv-duskk 3.2s ease-in 1 forwards}
+@keyframes rv-sink{0%{transform:translateY(0);opacity:1}100%{transform:translateY(10px);opacity:0}}
+.rv-dusk .rv-dot{animation:rv-sink 1.8s ease-in .7s 1 forwards;transform-box:fill-box}
+@keyframes rv-sunset{0%{transform:translateY(-100%)}100%{transform:translateY(0)}}
+.rv-sunset{animation:rv-sunset 3s ease-in 1 forwards}
+@keyframes rv-emerge{0%{transform:translateY(14px);opacity:0}60%{opacity:1}100%{transform:translateY(0);opacity:1}}
+.rv-emerge{animation:rv-emerge 1.2s cubic-bezier(.2,.8,.3,1) 1 both;transform-box:fill-box}
+@keyframes rv-glitch{0%{transform:translate(0,0);filter:none}20%{transform:translate(-4px,1px);filter:hue-rotate(40deg) saturate(2.2)}40%{transform:translate(3px,-2px) skewX(-1.5deg)}60%{transform:translate(-2px,0);filter:invert(.08) hue-rotate(-30deg)}80%{transform:translate(2px,1px)}100%{transform:translate(0,0);filter:none}}
+.rv-glitch{animation:rv-glitch .32s steps(2) infinite}
+@keyframes rv-pick{0%{transform:scale(0)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+.rv-pick{animation:rv-pick .45s ease-out 1 both;transform-box:fill-box;transform-origin:center bottom}
+
+/* Stone sinking at rest (design-reference.md, "Rest": 5 px, 45 %, 1.4 s). */
+.rv-stone{transition:transform 1.4s ease,opacity 1.4s ease}
+
+@media (prefers-reduced-motion: reduce){
+  .rv-pulse,.rv-breathe,.rv-ember,.rv-smoke,.rv-hand,.rv-flicker,.rv-snow,.rv-shake,.rv-flash,.rv-sting,.rv-cursor,.rv-fog,.rv-candle,.rv-thaw,.rv-drip{animation:none}
+  .rv-line,.rv-rise,.rv-crack,.rv-appear,.rv-slide,.rv-beat,.rv-dusk,.rv-sunset,.rv-emerge,.rv-glitch,.rv-pick,.rv-say,.rv-tick,.rv-fissure,.rv-fissure2,.rv-underglow,.rv-heave,.rv-burst,.rv-lbt,.rv-lbb{animation:none;opacity:1}
+  .rv-spark,.rv-eyes,.rv-dusk .rv-dot{animation:none}
+  .rv-stone,.rv-img,.rv-scars{transition:none}
+}
