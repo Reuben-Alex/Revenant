@@ -17,7 +17,7 @@ The board is the visual spec. Its inline styles are the exact look, and `renderV
 | Feature | Board refs | Spec |
 |---|---|---|
 | Daylight "Boreal Fire Watch", nightfall, title card | `dayOn` L492, `intro` L574, `nightfall()` | 04 |
-| Rising cinematic, camera zoom, letterbox, sting, shake; all sound and the Sound button | `camOn` L209/L263, `hasSting` L300, `playBell` etc. | 05 |
+| Rising cinematic, camera zoom, letterbox, sting, shake; bell, boom, creak (wind and drone moved to spec 04; no Sound button, by the spec 04 immersion decision) | `camOn` L209/L263, `hasSting` L300, `playBell` etc. | 05 |
 | Gravekeeper narrator, whispers, quiet-year glitch, wager, verdict | `hasSay` L308, `wagerOpen` L326, `hasVerdict` L290 | 06 |
 | Tonight footer countdown, staleness, crew phone, dossier, opening frame | `isTonight` L484, other boards | 07 |
 
