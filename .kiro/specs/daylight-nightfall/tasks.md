@@ -17,10 +17,10 @@ These tasks add the daylight viewer, nightfall and the title card in front of th
   - **Property 1** area snow · **Property 2** average ignores missing · **Property 3** all clear · **Property 5** no number without a source
   - **Validates: Requirements 3.2–3.6, 3.9**
 
-- [ ] 2. Phase machine
-- [ ] 2.1 `src/scenes/useNightfall.ts`: `nightfallReducer` (no skip event), `initialPhase(search, dev)`, and timers (3200 / 6000 ms), with `onNight` firing once. `useGraveyard.initialState` reads `?season=` / `?day=` in dev only.
+- [x] 2. Phase machine
+- [x] 2.1 `src/scenes/useNightfall.ts`: `nightfallReducer` (no skip event), `initialPhase(search, dev)`, and timers (3200 / 6000 ms), with `onNight` firing once. `useGraveyard.initialState` reads `?season=` / `?day=` in dev only.
   - _Requirements: 1.1–1.3, 4.2, 4.3, 4.5, 6.1, 6.3_
-- [ ] 2.2 Property 4 (fast-check), plus fake-timer tests: the timer path, `onNight` once, `initialPhase` in dev and production
+- [x] 2.2 Property 4 (fast-check), plus fake-timer tests: the timer path, `onNight` once, `initialPhase` in dev and production
   - **Property 4** the phase moves one step at a time
   - **Validates: Requirements 4.2, 4.3, 6.1**
 

@@ -1,5 +1,5 @@
 // Scene state for the night graveyard (spec 03 design.md, "State"). Initial values follow the board
-// constructor (Main.dc.html L665). `?season=s2025&day=60` in the URL sets the start (preview convenience).
+// constructor (Main.dc.html L665). In the dev server only, `?season=s2025&day=60` sets the start (spec 04 Req 1.3).
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import { PERIOD_MS, type Speed } from '../data/derive';
 import type { SceneKey } from '../data/types';
@@ -37,12 +37,20 @@ export type Action =
 
 const SCENES: SceneKey[] = ['s2024', 's2025', 's2026', 'tonight'];
 
-export function initialState(search = typeof window !== 'undefined' ? window.location.search : ''): UIState {
+export interface Start { scene: SceneKey; day: number }
+export const DEFAULT_START: Start = { scene: 's2024', day: 0 };
+
+/** Dev server only (spec 04 Requirement 1.3): `?season=s2025&day=60` sets where the graveyard opens. */
+export function parseStart(search: string): Start {
   const q = new URLSearchParams(search);
   const scene = (SCENES as string[]).includes(q.get('season') ?? '') ? (q.get('season') as SceneKey) : 's2024';
   const d = Number(q.get('day'));
+  return { scene, day: Number.isFinite(d) ? Math.max(0, Math.min(102, Math.round(d))) : 0 };
+}
+
+export function initialState(start: Start = DEFAULT_START): UIState {
   return {
-    scene, day: Number.isFinite(d) ? Math.max(0, Math.min(102, Math.round(d))) : 0, selected: 'G-01',
+    scene: start.scene, day: start.day, selected: 'G-01',
     playing: false, speed: '1', night: true, lantern: { on: false, x: 530, y: 358, inside: false },
     compare: false, split: 50, ex: null, hover: null, fireSel: null,
   };
@@ -91,7 +99,9 @@ interface Options {
 }
 
 export function useGraveyard(opts: Options = {}) {
-  const [state, dispatch] = useReducer(reducer, undefined, () => initialState());
+  // In production `import.meta.env.DEV` is `false`, so parseStart is never called and is dropped from the bundle.
+  const [state, dispatch] = useReducer(reducer, undefined,
+    () => initialState(import.meta.env.DEV ? parseStart(window.location.search) : DEFAULT_START));
   const act = useCallback((a: Action) => dispatch(a), []);
 
   // Replay clock (board tick(): 100 ms steps, one day per PERIOD_MS[speed]).
