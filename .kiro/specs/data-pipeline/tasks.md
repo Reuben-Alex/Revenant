@@ -65,7 +65,7 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
 - [x] 7.3 Enable the `data-contract` hook with the createHook tool (PostFileSave, matcher `public/data/.*\.json$`, `node scripts/validate-data.mjs`) and delete the draft in `revenant-kit/kiro-drafts/.kiro/hooks/`
   - _Requirements: 10.4_
 
-- [ ] 8. Build and publish the replay seasons
+- [x] 8. Build and publish the replay seasons
 - [x] 8.1 Write `pipeline/build.py` (`build_season`) and `pipeline/publish.py` (temp file → validator → atomic replace; mask PNGs)
   - _Requirements: 3.6, 5.5, 8.1–8.4_
 - [x] 8.2 Write `pipeline/__main__.py` with the `seasons` command
@@ -74,7 +74,7 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
   - _Requirements: 8.1–8.3_
 - [x] 8.4 Live run: check `budget()`, run `uv run python -m pipeline seasons`, confirm the validator passes; report risen / chance / zombie per season to the user before committing
   - _Requirements: 1.5, 8.3, 8.4_
-- [ ] 8.5 Update `docs/method.md` (schema additions, −1 melt, `tonight.json`, FIRMS/NBAC build method)
+- [x] 8.5 Update `docs/method.md` (schema additions, −1 melt, `tonight.json`, FIRMS/NBAC build method)
   - _Requirements: 8.5_
 
 - [ ] 9. Tonight
