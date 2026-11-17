@@ -46,7 +46,7 @@ flowchart TD
     N[nbac.py<br/>annual NBAC zip] --> NC[(nbac/*.zip)]
   end
   FC --> P[points.py<br/>parse, dedupe, confidence, static filter, to grid]
-  NC --> S[scars.py<br/>clip to bbox, rank, rasterise, 1 km buffer]
+  NC --> S[scars.py<br/>clip to bbox, rank, rasterise]
   P -->|current-year May–Oct points| H[hulls.py<br/>detection hulls for Tonight]
   H --> S
   GC --> SN[snow.py<br/>per-scar daily snow fraction]
@@ -80,7 +80,7 @@ pipeline/firms.py         # area API pages -> cached CSV text; mapkey_status bud
 pipeline/gibs.py          # WMS GetMap -> cached frame bytes
 pipeline/nbac.py          # download + cache NBAC_<year>_<release>.zip; read polygons with pyshp
 pipeline/points.py        # CSV -> Point records; dedupe; confidence; static filter; bbox clip
-pipeline/scars.py         # Scar records: polygon (EPSG:3978), grid mask, size_px, centroid, 1 km buffer
+pipeline/scars.py         # Scar records: polygon (EPSG:3978), grid mask, size_px, centroid
 pipeline/hulls.py         # detection hulls from points (research method) for years without NBAC
 pipeline/snow.py          # per-scar snow fraction per day from NDSI frames; region-wide missing rule
 pipeline/proximity.py     # on_scar flag: point within 1 km of a scar polygon
@@ -155,7 +155,8 @@ def build_tonight(today: date) -> dict
 ### Proximity (on_scar)
 
 A point is on a scar when its distance to the scar polygon, in EPSG:3978 metres, is ≤ 1000 m. That is the 1 km test in
-honesty.md. Buffers are computed once per scar with shapely.
+honesty.md. The test uses `shapely.dwithin`, which is exact. A stored buffer polygon would approximate the 1 km arcs with
+chords and miss points just inside 1 km, so scars keep no buffer.
 EPSG:3978 shrinks distances in this region (scale 0.984 at 54° N to 0.972 at 60° N), so 1000 map metres is 1017–1029 m
 on the ground. That was kept by decision on 2026-11-11, and the writeup and UI say "≈1 km". Only on-scar points are passed to the engine as
 `Hotspot(day, x, y, on_scar=True)`. Off-scar points have no effect on the rule (spec 01, Requirement 3.5).
@@ -247,7 +248,6 @@ class Point:
 class Scar:
     year: int; origin: Literal["nbac", "hull"]
     polygon_3978: shapely.Geometry
-    buffer_1km_3978: shapely.Geometry
     mask: np.ndarray                                     # bool (716, 1060)
     size_px: int; cx: int; cy: int
 ```

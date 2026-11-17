@@ -35,12 +35,12 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
 - [x] 3.2 Tests from CSV snippets (SP with `type`, NRT without), including **Property 3: Dedupe is idempotent and order-free** and **Property 4: Cleaning only removes**
   - _Requirements: 2.1–2.5_
 
-- [ ] 4. Scars and proximity
-- [ ] 4.1 Write `pipeline/scars.py` (NBAC scars clipped to bbox, rank by area, mask, size_px, centroid, 1 km buffer) and `pipeline/hulls.py` (2 px dilation, connected components)
+- [x] 4. Scars and proximity
+- [x] 4.1 Write `pipeline/scars.py` (NBAC scars clipped to bbox, rank by area, mask, size_px, centroid) and `pipeline/hulls.py` (2 px dilation, connected components)
   - _Requirements: 3.2–3.5_
-- [ ] 4.2 Write `pipeline/proximity.py` (`on_scar`, ≤ 1000 m in EPSG:3978)
+- [x] 4.2 Write `pipeline/proximity.py` (`on_scar`, ≤ 1000 m in EPSG:3978)
   - _Requirements: 4.1, 4.2, 4.3_
-- [ ] 4.3 Tests on tiny polygons and point grids, including **Property 5: Proximity agrees with distance**
+- [x] 4.3 Tests on tiny polygons and point grids, including **Property 5: Proximity agrees with distance**
   - _Requirements: 3.3–3.5, 4.1, 4.2_
 
 - [ ] 5. Snow

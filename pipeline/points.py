@@ -20,7 +20,7 @@ CONFIDENCE = frozenset({"l", "n", "h"})
 Cell = tuple[int, int]
 
 
-@dataclass(frozen=True, order=True)
+@dataclass(frozen=True)
 class Point:
     acq_date: date  # UTC
     acq_time: int  # HHMM, UTC
@@ -75,15 +75,21 @@ def parse(csv_text: str, source: str) -> list[Point]:
     return out
 
 
+def _order(p: Point) -> tuple:
+    """Total order over points. `type` is None for NRT, so it can't be compared directly with SP ints."""
+    return (p.acq_date, p.acq_time, p.lat, p.lon, p.source, p.satellite, p.confidence,
+            -1 if p.type is None else p.type, p.x, p.y)
+
+
 def dedupe(points: Iterable[Point]) -> list[Point]:
-    """One point per (lat, lon, acq_date, acq_time). The smallest point (dataclass order) wins and the
-    result is sorted, so the output does not depend on input order (Property 3)."""
+    """One point per (lat, lon, acq_date, acq_time). The smallest point by `_order` wins and the result
+    is sorted, so the output does not depend on input order (Property 3)."""
     best: dict[tuple, Point] = {}
     for p in points:
         k = p.key
-        if k not in best or p < best[k]:
+        if k not in best or _order(p) < _order(best[k]):
             best[k] = p
-    return sorted(best.values())
+    return sorted(best.values(), key=_order)
 
 
 def recurring_cells(points: Iterable[Point], years: Iterable[int], min_years: int = RECUR_MIN_YEARS) -> set[Cell]:
