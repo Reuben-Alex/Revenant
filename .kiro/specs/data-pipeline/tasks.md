@@ -55,12 +55,12 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
 - [x] 6.2 Tests, including **Property 7: Chance is a reproducible rate** and **Property 8: New fires are far from scars**
   - _Requirements: 6.1–6.3, 7.1, 7.2_
 
-- [ ] 7. Data contract validator
-- [ ] 7.1 Write `scripts/validate-data.mjs` (Node built-ins only): shapes and invariants for both files; exit 0/1 with JSON paths
+- [x] 7. Data contract validator
+- [x] 7.1 Write `scripts/validate-data.mjs` (Node built-ins only): shapes and invariants for both files; exit 0/1 with JSON paths
   - _Requirements: 10.1, 10.2, 10.3_
-- [ ] 7.2 Write `scripts/validate-data.test.mjs` (`node --test`): a valid example and one broken example per invariant
+- [x] 7.2 Write `scripts/validate-data.test.mjs` (`node --test`): a valid example and one broken example per invariant
   - _Requirements: 10.1, 10.2_
-- [ ] 7.3 Enable the `data-contract` hook with the createHook tool (PostFileSave, matcher `public/data/.*\.json$`, `node scripts/validate-data.mjs`) and delete the draft in `revenant-kit/kiro-drafts/.kiro/hooks/`
+- [x] 7.3 Enable the `data-contract` hook with the createHook tool (PostFileSave, matcher `public/data/.*\.json$`, `node scripts/validate-data.mjs`) and delete the draft in `revenant-kit/kiro-drafts/.kiro/hooks/`
   - _Requirements: 10.4_
 
 - [ ] 8. Build and publish the replay seasons
@@ -94,7 +94,7 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
   - _Requirements: 11.1–11.5_
 
 - [ ] 12. Final checks
-- [ ] 12.1 Run `uv run --python 3.12 pytest -q pipeline` with `HYPOTHESIS_PROFILE=ci` and `node --test scripts/`; all green. Add a 3-line entry to `docs/KIRO_LOG.md`
+- [ ] 12.1 Run `uv run --python 3.12 pytest -q pipeline` with `HYPOTHESIS_PROFILE=ci` and `node --test "scripts/*.test.mjs"`; all green. Add a 3-line entry to `docs/KIRO_LOG.md`
   - _Requirements: 8.4, 10.2_
 
 ## Task Dependency Graph

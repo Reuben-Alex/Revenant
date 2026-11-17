@@ -281,6 +281,7 @@ additions, and method.md is updated to list them.
 ```
 { "g": [[size_px, cx, cy, "YYYY-MM-DD", late_hits_14d, [x, y]|0, snow_pct_now|-1], ...≤24],
   "r": [[x, y, point_count], ...≤30],
+  "static": int,                       // recurring cells removed from NRT points (Requirement 2.6)
   "as_of": ISO, "frame_date": "YYYY-MM-DD", "points_through": "YYYY-MM-DD",
   "sources": [...], "credit": "..." }
 ```
@@ -351,6 +352,7 @@ These are tested with Hypothesis (`dev` 200 examples, `ci` 1000), like spec 01.
 | Swath gaps in true colour | > 5 % black pixels | The frame is skipped as a keyframe candidate. |
 | No usable true-colour frame in 5 days | All skipped | Keep the previous `viirs-latest.webp` and `frame_date`. Tonight still publishes; the UI shows the stale frame date. |
 | NBAC download fails | HTTP or zip error | `seasons` fails. There is no silent fallback to hulls for years NBAC covers, because that would change results without saying so. |
+| Chance undefined (no offset accepted, e.g. no grave melted) | `ChanceUndefined` from `chance.py` | The `seasons` build fails with a message naming the season, and the previous file stays. A 0 is never published, because it would be a made-up number beside the risen count (decided 2026-11-11). |
 | Output fails validation | `scripts/validate-data.mjs` after writing to a temp file | The temp file is discarded and the previous published file stays. Exit 1. |
 | Writing | `publish.py` | Write `*.tmp`, validate, then `os.replace` (atomic on the same volume). |
 
