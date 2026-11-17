@@ -24,8 +24,8 @@ These tasks add the daylight viewer, nightfall and the title card in front of th
   - **Property 4** the phase moves one step at a time
   - **Validates: Requirements 4.2, 4.3, 6.1**
 
-- [ ] 3. Sound
-- [ ] 3.1 `src/audio/context.ts`, `wind.ts`, `drone.ts`, using the board's `startAudio` / `playDrone` values. All calls guarded; silent when there is no AudioContext; `startWind()` is idempotent.
+- [x] 3. Sound
+- [x] 3.1 `src/audio/context.ts`, `wind.ts`, `drone.ts`, using the board's `startAudio` / `playDrone` values. All calls guarded; silent when there is no AudioContext; `startWind()` is idempotent.
   - _Requirements: 7.2–7.4_
 
 - [ ] 4. Daylight screen
