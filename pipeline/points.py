@@ -11,6 +11,8 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import date
 
+import numpy as np
+
 from .config import DROP_SP_TYPES, KEEP_CONFIDENCE, RECUR_CELL_DEG, RECUR_MIN_YEARS
 from .grid import in_bbox, lonlat_to_grid
 
@@ -133,6 +135,47 @@ def clean_with_counts(points: Iterable[Point], recurring: set[Cell]) -> tuple[li
 
 def clean(points: Iterable[Point], recurring: set[Cell]) -> list[Point]:
     return clean_with_counts(points, recurring)[0]
+
+
+def csv_cells(csv_text: str) -> tuple[np.ndarray, np.ndarray]:
+    """(year, encoded cell) arrays for every row of a FIRMS CSV inside the bbox, without building Points.
+
+    Used for the full-year recurrence scan, where Point objects would not fit in memory. The cell is the
+    same as `Point.cell`; see `encode_cell`.
+    """
+    reader = csv.reader(io.StringIO(csv_text.lstrip("\ufeff")))
+    header = next(reader, None)
+    if not header:
+        return np.array([], dtype=np.int64), np.array([], dtype=np.int64)
+    i_lat, i_lon, i_date = header.index("latitude"), header.index("longitude"), header.index("acq_date")
+    lat, lon, year = [], [], []
+    for row in reader:
+        lat.append(float(row[i_lat]))
+        lon.append(float(row[i_lon]))
+        year.append(int(row[i_date][:4]))
+    lat_a, lon_a, year_a = np.asarray(lat), np.asarray(lon), np.asarray(year, dtype=np.int64)
+    keep = in_bbox(lon_a, lat_a) if len(lat) else np.array([], dtype=bool)
+    return year_a[keep], encode_cell(lat_a[keep], lon_a[keep])
+
+
+def encode_cell(lat, lon) -> np.ndarray:
+    """Cells as one int64 each: same rounding as `Point.cell` (half to even, like Python's round)."""
+    la = np.round(np.asarray(lat, dtype=float) / RECUR_CELL_DEG).astype(np.int64)
+    lo = np.round(np.asarray(lon, dtype=float) / RECUR_CELL_DEG).astype(np.int64)
+    return la * 1_000_000 + (lo + 500_000)
+
+
+def decode_cell(key: int) -> Cell:
+    return (int(key) // 1_000_000, int(key) % 1_000_000 - 500_000)
+
+
+def recurring_from_keys(per_year: dict[int, np.ndarray], min_years: int = RECUR_MIN_YEARS) -> set[Cell]:
+    """Cells present in at least `min_years` of the given years (keys from `encode_cell`)."""
+    stacked = [np.unique(k) for k in per_year.values() if len(k)]
+    if not stacked:
+        return set()
+    keys, counts = np.unique(np.concatenate(stacked), return_counts=True)
+    return {decode_cell(k) for k in keys[counts >= min_years]}
 
 
 def static_type_cells(points: Iterable[Point]) -> set[Cell]:

@@ -76,6 +76,8 @@ CHANCE_ATTEMPTS = 300
 CHANCE_DX, CHANCE_DY = 200, 150
 
 # --- Tonight ---------------------------------------------------------------------------------
+FIRE_SEASON = ((5, 1), (10, 31))  # current-year scars come from detections May 1 – Oct 31
+TONIGHT_CREDIT = "NASA FIRMS · NASA GIBS/VIIRS · Scholten et al. 2021"  # Tonight's scars are detection hulls, not NBAC
 LATE_HITS_DAYS = 14
 SNOW_NOW_DAYS = 3
 CLUSTER_DAYS = 7

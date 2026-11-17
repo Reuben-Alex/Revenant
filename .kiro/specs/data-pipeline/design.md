@@ -229,7 +229,13 @@ Today's date is `today`, in UTC, from the CLI and never read inside pure modules
   - **last_burn:** the latest on-scar point date.
   - **late_hits_14d:** on-scar points dated `today−13…today`.
   - **[x, y]:** the latest on-scar point in that window, or 0 if there is none.
-  - **snow_pct_now:** the maximum snow % over the last 3 valid days, or −1 if all three are missing.
+  - **snow_pct_now:** the maximum snow % over the 3 completed UTC days before `today` (today−1…today−3), or −1 if all
+    three are missing. Today's NOAA-20 frame isn't complete when the job runs at 10:00 UTC.
+- **Windows:** "last 14 days" is today−13…today and "last 7 days" is today−7…today−1. NRT is only fetched for
+  completed days, so neither window contains points dated today. Keyframe candidates are today−1…today−5.
+- **Recurrence scan:** the ~800 full-year SP pages are read into encoded cells page by page, without building
+  `Point` objects, which wouldn't fit in memory for 2023. The resulting cell list is cached as
+  `pipeline/cache/derived/recurring-<y0>-<y1>.json`.
 - **r:** the 30 largest last-7-day point clusters, static removed, each `[x, y, point_count]`.
 - **Frame:** the latest NOAA-20 true colour of the last 5 days with the lowest cloud score, using the gibs-imagery skill's
   scoring. Saved as `public/img/viirs-latest.webp` at quality 72.

@@ -59,7 +59,11 @@ def new_fire_points(points: Sequence[Point], scars: Sequence[Scar], year: int) -
 
 def new_fires(points: Sequence[Point], scars: Sequence[Scar], year: int, n: int = N_NEW_FIRES) -> list[NewFire]:
     """Clusters of new-fire points, most points first (ties: earliest day, then position)."""
-    nf = new_fire_points(points, scars, year)
+    return cluster(new_fire_points(points, scars, year), n)
+
+
+def cluster(nf: Sequence[tuple[Point, int]], n: int) -> list[NewFire]:
+    """Rasterise (point, day) pairs, dilate 3 px, 4-connected components; the n with the most points."""
     raster = np.zeros((GRID_H, GRID_W), dtype=bool)
     for p, _ in nf:
         raster[pixel_of(p)] = True
