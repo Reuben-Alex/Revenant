@@ -1,11 +1,14 @@
 // The night graveyard scene (spec 03). Layout from Main.dc.html L105–490: header, headline band,
 // map + right column, footer. Right column (task 7) and the candle timeline (task 8) follow.
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import * as copy from '../copy/graveyard';
 import {
-  cardList, countList, creditLine, crossfade, fireCallout, flakeCount, frames, graveCallout, graveViews, headlineFor,
-  legendItems, registerNote, registerRows, riseMarks, sceneYear, tabList, tonightViews, tooltipFor, visibleFires, windowBand,
+  H, LANTERN_R, W, cardList, countList, creditLine, crossfade, exhumation, fireCallout, flakeCount, frames, graveCallout,
+  graveViews, headlineFor, lanternNames, legendItems, registerNote, registerRows, riseMarks, sceneYear, tabList,
+  tonightViews, tooltipFor, visibleFires, windowBand,
 } from '../data/derive';
+import { Exhumation } from '../components/Exhumation';
+import { Compare, Lantern } from '../components/Lantern';
 import { MASK_CLASS } from '../data/imagery';
 import type { SeasonsFile, TonightFile } from '../data/types';
 import { CandleTimeline } from '../components/CandleTimeline';
@@ -37,10 +40,45 @@ export function Graveyard({ data, tonight }: Props) {
 
   const selV = views.find((v) => v.id === st.selected) ?? views[0]!;
   const fireSel = season && st.fireSel ? season.fires.find((f) => f.id === st.fireSel) ?? null : null;
-  const overlayOpen = st.ex !== null || st.lantern.on;
+  // The board only hides the callout for exhumation and lantern; under the before/after split it showed
+  // as a sliver at the divider, so it is hidden there too.
+  const overlayOpen = st.ex !== null || st.lantern.on || (st.compare && !isT);
   const callout = overlayOpen ? null : fireSel ? fireCallout(fireSel, year) : graveCallout(selV, year);
   const hovV = st.hover && !st.lantern.on ? views.find((v) => v.id === st.hover) : undefined;
   const tip = hovV ? tooltipFor(hovV, scene, year) : null;
+
+  const comparing = st.compare && !isT;
+  const shownWeights = comparing ? fr.map((_, i) => (i === fr.length - 1 ? 1 : 0)) : weights;
+  let topFrame = 0;
+  weights.forEach((w, i) => { if (w > (weights[topFrame] ?? 0)) topFrame = i; });
+  const exV = st.ex ? views.find((v) => v.id === st.ex) : undefined;
+  const ex = exV ? exhumation(exV, scene, st.day, year, tonight, data.meta.proximity_km) : null;
+  const closeEx = useCallback(() => act({ type: 'exhume', id: null }), [act]);
+
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!st.lantern.on) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    act({ type: 'lanternMove', x: Math.round(((e.clientX - r.left) / r.width) * W), y: Math.round(((e.clientY - r.top) / r.height) * H), inside: true });
+  };
+  const onFocusGrave = (id: string) => {
+    if (!st.lantern.on) return;
+    const v = views.find((g) => g.id === id);
+    if (v) act({ type: 'lanternMove', x: v.cx, y: v.cy, inside: true });
+  };
+
+  const overlays = (
+    <>
+      {comparing && (
+        <Compare src={fr[0]!.src} night={st.night} split={st.split}
+          left={copy.compare.left(fr[0]!.label, year)} right={copy.compare.right(fr[fr.length - 1]!.label, year)}
+          onSplit={(n) => act({ type: 'split', split: n })} />
+      )}
+      {st.lantern.on && (
+        <Lantern x={st.lantern.x} y={st.lantern.y} r={LANTERN_R} inside={st.lantern.inside} src={fr[topFrame]!.src}
+          names={lanternNames(views, st.lantern.x, st.lantern.y)} />
+      )}
+    </>
+  );
 
   return (
     <div style={{ width: '100%', minHeight: 900, boxSizing: 'border-box', background: '#050807', color: '#ECE6D6', fontFamily: 'var(--font-ui)', display: 'flex', flexDirection: 'column', position: 'relative' }}>
@@ -53,21 +91,28 @@ export function Graveyard({ data, tonight }: Props) {
 
       <div style={{ display: 'flex', flexWrap: 'wrap', flex: '1 1 auto', alignItems: 'stretch' }}>
         <MapStack
-          frames={fr} weights={weights} night={st.night} maskClass={MASK_CLASS[scene]} graves={views} fires={fires}
+          frames={fr} weights={shownWeights} night={st.night} maskClass={MASK_CLASS[scene]} graves={views} fires={fires}
           fireSel={st.fireSel} clusters={isT ? tonight!.clusters : []} selected={st.selected} hover={st.hover}
           callout={callout} tip={tip} flakes={flakeCount(scene, st.day)} credit={creditLine(scene, st.day, tonight, year)}
-          onGrave={(id) => act({ type: 'select', id })} onFire={(id) => act({ type: 'selectFire', id })} onHover={(id) => act({ type: 'hover', id })}
+          onGrave={(id) => act({ type: 'exhume', id })} onFire={(id) => act({ type: 'selectFire', id })} onHover={(id) => act({ type: 'hover', id })}
+          onFocusGrave={onFocusGrave} onMove={onMove}
+          onLeave={() => st.lantern.on && act({ type: 'lanternMove', x: st.lantern.x, y: st.lantern.y, inside: false })}
+          cursor={st.lantern.on ? 'none' : 'default'} overlays={overlays}
+          panel={ex && <Exhumation ex={ex} onClose={closeEx} />}
         />
-        <aside aria-label="Graves and parish register" style={{ flex: '1 1 340px', maxHeight: 860, overflowY: 'auto', boxSizing: 'border-box', padding: '18px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12, background: '#070C0B' }}>
+        {/* The aside takes the map's height and scrolls inside it (its content would otherwise stretch the row). */}
+        <aside aria-label="Graves and parish register" style={{ flex: '1 1 340px', position: 'relative', minHeight: 480, background: '#070C0B' }}>
+          <div style={{ position: 'absolute', inset: 0, overflowY: 'auto', boxSizing: 'border-box', padding: '18px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
           <Register rows={registerRows(data, scene)} note={registerNote(data)} onPick={(k) => act({ type: 'scene', scene: k })} />
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginTop: 4 }}>
             <h2 style={{ margin: 0, fontFamily: 'var(--font-fell-sc)', fontWeight: 400, fontSize: 24, letterSpacing: 1 }}>{isT ? copy.list.tonightTitle : copy.list.title}</h2>
             <span style={{ fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 13, color: '#A3ADA8' }}>{isT ? copy.list.tonightSub : copy.list.sub(year)}</span>
           </div>
           {cardList(scene, views, year).map((c) => (
-            <GraveCard key={c.id} c={c} selected={st.selected === c.id} onPick={() => act({ type: 'select', id: c.id })} />
+            <GraveCard key={c.id} c={c} selected={st.selected === c.id} onPick={() => act({ type: 'exhume', id: c.id })} />
           ))}
           <Legend {...legendItems(scene, data, tonight, year)} />
+          </div>
         </aside>
       </div>
 

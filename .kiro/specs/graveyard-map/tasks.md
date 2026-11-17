@@ -70,10 +70,10 @@ These tasks build the night graveyard scene of `reference/design/Main.dc.html` i
 - [x] 8.3 **Checkpoint:** link plus screenshots of days 0, 30, 60 and 102 for 2024; user review
   - _Requirements: 20.1, 20.2_
 
-- [ ] 9. Overlays
-- [ ] 9.1 `Exhumation` (sheet, epitaph, 3 crops, snow chart, rule checks, Escape/close with focus return)
+- [x] 9. Overlays
+- [x] 9.1 `Exhumation` (sheet, epitaph, 3 crops, snow chart, rule checks, Escape/close with focus return)
   - _Requirements: 15.1–15.5, 17.3_
-- [ ] 9.2 `Lantern` (veil, clipped true colour, ring, icon, names, keyboard focus follows) and `Compare` (split, divider, tags, range input)
+- [x] 9.2 `Lantern` (veil, clipped true colour, ring, icon, names, keyboard focus follows) and `Compare` (split, divider, tags, range input)
   - _Requirements: 13.1–13.4, 14.1–14.3_
 
 - [ ] 10. Tonight tab (basic)

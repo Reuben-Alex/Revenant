@@ -31,17 +31,21 @@ interface Props {
   onGrave: (id: string) => void;
   onFire: (id: string) => void;
   onHover: (id: string | null) => void;
+  onFocusGrave?: (id: string) => void;
   onMove?: (e: React.MouseEvent<HTMLDivElement>) => void;
   onLeave?: () => void;
   cursor?: string;
   overlays?: ReactNode;
+  panel?: ReactNode;
 }
 
 export function MapStack(p: Props) {
   const grade = p.night ? 'brightness(0.62) saturate(0.75) contrast(1.15)' : 'none';
   return (
     <div onMouseMove={p.onMove} onMouseLeave={p.onLeave}
-      style={{ flex: '999 1 560px', minWidth: 0, position: 'relative', aspectRatio: '1060 / 716', overflow: 'hidden', borderRight: '1px solid #172120', background: '#060A09', cursor: p.cursor ?? 'default' }}>
+      // alignSelf keeps the 1060:716 box: if the row stretched it, the images would distort while the
+      // SVG layers (viewBox, letterboxed) would not, and graves would drift off their scars.
+      style={{ flex: '999 1 560px', minWidth: 0, alignSelf: 'flex-start', position: 'relative', aspectRatio: '1060 / 716', overflow: 'hidden', borderRight: '1px solid #172120', background: '#060A09', cursor: p.cursor ?? 'default' }}>
       <div style={{ position: 'absolute', inset: 0 }}>
         {p.frames.map((f, i) => (
           <img key={f.src} className="rv-img" src={f.src} alt="" style={{ filter: grade, opacity: +(p.weights[i] ?? 0).toFixed(3) }} />
@@ -119,7 +123,7 @@ export function MapStack(p: Props) {
         {p.graves.map((v) => (
           <button key={v.id} type="button" className="rv-hit" aria-label={copy.map.graveAria(v.id, v.label)} aria-pressed={p.selected === v.id}
             onClick={() => p.onGrave(v.id)} onMouseEnter={() => p.onHover(v.id)} onMouseLeave={() => p.onHover(null)}
-            onFocus={() => p.onHover(v.id)} onBlur={() => p.onHover(null)}
+            onFocus={() => { p.onHover(v.id); p.onFocusGrave?.(v.id); }} onBlur={() => p.onHover(null)}
             style={{ position: 'absolute', left: pct(v.cx, W), top: pct(v.cy, H), width: 40, height: 40, margin: '-20px 0 0 -20px', borderRadius: 20, background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} />
         ))}
 
@@ -128,7 +132,8 @@ export function MapStack(p: Props) {
 
       {p.overlays}
 
-      <span style={{ position: 'absolute', right: 12, bottom: 10, fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#C9D2D1', background: 'rgba(4,7,6,0.72)', padding: '3px 6px', borderRadius: 3, pointerEvents: 'none' }}>{p.credit}</span>
+      <span style={{ position: 'absolute', right: 12, bottom: 10, fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#C9D2D1', background: 'rgba(4,7,6,0.72)', padding: '3px 6px', borderRadius: 3, pointerEvents: 'none', zIndex: 6 }}>{p.credit}</span>
+      {p.panel}
     </div>
   );
 }
