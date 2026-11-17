@@ -46,6 +46,8 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
 - [x] 5. Snow
 - [x] 5.1 Write `pipeline/snow.py`: snow/cloud/clear per scar pixel (snow wins); fraction = snow ÷ (snow + clear); > 50 % cloud → None for that scar; snow frame < 2000 px or a failed frame → None for all
   - _Requirements: 5.1–5.5_
+- [x] 5.3 Option-3 cloud mask (2026-11-17): cloud = Cloud Top Height opaque AND true colour bright (mean RGB > 165) or black; `cloud_frame()` in `snow.py`, true-colour frames fetched in `build.py`, tests
+  - _Requirements: 5.1, 5.2, 5.4_
 - [x] 5.2 Tests with synthetic snow and cloud RGBA frames, including **Property 6: Snow fraction is a fraction of the known scar pixels**
   - _Requirements: 5.2–5.4_
 

@@ -32,7 +32,7 @@ from .points import Cell, Point, clean_with_counts, dedupe, parse, static_type_c
 from .proximity import points_3978, scar_hotspots
 from .rules import GraveInput, SeasonResult, classify_season, melt_day
 from .scars import Scar, scars_from_nbac, top_graves
-from .snow import Frame, opaque, percent_string, table
+from .snow import Frame, cloud_frame, opaque, percent_string, table
 
 METHOD = "firms-nbac-v1"
 
@@ -89,7 +89,9 @@ def season_frames(gibs: Gibs, year: int, layers: dict = LAYERS["replay"]) -> lis
     days = []
     for d in range(SEASON_DAYS):
         day = start + timedelta(days=d)
-        days.append((opaque(gibs.frame(layers["snow"], day, "png")), opaque(gibs.frame(layers["cloud"], day, "png"))))
+        snow = opaque(gibs.frame(layers["snow"], day, "png"))
+        cloud = cloud_frame(gibs.frame(layers["cloud"], day, "png"), gibs.frame(layers["true_colour"], day, "jpeg"))
+        days.append((snow, cloud))
     return days
 
 
@@ -161,7 +163,7 @@ def seasons_document(builds: Sequence[SeasonBuild], generated_at: str) -> dict:
         "proximity_km": PROXIMITY_M / 1000,
         "sources": [
             "NASA FIRMS VIIRS 375 m active fire points (S-NPP, NOAA-20, NOAA-21), standard processing",
-            "NASA GIBS VIIRS S-NPP NDSI snow cover, with Cloud Top Height (day) as the cloud mask",
+            "NASA GIBS VIIRS S-NPP NDSI snow cover; cloud = Cloud Top Height (day) where true colour is bright or black",
             f"NBAC burned-area polygons {first}–{last}, release {NBAC_RELEASE} (NRCan CWFIS)",
         ],
         "credit": CREDIT,

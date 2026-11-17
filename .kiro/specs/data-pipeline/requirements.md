@@ -80,10 +80,10 @@ points and NBAC polygons. That gives a real 1 km "on the scar" test instead of ~
 
 #### Acceptance Criteria
 
-1. THE Pipeline SHALL read daily snow from GIBS `VIIRS_SNPP_NDSI_Snow_Cover` and cloud from `VIIRS_SNPP_Cloud_Top_Height_Day` for replay seasons, and the `VIIRS_NOAA20_` versions of both for Tonight.
-2. THE Pipeline SHALL class each scar pixel on a day as snow (opaque in the snow frame), cloud (not snow, opaque in the cloud frame) or clear (neither).
+1. THE Pipeline SHALL read daily snow from GIBS `VIIRS_SNPP_NDSI_Snow_Cover`, cloud from `VIIRS_SNPP_Cloud_Top_Height_Day` and true colour from `VIIRS_SNPP_CorrectedReflectance_TrueColor` for replay seasons, and the `VIIRS_NOAA20_` versions of all three for Tonight.
+2. THE Pipeline SHALL class each scar pixel on a day as snow (opaque in the snow frame), cloud (not snow, opaque in the cloud frame, and in true colour either bright, mean RGB > 165, or black, a swath gap) or clear (otherwise).
 3. THE Pipeline SHALL set a scar's daily snow fraction to snow ÷ (snow + clear).
-4. WHEN more than 50 % of a scar's pixels are cloud, THE Pipeline SHALL treat that day as missing for that scar; WHEN the snow frame has fewer than 2000 opaque pixels region-wide, or either frame cannot be fetched, THE Pipeline SHALL treat that day as missing for every scar.
+4. WHEN more than 50 % of a scar's pixels are cloud, THE Pipeline SHALL treat that day as missing for that scar; WHEN the snow frame has fewer than 2000 opaque pixels region-wide, or any of the three frames cannot be fetched, THE Pipeline SHALL treat that day as missing for every scar.
 5. THE Pipeline SHALL give the Engine unrounded fractions and publish the series as 103 whole percents with −1 for missing.
 
 ### Requirement 6: Chance baseline

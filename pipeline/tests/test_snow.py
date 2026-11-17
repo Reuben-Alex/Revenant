@@ -46,6 +46,40 @@ def test_opaque_rejects_missing_corrupt_and_wrong_size() -> None:
     assert opaque(png(np.zeros((H, W + 1), dtype=bool)), (H, W)) is None
 
 
+# --- option-3 cloud frame ----------------------------------------------------------------------
+
+def jpeg(rgb: np.ndarray) -> bytes:
+    buf = io.BytesIO()
+    Image.fromarray(rgb.astype(np.uint8), "RGB").save(buf, "JPEG", quality=100, subsampling=0)
+    return buf.getvalue()
+
+
+def test_cloud_frame_needs_cloud_top_and_bright_or_black() -> None:
+    from pipeline.snow import cloud_frame
+
+    rgb = np.full((H, W, 3), 90)  # dim ground
+    rgb[0, :] = 230  # bright (cloud-like)
+    rgb[1, :] = 0  # black (swath gap)
+    rgb[2, :] = 165  # mean exactly 165: not bright (strict > 165)
+    top = np.zeros((H, W), dtype=bool)
+    top[:4, :4] = True  # cloud top retrieved on the left half of rows 0-3
+    got = cloud_frame(png(top), jpeg(rgb), (H, W))
+    want = np.zeros((H, W), dtype=bool)
+    want[0, :4] = True  # bright + cloud top
+    want[1, :4] = True  # black + cloud top
+    assert np.array_equal(got, want)  # dim or 165 under a cloud top, and bright without one: not cloud
+
+
+def test_cloud_frame_missing_inputs() -> None:
+    from pipeline.snow import cloud_frame
+
+    top = png(np.zeros((H, W), dtype=bool))
+    assert cloud_frame(None, jpeg(np.zeros((H, W, 3))), (H, W)) is None
+    assert cloud_frame(top, None, (H, W)) is None
+    assert cloud_frame(top, b"\xff\xd8\xffbroken", (H, W)) is None
+    assert cloud_frame(top, jpeg(np.zeros((H, W + 1, 3))), (H, W)) is None
+
+
 # --- fraction rules ----------------------------------------------------------------------------
 
 def test_snow_clear_cloud() -> None:

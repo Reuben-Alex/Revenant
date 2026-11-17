@@ -1,7 +1,8 @@
 """Snow on each scar (Requirements 5.1–5.5; gibs-imagery skill; design.md "Snow"). Pure: frames in, fractions out.
 
 Per scar pixel and day:  snow  = opaque in the NDSI snow frame (snow wins over cloud);
-                         cloud = not snow, opaque in the Cloud_Top_Height_Day frame (state unknown);
+                         cloud = not snow, opaque in Cloud_Top_Height_Day, and bright (mean RGB > 165) or
+                                 black (swath gap) in true colour; see `cloud_frame` (state unknown);
                          clear = neither.
 fraction = snow / (snow + clear). A day is missing (None):
   - for one scar, when more than 50 % of its pixels are cloud;
@@ -17,7 +18,7 @@ from collections.abc import Sequence
 import numpy as np
 from PIL import Image, UnidentifiedImageError
 
-from .config import CLOUD_MAX_SHARE, GRID_H, GRID_W, REGION_SNOW_MIN_PX
+from .config import CLOUD_BRIGHTNESS, CLOUD_MAX_SHARE, GRID_H, GRID_W, REGION_SNOW_MIN_PX
 
 Frame = np.ndarray | None  # bool (H, W): True = opaque
 
@@ -34,6 +35,28 @@ def opaque(png: bytes | None, shape: tuple[int, int] = (GRID_H, GRID_W)) -> Fram
     except (UnidentifiedImageError, OSError, ValueError):
         return None
     return alpha > 0
+
+
+BLACK_MAX_RGB = 8  # every channel below this = swath gap (no imagery), as in the keyframe black-pixel test
+
+
+def cloud_frame(cloud_png: bytes | None, true_colour_jpeg: bytes | None,
+                shape: tuple[int, int] = (GRID_H, GRID_W)) -> Frame:
+    """Option-3 cloud mask (design.md, Snow): Cloud_Top_Height opaque AND the true-colour pixel is bright
+    (mean RGB > 165, gibs-imagery skill) or black (swath gap). None if either frame is unusable."""
+    top = opaque(cloud_png, shape)
+    if top is None or true_colour_jpeg is None:
+        return None
+    try:
+        with Image.open(io.BytesIO(true_colour_jpeg)) as im:
+            if (im.height, im.width) != shape:
+                return None
+            rgb = np.asarray(im.convert("RGB"), dtype=np.uint16)
+    except (UnidentifiedImageError, OSError, ValueError):
+        return None
+    bright = rgb.sum(axis=2) > 3 * CLOUD_BRIGHTNESS
+    black = (rgb < BLACK_MAX_RGB).all(axis=2)
+    return top & (bright | black)
 
 
 def region_missing(snow: Frame, cloud: Frame, use_cloud_mask: bool = True,

@@ -178,18 +178,24 @@ on the ground. That was kept by decision on 2026-11-11, and the writeup and UI s
 
 - **Replay seasons:** the GIBS layer `VIIRS_SNPP_NDSI_Snow_Cover`, the same as the research, so the comparison is fair.
 - **Tonight:** `VIIRS_NOAA20_NDSI_Snow_Cover`, because S-NPP stopped delivering after 2026-11-02.
-- **Cloud mask:** GIBS `VIIRS_SNPP_Cloud_Top_Height_Day` for replay seasons and `VIIRS_NOAA20_Cloud_Top_Height_Day` for
-  Tonight. An opaque pixel means a cloud top was retrieved, so the pixel is cloud.
+- **Cloud mask (option 3, decided 2026-11-17):** a pixel is cloud when GIBS `VIIRS_SNPP_Cloud_Top_Height_Day` is opaque
+  (a cloud top was retrieved) **and** the same day's `VIIRS_SNPP_CorrectedReflectance_TrueColor` pixel is bright
+  (mean RGB > 165, the gibs-imagery skill's cloud test) or black (a swath gap, no data). Tonight uses the NOAA-20
+  layers.
+  - Why: on its own, Cloud Top Height covered 63–85 % of the region each day. In the first live run it left 55–89 of
+    103 days missing per grave, so 7 graves in 2025 and 8 in 2026 never got a melt day.
+  - Requiring a bright or black true-colour pixel keeps thick cloud as unknown and lets thin cloud over visible
+    ground count as clear.
 - **Each scar pixel on a day is one of three things:**
   - **snow:** opaque in the snow layer. Snow wins over cloud, because the snow product applies its own cloud mask.
-  - **cloud:** not snow and opaque in the cloud layer. Its state is unknown.
+  - **cloud:** not snow, opaque in the cloud layer, and bright or black in true colour. Its state is unknown.
   - **clear:** neither.
 - **Daily fraction for a scar:** snow ÷ (snow + clear), computed on unrounded values.
 - **Missing days:**
   - The day is missing (`None`) for a scar when fewer than 50 % of its pixels are snow or clear, i.e. cloud covers more
     than half of it.
   - The day is missing for **every** scar when the snow frame has fewer than 2000 opaque pixels region-wide (method.md),
-    or when either frame cannot be fetched.
+    or when any of the three frames (snow, cloud, true colour) cannot be fetched.
 - **Publishing:** the series is written as whole percent with −1 for missing, per the schema.
 - **Effect on results:** the comparison report also computes melt days *without* the cloud mask, the research method, and
   lists every grave whose melt day the mask moved. Readers can see what masking changed.
