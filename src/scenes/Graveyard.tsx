@@ -23,9 +23,11 @@ import { useGraveyard } from './useGraveyard';
 interface Props {
   data: SeasonsFile;
   tonight: TonightFile | null;
+  /** Spec 04 Requirement 8.3: focus the headline when the scene opens after nightfall. */
+  focusHeadline?: boolean;
 }
 
-export function Graveyard({ data, tonight }: Props) {
+export function Graveyard({ data, tonight, focusHeadline = false }: Props) {
   const { state: st, act } = useGraveyard();
   const scene = st.scene === 'tonight' && !tonight ? 's2024' : st.scene;
   const isT = scene === 'tonight';
@@ -87,7 +89,7 @@ export function Graveyard({ data, tonight }: Props) {
         lanternOn={st.lantern.on} compareOn={st.compare && !isT} compareDisabled={isT} night={st.night}
         onLantern={() => act({ type: 'lantern' })} onCompare={() => act({ type: 'compare' })} onNight={() => act({ type: 'night' })}
       />
-      <HeadlineBand headline={head.headline} subline={head.subline} glow={head.glow} counts={countList(scene, views, tonight)} />
+      <HeadlineBand headline={head.headline} subline={head.subline} glow={head.glow} counts={countList(scene, views, tonight)} focusOnMount={focusHeadline} />
 
       <div style={{ display: 'flex', flexWrap: 'wrap', flex: '1 1 auto', alignItems: 'stretch' }}>
         <MapStack

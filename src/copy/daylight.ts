@@ -7,6 +7,12 @@ export const page = {
   aside: 'Status',
 };
 
+/** Browser tab title (Requirement 2.6): the agency name until the title card, so the tab keeps the costume on. */
+export const docTitle = {
+  day: 'Boreal Fire Watch',
+  night: 'Revenant · What burned last summer is not always dead.',
+};
+
 export const brand = {
   name: 'Boreal Fire Watch',
   sub: 'Northeast BC & Northern Alberta',

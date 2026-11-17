@@ -38,7 +38,8 @@ export function Daylight({ view, src, maskClass, dusk, onNightShift }: Props) {
   const nightBtn: CSSProperties = { minHeight: 40, padding: '0 14px', borderRadius: 10, font: '600 13px Inter, sans-serif', cursor: 'pointer' };
 
   return (
-    <main aria-label={copy.page.main} className={dusk ? 'rv-dusk' : ''} style={{
+    // `inert` during dusk: nightfall can't be pressed twice or tabbed away from while the colour drains.
+    <main aria-label={copy.page.main} className={dusk ? 'rv-dusk' : ''} inert={dusk} style={{
       position: 'relative', minHeight: '100vh', boxSizing: 'border-box', background: 'var(--day-bg)', color: INK,
       fontFamily: 'Inter, system-ui, sans-serif', display: 'flex', flexDirection: 'column', overflow: 'hidden',
     }}>

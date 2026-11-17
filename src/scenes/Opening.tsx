@@ -1,15 +1,26 @@
 // The opening (spec 04): daylight → nightfall → title card → the graveyard. One fixed path with no skip and
 // sound always on (design.md, "Immersion decision"). Board: Main.dc.html nightfall() L676.
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getAudio } from '../audio/context';
 import { playDrone } from '../audio/drone';
 import { startWind } from '../audio/wind';
+import { TitleCard } from '../components/TitleCard';
+import * as copy from '../copy/daylight';
 import { daylightView } from '../data/daylight';
 import { FRAME_SATELLITE, KEYFRAMES, MASK_CLASS } from '../data/imagery';
 import type { SeasonsFile, TonightFile } from '../data/types';
 import { Daylight } from './Daylight';
 import { Graveyard } from './Graveyard';
 import { useNightfall } from './useNightfall';
+
+/** Faces used by the title card and the graveyard (index.html loads the same families). */
+const NIGHT_FONTS = [
+  '400 16px "IM Fell English SC"',
+  '400 16px "IM Fell English"',
+  'italic 400 16px "IM Fell English"',
+  '400 16px "JetBrains Mono"',
+  '500 16px "JetBrains Mono"',
+];
 
 interface Props {
   data: SeasonsFile;
@@ -22,24 +33,37 @@ export function Opening({ data, tonight, onNight }: Props) {
   const { phase, nightfall } = useNightfall({ onNight });
   const keyframe = KEYFRAMES.s2024[0]!;
   const view = useMemo(() => daylightView(data.seasons.s2024, keyframe, FRAME_SATELLITE.s2024, data.static), [data, keyframe]);
+  const daylit = phase === 'day' || phase === 'dusk';
+
+  // Browsers fetch a web font only when text first uses it, so the night faces would arrive after the reveal
+  // and flash in Georgia. Ask for them while the daylight view is up.
+  useEffect(() => {
+    const fonts = typeof document !== 'undefined' ? document.fonts : undefined;
+    if (!fonts?.load) return;
+    for (const f of NIGHT_FONTS) fonts.load(f).catch(() => undefined);
+  }, []);
+
+  // Requirement 2.6: the tab keeps the agency name until the title card.
+  useEffect(() => {
+    document.title = daylit ? copy.docTitle.day : copy.docTitle.night;
+  }, [daylit]);
 
   // Sound starts inside the click: browsers allow audio only after a user gesture (Requirement 7.2).
   const started = useRef(false);
+  const [fromNightfall, setFromNightfall] = useState(false);
   const onNightShift = useCallback(() => {
     if (started.current) return;
     started.current = true;
+    setFromNightfall(true);
     const ac = getAudio();
     startWind(ac);
     playDrone(ac);
     nightfall();
   }, [nightfall]);
 
-  if (phase === 'day' || phase === 'dusk') {
+  if (daylit) {
     return <Daylight view={view} src={keyframe.src} maskClass={MASK_CLASS.s2024} dusk={phase === 'dusk'} onNightShift={onNightShift} />;
   }
-  if (phase === 'title') {
-    // The title card (task 5.2) goes here; until then the 6 s beat is a black screen.
-    return <div aria-busy="true" style={{ minHeight: '100vh', background: '#020303' }} />;
-  }
-  return <Graveyard data={data} tonight={tonight} />;
+  if (phase === 'title') return <TitleCard staticLine={view.text.titleLine2} />;
+  return <Graveyard data={data} tonight={tonight} focusHeadline={fromNightfall} />;
 }

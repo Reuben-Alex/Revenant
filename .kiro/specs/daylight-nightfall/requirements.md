@@ -47,6 +47,7 @@ Out of scope:
 3. THE markers SHALL be at each Spring 2024 grave's published `cx, cy`. Only the first eight SHALL have labels, as on the board.
 4. THE scale bar SHALL be 60 km long at the map's current width: 1 grid px = 17/1060° × 111.32 km × cos 57° ≈ 0.972 km.
 5. Search, layers, zoom and "View all 24" SHALL be inert, as on the board. They are text, not controls, so the keyboard never stops on a dead control.
+6. THE browser tab title SHALL read "Boreal Fire Watch" during `day` and `dusk`, including before the app loads (`index.html`). It SHALL change to "Revenant · What burned last summer is not always dead." when the title card appears, so the tab doesn't give away the reveal (user decision, 2026-11-17).
 
 ### Requirement 3: Daylight numbers come from data
 **User Story:** As the team, I want the daylight screen to be as honest as the night one, so that the costume never lies.

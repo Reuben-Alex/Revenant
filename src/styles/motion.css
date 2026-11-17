@@ -97,3 +97,13 @@
   .rv-spark,.rv-eyes,.rv-dusk .rv-dot{animation:none}
   .rv-stone,.rv-img,.rv-scars{transition:none}
 }
+
+/* Spec 04 Requirement 9.1: under reduced motion nightfall keeps its 3.2 s, but as a plain fade to black
+   (opacity only). The board's rule above would freeze daylight on screen for 3.2 s and then cut. The sunset
+   sweep and marker sink are dropped, and the title card holds without fading. */
+@keyframes rv-duskfade{0%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){
+  .rv-dusk{animation:rv-duskfade 3.2s ease-in 1 forwards}
+  .rv-sunset{display:none}
+  .rv-intro{animation:none}
+}

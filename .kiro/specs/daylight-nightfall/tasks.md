@@ -36,16 +36,16 @@ These tasks add the daylight viewer, nightfall and the title card in front of th
 - [x] 4.3 **Checkpoint:** run `npm run dev`, give the user the link, and compare a 1440 × 1000 Playwright screenshot of the daylight view with the board values. Fix or report differences over 4 px.
   - _Requirements: 10.1_
 
-- [ ] 5. Nightfall and title card
-- [ ] 5.1 Dusk: `rv-dusk` on the daylight view, the sunset overlay, `rv-dot` on the markers, the board's keyframes in motion.css, and `rv-duskfade` for reduced motion
+- [x] 5. Nightfall and title card
+- [x] 5.1 Dusk: `rv-dusk` on the daylight view, the sunset overlay, `rv-dot` on the markers, the board's keyframes in motion.css, and `rv-duskfade` for reduced motion
   - _Requirements: 4.1, 9.1, 9.2_
-- [ ] 5.2 `src/components/TitleCard.tsx`: four lines with the board delays, the `rv-intro` fade, no controls, the card focused on open (`tabIndex = -1`)
+- [x] 5.2 `src/components/TitleCard.tsx`: four lines with the board delays, the `rv-intro` fade, no controls, the card focused on open (`tabIndex = -1`)
   - _Requirements: 5.1–5.3, 6.2, 8.4_
-- [ ] 5.3 Night arrival: Graveyard mounts on Spring 2024 day 0, tombstones emerge, focus moves to the headline, `onNight` seam
+- [x] 5.3 Night arrival: Graveyard mounts on Spring 2024 day 0, tombstones emerge, focus moves to the headline, `onNight` seam
   - _Requirements: 1.3, 4.4, 4.5, 8.3_
-- [ ] 5.4 Component tests (@testing-library/react, fake timers): Night shift → title → graveyard; Escape and clicks don't skip; no sound control in the DOM; focus on the card, then on the headline
+- [x] 5.4 Component tests (@testing-library/react, fake timers): Night shift → title → graveyard; Escape and clicks don't skip; no sound control in the DOM; focus on the card, then on the headline
   - _Requirements: 4.2, 6.1, 6.2, 7.1, 8.3_
-- [ ] 5.5 **Checkpoint:** nightfall frames at 0 / 1.6 / 6.2 / 9.2 s with normal and with reduced motion; link for the user
+- [x] 5.5 **Checkpoint:** nightfall frames at 0 / 1.6 / 6.2 / 9.2 s with normal and with reduced motion; link for the user
   - _Requirements: 10.2_
 
 - [ ] 6. Final check

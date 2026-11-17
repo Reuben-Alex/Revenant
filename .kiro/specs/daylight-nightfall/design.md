@@ -46,6 +46,8 @@ Both seams are an `onNight()` callback fired once when the phase reaches `night`
 | Night header Sound button (L127), `toggleSound` | User decision | Not built, here or in spec 05 |
 | Reduced motion: `.rv-dusk{animation:none}` | Daylight would sit frozen for 3.2 s, then cut | A 3.2 s opacity fade to black (`rv-duskfade`), no filter, sweep or sink |
 | Nightfall line, sting, bell | Owned by 06 and 05 | `onNight()` seam |
+| Browser tab title (not on the board) | "Revenant · …" in the tab gives the reveal away | `index.html` says "Boreal Fire Watch"; `Opening` sets `copy.docTitle.night` from the title card on (Requirement 2.6) |
+| Night fonts (not on the board) | Browsers load a face only when text first uses it, so IM Fell would flash in Georgia at the reveal | `Opening` calls `document.fonts.load()` for the night faces while daylight is up |
 
 Kept verbatim from the board or brief: "Boreal Fire Watch", "Northeast BC & Northern Alberta", "Search a place, burn area or coordinates", "Regional status", "Monitored burn areas", "View all 24", "Inactive", "Night shift starts at 19:00", "Some crews keep watch after dark.", "Stay until dark", "Night shift", "> same satellites · same data · after dark", "Not every fire goes out in the fall.", "Some wait under the snow.".
 
