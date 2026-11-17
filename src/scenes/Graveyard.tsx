@@ -3,14 +3,18 @@
 import { useMemo } from 'react';
 import * as copy from '../copy/graveyard';
 import {
-  countList, creditLine, crossfade, fireCallout, flakeCount, frames, graveCallout, graveViews, headlineFor, sceneYear,
-  tabList, tonightViews, tooltipFor, visibleFires,
+  cardList, countList, creditLine, crossfade, fireCallout, flakeCount, frames, graveCallout, graveViews, headlineFor,
+  legendItems, registerNote, registerRows, riseMarks, sceneYear, tabList, tonightViews, tooltipFor, visibleFires, windowBand,
 } from '../data/derive';
 import { MASK_CLASS } from '../data/imagery';
 import type { SeasonsFile, TonightFile } from '../data/types';
+import { CandleTimeline } from '../components/CandleTimeline';
+import { GraveCard } from '../components/GraveCard';
 import { Header } from '../components/Header';
 import { HeadlineBand } from '../components/HeadlineBand';
+import { Legend } from '../components/Legend';
 import { MapStack } from '../components/MapStack';
+import { Register } from '../components/Register';
 import { useGraveyard } from './useGraveyard';
 
 interface Props {
@@ -54,15 +58,35 @@ export function Graveyard({ data, tonight }: Props) {
           callout={callout} tip={tip} flakes={flakeCount(scene, st.day)} credit={creditLine(scene, st.day, tonight, year)}
           onGrave={(id) => act({ type: 'select', id })} onFire={(id) => act({ type: 'selectFire', id })} onHover={(id) => act({ type: 'hover', id })}
         />
-        <aside aria-label="Graves and parish register" style={{ flex: '1 1 340px', maxHeight: 860, overflowY: 'auto', boxSizing: 'border-box', padding: '18px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12, background: '#070C0B' }} />
+        <aside aria-label="Graves and parish register" style={{ flex: '1 1 340px', maxHeight: 860, overflowY: 'auto', boxSizing: 'border-box', padding: '18px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12, background: '#070C0B' }}>
+          <Register rows={registerRows(data, scene)} note={registerNote(data)} onPick={(k) => act({ type: 'scene', scene: k })} />
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginTop: 4 }}>
+            <h2 style={{ margin: 0, fontFamily: 'var(--font-fell-sc)', fontWeight: 400, fontSize: 24, letterSpacing: 1 }}>{isT ? copy.list.tonightTitle : copy.list.title}</h2>
+            <span style={{ fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 13, color: '#A3ADA8' }}>{isT ? copy.list.tonightSub : copy.list.sub(year)}</span>
+          </div>
+          {cardList(scene, views, year).map((c) => (
+            <GraveCard key={c.id} c={c} selected={st.selected === c.id} onPick={() => act({ type: 'select', id: c.id })} />
+          ))}
+          <Legend {...legendItems(scene, data, tonight, year)} />
+        </aside>
       </div>
 
       <footer style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18, padding: '14px 28px 18px', borderTop: '1px solid #172120', boxSizing: 'border-box', background: 'linear-gradient(180deg, #080C0B, #040605)' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 'none', minWidth: 160 }}>
-          <span style={{ fontFamily: 'var(--font-fell-sc)', fontSize: 24 }}>{isT ? copy.footer.tonightDate(tonight!.asOf) : copy.footer.date(year, st.day)}</span>
-          <span style={{ fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 13, color: '#A3ADA8' }}>{isT ? copy.footer.tonightSub(year) : copy.footer.paused}</span>
-        </div>
-        <span style={{ marginLeft: 'auto', fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#7C8884' }}>{copy.footerCredit(isT ? tonight!.credit : data.meta.credit)}</span>
+        {isT ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 'none', minWidth: 160 }}>
+            <span style={{ fontFamily: 'var(--font-fell-sc)', fontSize: 24 }}>{copy.footer.tonightDate(tonight!.asOf)}</span>
+            <span style={{ fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 13, color: '#A3ADA8' }}>{copy.footer.tonightSub(year)}</span>
+          </div>
+        ) : (
+          <CandleTimeline
+            playing={st.playing} speed={st.speed} day={st.day}
+            dateLabel={copy.footer.date(year, st.day)} subLabel={st.playing ? copy.footer.playing(st.speed) : copy.footer.paused}
+            marks={riseMarks(season!, st.day, year)} band={windowBand(selV.grave, year)}
+            onPlay={() => act({ type: 'play', playing: !st.playing })} onSpeed={(s) => act({ type: 'speed', speed: s })}
+            onScrub={(d) => act({ type: 'day', day: d })}
+          />
+        )}
+        <span style={{ flexBasis: '100%', textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#7C8884' }}>{copy.footerCredit(isT ? tonight!.credit : data.meta.credit)}</span>
       </footer>
     </div>
   );

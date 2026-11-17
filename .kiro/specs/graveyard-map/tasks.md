@@ -56,18 +56,18 @@ These tasks build the night graveyard scene of `reference/design/Main.dc.html` i
 - [x] 6.4 **Checkpoint:** run `npm run dev`, give the user the link, and take a Playwright screenshot at 1440 × 1000 to compare with the board values. Fix or report differences over 4 px before going on.
   - _Requirements: 20.1, 20.2_
 
-- [ ] 7. Right column
-- [ ] 7.1 `Register` (rows, bars, footnote from the zombie flags, click to switch season)
+- [x] 7. Right column
+- [x] 7.1 `Register` (rows, bars, footnote from the zombie flags, click to switch season)
   - _Requirements: 9.1–9.4_
-- [ ] 7.2 `GraveCard` list and `Legend` (static note from `seasons.static`)
+- [x] 7.2 `GraveCard` list and `Legend` (static note from `seasons.static`)
   - _Requirements: 10.1–10.3, 11.1, 11.2_
 
-- [ ] 8. Candle timeline and replay clock
-- [ ] 8.1 Replay clock in `useGraveyard` (100 ms tick, RV_PERIOD per speed, stop at 102, restart, `onRiseCrossed` seam)
+- [x] 8. Candle timeline and replay clock
+- [x] 8.1 Replay clock in `useGraveyard` (100 ms tick, RV_PERIOD per speed, stop at 102, restart, `onRiseCrossed` seam)
   - _Requirements: 12.2, 12.6_
-- [ ] 8.2 `CandleTimeline` (play, speeds, date labels, wax, stub, flame, glow, drips, window band, month ticks, accessible range)
+- [x] 8.2 `CandleTimeline` (play, speeds, date labels, wax, stub, flame, glow, drips, window band, month ticks, accessible range)
   - _Requirements: 12.1, 12.3–12.5_
-- [ ] 8.3 **Checkpoint:** link plus screenshots of days 0, 30, 60 and 102 for 2024; user review
+- [x] 8.3 **Checkpoint:** link plus screenshots of days 0, 30, 60 and 102 for 2024; user review
   - _Requirements: 20.1, 20.2_
 
 - [ ] 9. Overlays

@@ -1,7 +1,7 @@
 // Scene state for the night graveyard (spec 03 design.md, "State"). Initial values follow the board
 // constructor (Main.dc.html L665). `?season=s2025&day=60` in the URL sets the start (preview convenience).
-import { useCallback, useMemo, useReducer } from 'react';
-import type { Speed } from '../data/derive';
+import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
+import { PERIOD_MS, type Speed } from '../data/derive';
 import type { SceneKey } from '../data/types';
 
 export interface UIState {
@@ -32,6 +32,7 @@ export type Action =
   | { type: 'split'; split: number }
   | { type: 'exhume'; id: string | null }
   | { type: 'play'; playing: boolean }
+  | { type: 'advance' }
   | { type: 'speed'; speed: Speed };
 
 const SCENES: SceneKey[] = ['s2024', 's2025', 's2026', 'tonight'];
@@ -74,13 +75,45 @@ export function reducer(s: UIState, a: Action): UIState {
       return { ...s, ex: a.id, selected: a.id ?? s.selected, fireSel: a.id ? null : s.fireSel };
     case 'play':
       return { ...s, playing: a.playing, day: a.playing && s.day >= 102 ? 0 : s.day };
+    case 'advance': {
+      if (!s.playing || s.scene === 'tonight') return s;
+      const day = Math.min(102, s.day + 1);
+      return { ...s, day, playing: day < 102 };
+    }
     case 'speed':
       return { ...s, speed: a.speed };
   }
 }
 
-export function useGraveyard() {
+interface Options {
+  /** Seam for spec 05: called when the replay moves forward from `from` to `to` (scrub or play). */
+  onRiseCrossed?: (from: number, to: number) => void;
+}
+
+export function useGraveyard(opts: Options = {}) {
   const [state, dispatch] = useReducer(reducer, undefined, () => initialState());
   const act = useCallback((a: Action) => dispatch(a), []);
+
+  // Replay clock (board tick(): 100 ms steps, one day per PERIOD_MS[speed]).
+  useEffect(() => {
+    if (!state.playing) return;
+    let acc = 0;
+    const id = setInterval(() => {
+      acc += 100;
+      if (acc < PERIOD_MS[state.speed]) return;
+      acc = 0;
+      dispatch({ type: 'advance' });
+    }, 100);
+    return () => clearInterval(id);
+  }, [state.playing, state.speed]);
+
+  const prev = useRef(state.day);
+  const cb = useRef(opts.onRiseCrossed);
+  useEffect(() => { cb.current = opts.onRiseCrossed; });
+  useEffect(() => {
+    if (state.day > prev.current) cb.current?.(prev.current, state.day);
+    prev.current = state.day;
+  }, [state.day]);
+
   return useMemo(() => ({ state, act }), [state, act]);
 }
