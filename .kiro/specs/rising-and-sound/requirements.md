@@ -50,9 +50,9 @@ Out of scope:
 1. FOR every rising, THE map SHALL show the board's sting for 4.5 s:
    - a radial flash centred on the lead's rise point (`rv-flash`);
    - the title in IM Fell English SC 62 px, `#F4E9DA` with an ember glow: "{id} has risen", or "{n} graves have risen" when several rise on the same step (`rv-sting`);
-   - the detail in JetBrains Mono 13 px, letter-spacing 3 px: "[ids · ]{DATE} · DAY {d} AFTER SNOWMELT" (`rv-sting`).
+   - the detail in JetBrains Mono 13 px, letter-spacing 3 px: "{DATE} · DAY {d} AFTER SNOWMELT" for one grave, or "{DATE} · G-13 DAY 0 · G-24 DAY 26 AFTER SNOWMELT" for several (`rv-sting`).
    The map SHALL also shake (`rv-shake`, 0.7 s).
-2. `{DATE}` SHALL be the lead's rise date, from Mar 21 of the season year. `{d}` SHALL be the lead's published `rise.day − melt`.
+2. `{DATE}` SHALL be the rise date, from Mar 21 of the season year. Each `{d}` SHALL be that grave's own published `rise.day − melt`. The board printed the lead's count for every grave on a shared day, which is wrong for the others: on Spring 2024 day 30, G-13 rose 0 days after its melt and G-24 rose 26 days after.
 3. THE sting text SHALL also be placed in a polite live region, so that screen readers announce it once.
 4. A new rising within 1 s of the last flash SHALL update the sting text but SHALL NOT restart the flash or the shake. This keeps flashes under 3 per second at 2× speed (costume.md, WCAG 2.3.1).
 

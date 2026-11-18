@@ -8,12 +8,12 @@ These tasks add the rising cinematic and its sounds to the spec 03 graveyard. Th
 
 ## Tasks
 
-- [ ] 1. Rising plan (pure, tested)
-- [ ] 1.1 `src/copy/rising.ts` (sting title, detail, live sentence, footer sub-labels) and `fissuresPath()` in `src/data/geometry.ts`
-  - _Requirements: 2.1, 2.3, 3.4, 9.5_
-- [ ] 1.2 `src/data/rising.ts`: `risingsIn`, `planRising`, `cameraTransform`, `stingView`, and the timing constants
+- [x] 1. Rising plan (pure, tested)
+- [x] 1.1 `src/copy/rising.ts` (sting title, detail, live sentence) and `fissuresPath()` in `src/data/geometry.ts`. The footer sub-labels go with the footer copy in task 4.1.
+  - _Requirements: 2.1–2.3, 3.4_
+- [x] 1.2 `src/data/rising.ts`: `risingsIn`, `planRising`, `cameraTransform`, `stingView`, and the timing constants
   - _Requirements: 1.1–1.3, 2.2, 2.4, 3.1, 3.2, 3.5, 5.2, 5.3_
-- [ ] 1.3 Property tests (fast-check) for Properties 1–5, plus the published G-10 example
+- [x] 1.3 Property tests (fast-check) for Properties 1–5, plus the published G-10 example
   - **Property 1** risings are the published rises · **Property 2** beat and camera gates · **Property 3** camera covers the frame · **Property 4** bells bounded · **Property 5** one flash per second
   - **Validates: Requirements 1.1–1.4, 2.2, 2.4, 3.1, 3.2, 3.5, 5.2, 5.3**
 
@@ -31,7 +31,7 @@ These tasks add the rising cinematic and its sounds to the spec 03 graveyard. Th
   - **Validates: Requirements 1.4, 4.1, 4.2, 9.2–9.4**
 
 - [ ] 4. View
-- [ ] 4.1 `CandleTimeline` without the play button; the sub-label from copy; `scrubStart` / `scrubEnd` on the range input. Spec 03 tests updated to the new footer.
+- [ ] 4.1 `CandleTimeline` without the play button; the sub-labels in `copy.footer` (running at a speed, waiting while you look, the spring is over); `scrubStart` / `scrubEnd` on the range input. Spec 03 tests updated to the new footer.
   - _Requirements: 9.1, 9.3, 9.5_
 - [ ] 4.2 `MapStack` camera layer (`.rv-cam`, the board transitions), the cinematic slot inside it, the letterbox outside it, and the lead's small hand hidden while the cinematic is up
   - _Requirements: 3.2–3.4_

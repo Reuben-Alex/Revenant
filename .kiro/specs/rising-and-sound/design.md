@@ -70,7 +70,7 @@ interface PlanInput {
   now: number; lastFlash: number;  // ms
 }
 interface RisingPlan {
-  ids: string[]; lead: Grave; days: number;           // days = lead.rise.day − lead.melt
+  graves: Grave[]; lead: Grave; days: number[];       // days[k] = graves[k].rise.day − graves[k].melt
   beat: 1 | 2 | 3 | null;
   camera: { x: number; y: number; until: number } | null;
   bells: number;                                      // 0 when no camera
@@ -124,7 +124,7 @@ interface RisingPlan {
 
 Generators: seasons of 1–24 graves, with melt in −1..102 and rise = 0 or `[day ≥ melt, x, y]`; any `from`/`to` in 0..102; any speed, lantern, compare, `played`, `beatsSoFar` in 0..3, and times.
 
-- **Property 1: a rising is exactly the published rises in the step.** `planRising` is non-null iff some grave has `from < rise.day ≤ to`. Its `ids` are those graves in published order, `lead` is the first, and `days = lead.rise.day − lead.melt ≥ 0`. **Validates: Requirements 1.1, 1.2, 2.2**
+- **Property 1: a rising is exactly the published rises in the step.** `planRising` is non-null iff some grave has `from < rise.day ≤ to`. Its `graves` are those graves in published order, `lead` is the first, and each `days[k] = graves[k].rise.day − graves[k].melt ≥ 0`. The sting detail names each grave's own count. **Validates: Requirements 1.1, 1.2, 2.2**
 - **Property 2: beats and camera follow the gates.**
   - A beat happens iff `played && beatsSoFar < 3`.
   - The camera happens iff `played && !lantern && !compare && (beat || speed ≠ 2×)`.

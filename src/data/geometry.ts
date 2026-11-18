@@ -23,6 +23,25 @@ export const fireTriangle = (x: number, y: number) => `M${x} ${y - 8} L${x + 7} 
 export const fireFlame = (x: number, y: number) =>
   `M${x} ${y - 15} C${x + 4} ${y - 11} ${x + 3} ${y - 8} ${x} ${y - 7} C${x - 3} ${y - 8} ${x - 4} ${y - 11} ${x} ${y - 15} Z`;
 
+/** Nine fissures radiating from a rising's hotspot, flattened for perspective (board rvFissures, L616). */
+export function fissuresPath(x: number, y: number): string {
+  const out: string[] = [];
+  for (let k = 0; k < 9; k++) {
+    const a = ((k * 40 + ((k * 53) % 17)) * Math.PI) / 180;
+    const len = 9 + ((k * 7) % 5) * 3;
+    let seg = `M${x} ${y}`;
+    for (let s = 1; s <= 3; s++) {
+      const r = (len * s) / 3;
+      const j = (((k * 31 + s * 13) % 7) - 3) * 0.9;
+      const px = x + Math.cos(a) * r - Math.sin(a) * j;
+      const py = y + Math.sin(a) * r * 0.62 + Math.cos(a) * j * 0.62;
+      seg += ` L${px.toFixed(1)} ${py.toFixed(1)}`;
+    }
+    out.push(seg);
+  }
+  return out.join(' ');
+}
+
 export const lanternIcon = (x: number, y: number) =>
   `M${x - 5} ${y - 9} H${x + 5} M${x} ${y - 13} V${y - 9} M${x - 6} ${y - 7} H${x + 6} L${x + 5} ${y + 7} H${x - 5} Z`;
 export const lanternFlame = (x: number, y: number) =>
