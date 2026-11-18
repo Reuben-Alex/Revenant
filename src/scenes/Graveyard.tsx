@@ -18,17 +18,27 @@ import { HeadlineBand } from '../components/HeadlineBand';
 import { Legend } from '../components/Legend';
 import { MapStack } from '../components/MapStack';
 import { Register } from '../components/Register';
-import { useGraveyard } from './useGraveyard';
+import { useGraveyard, type RisingEvent, type UIState } from './useGraveyard';
 
 interface Props {
   data: SeasonsFile;
   tonight: TonightFile | null;
   /** Spec 04 Requirement 8.3: focus the headline when the scene opens after nightfall. */
   focusHeadline?: boolean;
+  /** Seam for spec 06 (spec 05 Requirement 6.1). */
+  onRising?: (e: RisingEvent) => void;
 }
 
-export function Graveyard({ data, tonight, focusHeadline = false }: Props) {
-  const { state: st, act } = useGraveyard();
+/** What time is doing, for the footer sub-label (spec 05 Requirement 9.5). */
+function footerSub(st: UIState): string {
+  if (!st.running) return copy.footer.over;
+  if (st.cam) return copy.footer.rising;
+  if (st.ex !== null || st.lantern.on || st.compare || st.dragging || !st.startGate) return copy.footer.waiting;
+  return copy.footer.playing(st.speed);
+}
+
+export function Graveyard({ data, tonight, focusHeadline = false, onRising }: Props) {
+  const { state: st, act } = useGraveyard({ seasons: data.seasons, onRising });
   const scene = st.scene === 'tonight' && !tonight ? 's2024' : st.scene;
   const isT = scene === 'tonight';
   const season = isT ? null : data.seasons[scene];
@@ -127,11 +137,12 @@ export function Graveyard({ data, tonight, focusHeadline = false }: Props) {
           </div>
         ) : (
           <CandleTimeline
-            playing={st.playing} speed={st.speed} day={st.day}
-            dateLabel={copy.footer.date(year, st.day)} subLabel={st.playing ? copy.footer.playing(st.speed) : copy.footer.paused}
+            speed={st.speed} day={st.day}
+            dateLabel={copy.footer.date(year, st.day)} subLabel={footerSub(st)}
             marks={riseMarks(season!, st.day, year)} band={windowBand(selV.grave, year)}
-            onPlay={() => act({ type: 'play', playing: !st.playing })} onSpeed={(s) => act({ type: 'speed', speed: s })}
+            onSpeed={(s) => act({ type: 'speed', speed: s })}
             onScrub={(d) => act({ type: 'day', day: d })}
+            onScrubStart={() => act({ type: 'scrubStart' })} onScrubEnd={() => act({ type: 'scrubEnd' })}
           />
         )}
         <span style={{ flexBasis: '100%', textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#7C8884' }}>{copy.footerCredit(isT ? tonight!.credit : data.meta.credit)}</span>

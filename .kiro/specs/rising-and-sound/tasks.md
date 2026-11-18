@@ -21,17 +21,17 @@ These tasks add the rising cinematic and its sounds to the spec 03 graveyard. Th
 - [x] 2.1 Move the fake AudioContext to `src/audio/fakeAudio.ts`. Add `boom.ts`, `bell.ts` and `creak.ts` with the board values, using `currentAudio()` and staying silent without it. Add tests.
   - _Requirements: 5.1, 5.6_
 
-- [ ] 3. State and clock
-- [ ] 3.1 `useGraveyard`: the self-running replay (`running`, `dragging`, `startGate`, no `play` action, restart on choosing a season) and `clockMayAdvance`
+- [x] 3. State and clock
+- [x] 3.1 `useGraveyard`: the self-running replay (`running`, `dragging`, `startGate`, no `play` action, restart on choosing a season) and `clockMayAdvance`
   - _Requirements: 9.1–9.4, 9.6_
-- [ ] 3.2 `useGraveyard`: `cam`, `sting`, `beats`, `lastFlash`, `lastStep`; the `rising`, `endCam` and `endSting` actions; the actions that end the hold; beat resets; end timers; boom and bell on a plan; the `onRising` seam
+- [x] 3.2 `useGraveyard`: `cam`, `sting`, `beats`, `lastFlash`, `lastStep`; the `rising`, `endCam` and `endSting` actions; the actions that end the hold; beat resets; end timers; boom and bell on a plan; the `onRising` seam
   - _Requirements: 1.3, 1.4, 4.1–4.3, 5.2, 5.3, 6.1_
-- [ ] 3.3 Properties 6 and 7, plus reducer tests (hold-ending actions)
+- [x] 3.3 Properties 6 and 7, plus reducer tests (hold-ending actions)
   - **Property 6** the clock waits · **Property 7** the replay restarts cleanly
   - **Validates: Requirements 1.4, 4.1, 4.2, 9.2–9.4**
 
 - [ ] 4. View
-- [ ] 4.1 `CandleTimeline` without the play button; the sub-labels in `copy.footer` (running at a speed, waiting while you look, the spring is over); `scrubStart` / `scrubEnd` on the range input. Spec 03 tests updated to the new footer.
+- [x] 4.1 `CandleTimeline` without the play button; the sub-labels in `copy.footer` (running at a speed, waiting while you look, the spring is over); `scrubStart` / `scrubEnd` on the range input. Spec 03 tests updated to the new footer. Done with task 3: removing the `play` action left the footer's button with nothing to call.
   - _Requirements: 9.1, 9.3, 9.5_
 - [ ] 4.2 `MapStack` camera layer (`.rv-cam`, the board transitions), the cinematic slot inside it, the letterbox outside it, and the lead's small hand hidden while the cinematic is up
   - _Requirements: 3.2–3.4_

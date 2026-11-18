@@ -150,13 +150,14 @@ export const map = {
 };
 
 export const footer = {
-  play: 'Play replay',
-  pause: 'Pause replay',
   speedGroup: 'Replay speed',
   speed: { '0.5': '½×', '1': '1×', '2': '2×' } as const,
   date: (year: number, day: number) => `${fmtDay(day, year)}, ${year}`,
+  // The replay runs by itself (spec 05 Requirement 9.5): the sub-label says what time is doing.
   playing: (speed: '0.5' | '1' | '2') => `The candle burns · ${{ '0.5': '0.75', '1': '1.5', '2': '3' }[speed]} days a second`,
-  paused: 'The candle is out · drag it, or press play',
+  rising: 'The candle waits while the dead rise',
+  waiting: 'The candle waits while you look',
+  over: 'The candle is out · drag it back, or choose the spring again',
   tonightDate: (asOf: string) => `${fmtIso(asOf.slice(0, 10))}, ${asOf.slice(0, 4)}`,
   tonightSub: (year: number) => `The scars of ${year}, going under`,
   scrub: 'Replay day',

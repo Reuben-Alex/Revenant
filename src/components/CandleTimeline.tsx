@@ -1,4 +1,4 @@
-// Footer: play, speeds, date, and the candle timeline (Main.dc.html L440–483; candle, band, riseMarks
+// Footer: speeds, date, and the candle timeline (Main.dc.html L440–483; candle, band, riseMarks
 // from renderVals() L1203–1268, L1393–1399).
 import * as copy from '../copy/graveyard';
 import type { Speed } from '../data/derive';
@@ -8,31 +8,24 @@ interface Mark { id: string; pct: number; done: boolean; h: number; label: strin
 interface Band { left: number; width: number; end: number; startLabel: string; endLabel: string }
 
 interface Props {
-  playing: boolean;
   speed: Speed;
   day: number;
   dateLabel: string;
   subLabel: string;
   marks: Mark[];
   band: Band | null;
-  onPlay: () => void;
   onSpeed: (s: Speed) => void;
   onScrub: (day: number) => void;
+  /** The replay waits while the candle is held (spec 05 Requirement 9.3). */
+  onScrubStart: () => void;
+  onScrubEnd: () => void;
 }
 
 export function CandleTimeline(p: Props) {
   const pct = (p.day / 102) * 100;
   return (
     <>
-      <button type="button" className="rv-btn" aria-label={p.playing ? copy.footer.pause : copy.footer.play} onClick={p.onPlay} style={{
-        width: 50, height: 50, borderRadius: 25, border: '1px solid #4A4236', background: 'radial-gradient(circle at 35% 30%, #3A332A, #14110E 70%)',
-        boxShadow: `inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 0 #000, 0 0 16px rgba(255,184,107,${p.playing ? '0.25' : '0.08'})`,
-        display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none',
-      }}>
-        {p.playing
-          ? <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 2 V12 M11 2 V12" style={{ stroke: '#ECE6D6', strokeWidth: 2.4, strokeLinecap: 'round' }} /></svg>
-          : <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5 L12.5 7 L3 12.5 Z" style={{ fill: '#ECE6D6' }} /></svg>}
-      </button>
+      {/* No play/pause button: the replay runs by itself (spec 05 Requirement 9.1). */}
       <div role="group" aria-label={copy.footer.speedGroup} style={{ display: 'flex', gap: 4, flex: 'none' }}>
         {(['0.5', '1', '2'] as const).map((k) => (
           <button key={k} type="button" className="rv-btn" aria-pressed={p.speed === k} onClick={() => p.onSpeed(k)}
@@ -67,6 +60,8 @@ export function CandleTimeline(p: Props) {
           <label htmlFor="rv-day" className="rv-sr">{copy.footer.scrub}</label>
           <input id="rv-day" className="rv-range" type="range" min={0} max={102} step={1} value={p.day} aria-valuetext={p.dateLabel}
             onChange={(e) => p.onScrub(Number(e.target.value))}
+            onPointerDown={p.onScrubStart} onPointerUp={p.onScrubEnd} onPointerCancel={p.onScrubEnd}
+            onKeyDown={p.onScrubStart} onKeyUp={p.onScrubEnd} onBlur={p.onScrubEnd}
             style={{ position: 'absolute', left: 0, right: 0, top: 0, width: '100%', height: 54, margin: 0, opacity: 0, cursor: 'pointer' }} />
           <div className="rv-knob" aria-hidden="true" style={{ position: 'absolute', left: `${pct.toFixed(2)}%`, top: 14, width: 1, height: 1, pointerEvents: 'none' }} />
         </div>
