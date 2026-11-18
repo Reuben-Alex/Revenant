@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Revenant">
+  <defs>
+    <radialGradient id="glow" cx="0.5" cy="0.62" r="0.5">
+      <stop offset="0" stop-color="#FF6B2C" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#FF6B2C" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="stone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2A3532"/>
+      <stop offset="1" stop-color="#121917"/>
+    </linearGradient>
+    <clipPath id="badge"><rect width="128" height="128" rx="28"/></clipPath>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#050807"/>
+  <circle cx="64" cy="80" r="56" fill="url(#glow)" clip-path="url(#badge)"/>
+  <path d="M38 100 V54 A26 26 0 0 1 90 54 V100 Z" fill="url(#stone)" stroke="#ECE6D6" stroke-width="3"/>
+  <path d="M64 40 V72 M53 51 H75" fill="none" stroke="#ECE6D6" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M24 102 H104" stroke="#FF6B2C" stroke-width="3" stroke-linecap="round"/>
+  <path d="M44 102 L50 94 L55 102 M84 102 L78 95 L74 102" fill="none" stroke="#FF6B2C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M60 22 C66 15 64 9 60 4 C56 9 54 15 60 22 Z" fill="#FFB86B"/>
+  <path d="M60 19 C62.5 15.5 61.5 12 60 10 C58.5 12 57.5 15.5 60 19 Z" fill="#FFF1C9"/>
+</svg>
