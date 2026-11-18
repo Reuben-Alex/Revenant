@@ -37,6 +37,26 @@ A spring hotspot is a **revenant** if it lies on (within ~1 km of) last year's f
   - **Candle timeline:** burns down through spring; red wax drips at each rising.
   - **Verdict:** tombstone card; "Dig them up again".
 - **Tonight (live):** current-season scars going under snow, last-7-day hotspots, "still warm" scars, 2027 watch list, countdown.
+
+## Puzzles (user decision, 2026-11-18: all five)
+The night is played, not watched. The replay runs by itself, with no play/pause button and always-on sound. Each puzzle makes the viewer reason with the rule, and every clue is a published value or the rule itself.
+1. **Read the stones** (spec 06). Before each replay, the replay waits at day 0 while the viewer reads clue cards on the stones and marks three graves to rise:
+   - scar size (NBAC);
+   - latitude;
+   - when the snow left (melt day);
+   - heat seen on the scar before melt (`early_hits`).
+
+   The verdict scores the marks against blind chance (3 × risen / 24) and against the Gravekeeper's own guess (the three largest scars). "Just watch" starts without marks.
+2. **The Gravekeeper's riddle** (spec 06). At the first rising, the Gravekeeper asks why the grave rose. The viewer picks the three true conditions from four cards:
+   - on the scar, within ≈ 1 km;
+   - after the snow left;
+   - within 50 days;
+   - one decoy misconception, such as "the brightest heat in the region".
+
+   The grave's exhumation opens when the three are right. Wrong picks get a hint, never a penalty.
+3. **Lantern hunt** (spec 06). In lantern mode, the season's new fires hide in the dark. Each one found reads "Not a revenant: more than 15 km from every scar", and the Gravekeeper counts them.
+4. **Keep watch** (spec 07). On Tonight, the viewer places three lanterns on still-warm 2026 scars as their 2027 watch list. The app compares it with the published ranking and offers a shareable epitaph card.
+5. **Is it chance?** (spec 02 publishes the data, then spec 08). The viewer drags a grave's own shape onto unburned ground and sees whether that offset caught heat, using the chance test's real offsets. This needs a new published field, so it is built last.
 - **Grave dossier** (G-03, Spring 2024): satellite crops, rule checks, and the snow curve with the heat that followed. In the published data, G-03 rose 41 days after its snow left. The "late snowfall" in the dossier board came from the research data.
 - **Field crew phone** (390×844): patrol route, nearest risen grave, quick report buttons.
 - **Opening frame** (1920×1080) for the video.

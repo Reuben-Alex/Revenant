@@ -5,4 +5,8 @@ countdown to expected spring melt, "data as of" stamp, graceful staleness (if da
 Also the 390 px crew phone view (`reference/design/Phone.dc.html`) and the grave dossier (`reference/design/Dossier.dc.html`),
 plus a static 1920×1080 route for capturing the video's opening frame (`reference/design/Opening.dc.html`). Decide hosting here: a free static host that stays up, free, through Jan 29, 2027.
 
+Puzzle (docs/brief.md, "Puzzles" 4) — **Keep watch**: the viewer places three lanterns on still-warm 2026 scars as their 2027 watch list,
+then sees it next to the published ranking, and can save a shareable epitaph card (PNG, drawn locally, no upload). Late heat may be
+slash-pile burning: the card says "crews confirm", never "this fire will return".
+
 Design source (use skill /design-boards): `reference/design/Main.dc.html` block `isTonight` L484, and the three boards above.

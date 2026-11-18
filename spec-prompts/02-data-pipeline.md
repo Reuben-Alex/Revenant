@@ -9,3 +9,7 @@ API gaps, swath gaps), and a validation script `scripts/validate-data.mjs` (then
 `data/seasons.json` (imagery-based) and report differences honestly.
 
 Design source: the `data/seasons.json` schema, and `reference/gibs-pipeline.js` as the baseline method to compare against (not code to ship).
+
+Follow-up for the "Is it chance?" puzzle (docs/brief.md, "Puzzles" 5; after specs 05–07): publish, per season and grave, the chance test's
+accepted offsets and whether each caught heat (`chance_offsets: [[dx, dy, hit], …]`, from the same seeded RNG, so `chance` is unchanged).
+Extend the schema in docs/method.md and `scripts/validate-data.mjs` together, with a check that hits ÷ offsets equals the published `chance`.
