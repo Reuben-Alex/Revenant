@@ -17,8 +17,8 @@ These tasks add the rising cinematic and its sounds to the spec 03 graveyard. Th
   - **Property 1** risings are the published rises · **Property 2** beat and camera gates · **Property 3** camera covers the frame · **Property 4** bells bounded · **Property 5** one flash per second
   - **Validates: Requirements 1.1–1.4, 2.2, 2.4, 3.1, 3.2, 3.5, 5.2, 5.3**
 
-- [ ] 2. Sounds
-- [ ] 2.1 Move the fake AudioContext to `src/audio/fakeAudio.ts`. Add `boom.ts`, `bell.ts` and `creak.ts` with the board values, using `currentAudio()` and staying silent without it. Add tests.
+- [x] 2. Sounds
+- [x] 2.1 Move the fake AudioContext to `src/audio/fakeAudio.ts`. Add `boom.ts`, `bell.ts` and `creak.ts` with the board values, using `currentAudio()` and staying silent without it. Add tests.
   - _Requirements: 5.1, 5.6_
 
 - [ ] 3. State and clock
