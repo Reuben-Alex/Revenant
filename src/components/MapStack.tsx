@@ -82,7 +82,8 @@ export function MapStack(p: Props) {
           <path d="M374 0 V716" style={{ fill: 'none', stroke: '#C9D2D1', strokeOpacity: 0.35, strokeWidth: 1.2, strokeDasharray: '6 5' }} />
           <text x="382" y="672" style={{ fontFamily: 'var(--font-mono)', fontSize: 10, fill: '#C9D2D1', fillOpacity: 0.6 }}>{copy.map.border}</text>
           <text x="24" y="698" style={{ fontFamily: 'var(--font-fell-sc)', fontSize: 15, letterSpacing: 8, fill: '#C9D2D1', fillOpacity: 0.7 }}>{copy.map.bc}</text>
-          <text x="880" y="698" style={{ fontFamily: 'var(--font-fell-sc)', fontSize: 15, letterSpacing: 8, fill: '#C9D2D1', fillOpacity: 0.7 }}>{copy.map.ab}</text>
+          {/* The board's y = 698 sits under the credit chip, which carries the FIRMS and NBAC credits too. */}
+          <text x="880" y="664" style={{ fontFamily: 'var(--font-fell-sc)', fontSize: 15, letterSpacing: 8, fill: '#C9D2D1', fillOpacity: 0.7 }}>{copy.map.ab}</text>
         </svg>
 
         {p.clusters.length > 0 && (
