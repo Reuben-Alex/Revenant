@@ -8,12 +8,12 @@ These tasks add the Gravekeeper, the three puzzles, quiet years and the verdict.
 
 ## Tasks
 
-- [ ] 1. Copy and pure logic (tested)
-- [ ] 1.1 `src/copy/gravekeeper.ts`: every line and card in Requirements 2–7, with templates that take only published fields
+- [x] 1. Copy and pure logic (tested)
+- [x] 1.1 `src/copy/gravekeeper.ts`: every line and card in Requirements 2–7, with templates that take only published fields
   - _Requirements: 2.1–2.7, 3.2, 4.3, 5.2, 5.3, 6.2, 6.3, 7.2–7.6_
-- [ ] 1.2 `src/data/gravekeeper.ts`: `line`, `introLine`, `firstThaw`, `risingLine`, `whisperAt`, `glitchText`, `glitchOn`, `clueCard`, `riddleCards`, `checkRiddle`, `margin`, `verdictView`, `wagerScore`, `gravekeeperGuess`, `lanternRadius`, `fireFound`
+- [x] 1.2 `src/data/gravekeeper.ts`: `line`, `introLine`, `firstThaw`, `risingLine`, `whisperAt`, `glitchText`, `glitchOn`, `clueCard`, `riddleCards`, `checkRiddle`, `margin`, `verdictView`, `wagerScore`, `gravekeeperGuess`, `lanternRadius`, `fireFound`
   - _Requirements: 1.2, 2–7_
-- [ ] 1.3 Property tests (fast-check) for Properties 1–7, plus published examples (2025 margin 2; the 2024 Gravekeeper's guess 3; 2026 quiet)
+- [x] 1.3 Property tests (fast-check) for Properties 1–7, plus published examples (2025 margin 2; the 2024 Gravekeeper's guess 3; 2026 quiet)
   - **Validates: Requirements 1.2, 2.2–2.4, 3.1, 3.3, 4.3, 4.5, 5.2, 5.3, 7.2–7.5**
 
 - [ ] 2. Narrator

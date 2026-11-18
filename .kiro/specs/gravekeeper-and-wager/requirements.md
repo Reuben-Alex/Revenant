@@ -116,8 +116,8 @@ Out of scope: Tonight's narrator lines and Keep watch (spec 07); Is it chance? (
    - "Dig them up again".
    The bell SHALL toll 3 times in a zombie year and once otherwise (board `playBell(zombie ? 3 : 1)`).
 2. THE detail SHALL use published fields only: "The same shapes laid on unburned ground caught heat {chance %}% of the time." Then:
-   - in a zombie year: "These scars woke far more often than chance: a zombie year, after the fires of {Y−1}." This replaces the board's "after the great fires of 2023", which is wrong for 2025.
-   - in a quiet year: "These scars woke about as often as chance. Revenant says so, rather than cry wolf."
+   - in a zombie year: "These scars woke {ratio} times as often as chance: a zombie year, after the fires of {Y−1}." Here ratio = (risen / n) / chance, to one decimal (2.2 for 2024, 1.7 for 2025). This replaces the board's "far more often … after the great fires of 2023", which is wrong for 2025.
+   - in a quiet year: "These scars woke no more often than chance. Revenant says so, rather than cry wolf." Spring 2026 woke at 8 % against 12 % chance, so the board's "about as often" would be generous.
 3. THE Gravekeeper SHALL say: "{N word} of {n} rose. Chance alone would have raised {C word}.\n" followed by "This was a zombie year." or "These were ordinary spring fires, not the dead walking. I do not cry wolf." Here C = round(chance × n).
 4. IF the margin is 1 or 2 graves, THEN the detail SHALL add: "A thin margin: {k word} fewer and I would have called it chance." For Spring 2025 the published data gives k = 2. method.md asks for the thin margin to be said.
 5. THE wager line SHALL read: "Your wager: {k word} of your three walked ({ids}). Picking blind, you would expect {3·N/n, one decimal}. The Gravekeeper, betting on the three largest, got {g word}." It is followed by the board's ranked line for k = 0–3.

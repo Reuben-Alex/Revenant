@@ -100,7 +100,7 @@ flowchart LR
 
   **Validates: Requirements 4.5, 7.5**
 - **Property 6: clue cards are data.** For any grave, the clue card's numbers are the grave's km² (from size), latitude, melt date and `early`. No other digits. **Validates: Requirement 4.3**
-- **Property 7: the glitch stays visual and slow.** `glitchText` keeps length, spaces and newlines. It changes at most 22 % + 1 of the characters. `glitchOn` is true in at most 3 of every 46 ticks of 110 ms, i.e. under 1 window per 5 s. **Validates: Requirements 3.3, 3.4**
+- **Property 7: the glitch stays visual and slow.** `glitchText` keeps length, spaces and newlines. It changes at most ⌈22 % of the length⌉ + 6 characters: the board's step of 9301/233280 ≈ 0.04 per character lets a run of up to 6 fall under 0.22. `glitchOn` is true in at most 3 of every 46 ticks of 110 ms, i.e. under 1 window per 5 s. **Validates: Requirements 3.3, 3.4**
 
 Example tests:
 - 2025's margin is 2;
