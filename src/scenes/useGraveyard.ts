@@ -9,6 +9,8 @@ import { playBell } from '../audio/bell';
 import { playBoom } from '../audio/boom';
 import { currentAudio } from '../audio/context';
 import { PERIOD_MS, type Speed } from '../data/derive';
+import * as gk from '../copy/gravekeeper';
+import { firstThaw, line, risingLine, type Line } from '../data/gravekeeper';
 import { planRising, stingView, type RisingPlan, type StingView } from '../data/rising';
 import type { SceneKey, SeasonData, SeasonKey } from '../data/types';
 
@@ -39,6 +41,10 @@ export interface UIState {
   lastFlash: number;
   /** How the last day change happened, so a rising knows whether it was played or scrubbed. */
   lastStep: 'play' | 'scrub' | null;
+  /** Spec 06: what the Gravekeeper is saying, whether the first thaw was spoken, and the later-rising rotation. */
+  say: Line | null;
+  woke: boolean;
+  rot: number;
 }
 
 export type Action =
@@ -60,7 +66,11 @@ export type Action =
   | { type: 'gate'; open: boolean }
   | { type: 'rising'; plan: RisingPlan; sting: StingView; now: number }
   | { type: 'endCam'; until: number }
-  | { type: 'endSting'; until: number };
+  | { type: 'endSting'; until: number }
+  | { type: 'say'; line: Line }
+  | { type: 'endSay'; until: number }
+  | { type: 'woke' }
+  | { type: 'rot' };
 
 const SCENES: SceneKey[] = ['s2024', 's2025', 's2026', 'tonight'];
 
@@ -82,6 +92,7 @@ export function initialState(start: Start = DEFAULT_START): UIState {
     speed: '1', night: true, lantern: { on: false, x: 530, y: 358, inside: false },
     compare: false, split: 50, ex: null, hover: null, fireSel: null,
     cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null,
+    say: null, woke: false, rot: 0,
   };
 }
 
@@ -98,7 +109,7 @@ export function reducer(s: UIState, a: Action): UIState {
       return {
         ...s, scene: a.scene, day: 0, running: a.scene !== 'tonight', selected: 'G-01', ex: null, fireSel: null, hover: null,
         compare: a.scene === 'tonight' ? false : s.compare,
-        cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null,
+        cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null, woke: false,
       };
     case 'day': {
       const day = Math.max(0, Math.min(102, a.day));
@@ -151,6 +162,14 @@ export function reducer(s: UIState, a: Action): UIState {
       return s.cam && s.cam.until === a.until ? { ...s, cam: null } : s;
     case 'endSting':
       return s.sting && s.sting.until === a.until ? { ...s, sting: null } : s;
+    case 'say':
+      return { ...s, say: a.line };
+    case 'endSay':
+      return s.say && s.say.until === a.until ? { ...s, say: null } : s;
+    case 'woke':
+      return { ...s, woke: true };
+    case 'rot':
+      return { ...s, rot: s.rot + 1 };
   }
 }
 
@@ -170,6 +189,8 @@ interface Options {
   seasons?: Record<SeasonKey, SeasonData>;
   /** Seam for spec 06: called once per rising. */
   onRising?: (e: RisingEvent) => void;
+  /** Spec 06 wager marks, so a marked grave's rising says Your mark. */
+  marks?: string[];
 }
 
 export function useGraveyard(opts: Options = {}) {
@@ -199,6 +220,8 @@ export function useGraveyard(opts: Options = {}) {
   const prev = useRef(state.day);
   const seasonsRef = useRef(opts.seasons);
   const risingCb = useRef(opts.onRising);
+  const marksRef = useRef<string[]>(opts.marks ?? []);
+  useEffect(() => { marksRef.current = opts.marks ?? []; });
   useEffect(() => { seasonsRef.current = opts.seasons; risingCb.current = opts.onRising; });
   useEffect(() => {
     const from = prev.current;
@@ -208,12 +231,21 @@ export function useGraveyard(opts: Options = {}) {
     const season = seasonsRef.current?.[s.scene];
     if (!season) return;
     const now = Date.now();
+    // First thaw (spec 06 Requirement 2.3): once per replay, while playing, and only when nothing else is being
+    // said, so it never cuts off the night or season line. A rising on the same step speaks over it.
+    if (s.lastStep === 'play' && !s.woke && (s.say === null || now >= s.say.until)) {
+      const w = firstThaw(season, state.day);
+      if (w) { dispatch({ type: 'woke' }); dispatch({ type: 'say', line: line(gk.firstThaw(w.id), now) }); }
+    }
     const plan = planRising({
       season, from, to: state.day, played: s.lastStep === 'play', beatsSoFar: s.beats,
       speed: s.speed, lantern: s.lantern.on, compare: s.compare, now, lastFlash: s.lastFlash,
     });
     if (!plan) return;
     dispatch({ type: 'rising', plan, sting: stingView(plan, season.year), now });
+    const ev = { ids: plan.graves.map((g) => g.id), lead: plan.lead.id, days: plan.days, beat: plan.beat, year: season.year };
+    dispatch({ type: 'say', line: line(risingLine(ev, s.rot, marksRef.current), now, plan.beat ? 6400 : undefined) });
+    if (!plan.beat) dispatch({ type: 'rot' });
     if (plan.flash) playBoom(currentAudio());
     if (plan.bells > 0) playBell(currentAudio(), plan.bells);
     risingCb.current?.({
@@ -229,6 +261,12 @@ export function useGraveyard(opts: Options = {}) {
     const t = setTimeout(() => dispatch({ type: 'endCam', until }), Math.max(0, until - Date.now()));
     return () => clearTimeout(t);
   }, [state.cam]);
+  useEffect(() => {
+    if (!state.say) return;
+    const until = state.say.until;
+    const t = setTimeout(() => dispatch({ type: 'endSay', until }), Math.max(0, until - Date.now()));
+    return () => clearTimeout(t);
+  }, [state.say]);
   useEffect(() => {
     if (!state.sting) return;
     const until = state.sting.until;

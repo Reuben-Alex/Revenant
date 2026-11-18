@@ -16,12 +16,14 @@ These tasks add the Gravekeeper, the three puzzles, quiet years and the verdict.
 - [x] 1.3 Property tests (fast-check) for Properties 1–7, plus published examples (2025 margin 2; the 2024 Gravekeeper's guess 3; 2026 quiet)
   - **Validates: Requirements 1.2, 2.2–2.4, 3.1, 3.3, 4.3, 4.5, 5.2, 5.3, 7.2–7.5**
 
-- [ ] 2. Narrator
-- [ ] 2.1 `useNarrator` (current line, replace, expiry timer) and `Gravekeeper.tsx` (the board's panel, typewriter, hairline, live region, reduced motion)
+- [x] 2. Narrator
+- [x] 2.1 `useNarrator` (current line, replace, expiry timer) and `Gravekeeper.tsx` (the board's panel, typewriter, hairline, live region, reduced motion)
+  - Done as `say`/`endSay` in the `useGraveyard` reducer rather than a separate hook, so a rising and its line change in one step.
   - _Requirements: 1.1–1.4, 8.4_
-- [ ] 2.2 Triggers: night arrival, season start, first thaw, risings (with marks), lantern lit
+- [x] 2.2 Triggers: night arrival, season start, first thaw, risings (with marks), lantern lit
+  - The first-thaw line waits for silence (it had cut off the night line on day 1). The season intro compares with the last scene, so StrictMode's repeated mount effect stays silent.
   - _Requirements: 2.1–2.5_
-- [ ] 2.3 **Checkpoint:** narrator screenshots (night line, a beat line); link for the user
+- [x] 2.3 **Checkpoint:** narrator screenshots (night line, a beat line); link for the user
   - _Requirements: 9.1_
 
 - [ ] 3. Read the stones

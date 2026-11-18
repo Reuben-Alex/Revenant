@@ -45,6 +45,8 @@ interface Props {
   /** Spec 05: the camera on a rising's hotspot, and the sting. */
   cam?: Cam | null;
   sting?: StingState | null;
+  /** Spec 06: the Gravekeeper's panel and its live region, outside the camera. */
+  narrator?: ReactNode;
 }
 
 export function MapStack(p: Props) {
@@ -152,6 +154,7 @@ export function MapStack(p: Props) {
       {p.sting && <Sting s={p.sting} />}
       <span role="status" className="rv-sr">{p.sting?.live ?? ''}</span>
 
+      {p.narrator}
       {p.overlays}
 
       <span style={{ position: 'absolute', right: 12, bottom: 10, fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#C9D2D1', background: 'rgba(4,7,6,0.72)', padding: '3px 6px', borderRadius: 3, pointerEvents: 'none', zIndex: 6 }}>{p.credit}</span>

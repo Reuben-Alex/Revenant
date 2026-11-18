@@ -73,5 +73,5 @@ export function Opening({ data, tonight, onNight }: Props) {
     return <Daylight view={view} src={keyframe.src} maskClass={MASK_CLASS.s2024} dusk={phase === 'dusk'} onNightShift={onNightShift} />;
   }
   if (phase === 'title') return <TitleCard staticLine={view.text.titleLine2} />;
-  return <Graveyard data={data} tonight={tonight} focusHeadline={fromNightfall} />;
+  return <Graveyard data={data} tonight={tonight} focusHeadline={fromNightfall} greet={fromNightfall} />;
 }

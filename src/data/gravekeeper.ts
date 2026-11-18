@@ -9,6 +9,7 @@ export const ZOMBIE_FACTOR = 1.4; // method.md: zombie year = risen / n > 1.4 ×
 export const LANTERN_BASE = 130;
 export const LANTERN_STEP = 30;
 export const WHISPER_DAYS = [22, 48, 76] as const;
+export const NIGHT_MS = 9500; // the night greeting stays this long (board night phase, say(…, 9500))
 
 export type Who = 'keeper' | 'whisper';
 export interface Line { text: string; who: Who; start: number; until: number }
@@ -35,9 +36,20 @@ export function introLine(seasons: Record<SeasonKey, SeasonData>, key: SeasonKey
   return copy.intro.compared(s.graves.length, s.year - 1, area(s) < area(p), km2(area(s)), km2(area(p)));
 }
 
-/** The first grave whose melt day is `day` and which doesn't rise that day (Requirement 2.3). */
+/**
+ * The grave to name at the first thaw (Requirement 2.3): of the graves whose snow has left by `day`, still inside
+ * their 50-day window and not yet risen, the one that thawed most recently (published order breaks ties).
+ * The line waits for silence, so it can come a few days after the first melt; naming the latest thaw keeps
+ * "The snow is leaving" true on the day it is said.
+ */
 export function firstThaw(season: SeasonData, day: number): Grave | null {
-  return season.graves.find((g) => g.melt === day && !(g.rise && g.rise.day === day)) ?? null;
+  let best: Grave | null = null;
+  for (const g of season.graves) {
+    if (g.melt < 0 || g.melt > day || day > g.melt + 50) continue;
+    if (g.rise && g.rise.day <= day) continue;
+    if (!best || g.melt > best.melt) best = g;
+  }
+  return best;
 }
 
 export interface RisingInput { ids: string[]; lead: string; days: number[]; beat: 1 | 2 | 3 | null; year: number }

@@ -5,7 +5,7 @@ import seasonsRaw from '../../public/data/seasons.json';
 import * as copy from '../copy/gravekeeper';
 import { fmtDay, km2, lat, word } from './format';
 import {
-  WHISPER_DAYS, ZOMBIE_FACTOR, checkRiddle, clueCard, glitchOn, glitchText, gravekeeperGuess, introLine, lanternRadius, line,
+  WHISPER_DAYS, ZOMBIE_FACTOR, checkRiddle, clueCard, firstThaw, glitchOn, glitchText, gravekeeperGuess, introLine, lanternRadius, line,
   margin, riddleCards, risingLine, verdictView, wagerScore, whisperAt,
 } from './gravekeeper';
 import { parseSeasons } from './load';
@@ -141,6 +141,24 @@ describe('Examples from the published file', () => {
 
   it('names the night: 24 graves of 2023', () => {
     expect(copy.night(s2024.graves.length, 2023)).toContain('twenty-four of them, from the summer of 2023');
+  });
+
+  it('first thaw names a thawed, unrisen grave inside its window, the latest to thaw', () => {
+    for (const s of [s2024, s2025, s2026]) {
+      for (let day = 0; day <= 102; day++) {
+        const g = firstThaw(s, day);
+        if (!g) continue;
+        expect(g.melt).toBeGreaterThanOrEqual(0);
+        expect(g.melt).toBeLessThanOrEqual(day);
+        expect(day - g.melt).toBeLessThanOrEqual(50);
+        expect(g.rise === null || g.rise.day > day).toBe(true);
+        for (const o of s.graves) {
+          const eligible = o.melt >= 0 && o.melt <= day && day - o.melt <= 50 && (o.rise === null || o.rise.day > day);
+          if (eligible) expect(o.melt).toBeLessThanOrEqual(g.melt);
+        }
+      }
+    }
+    expect(firstThaw(s2024, 1)?.id).toBe('G-10');
   });
 
   it('builds the intros from the published sizes; 2025 and 2026 were gentler, by area', () => {

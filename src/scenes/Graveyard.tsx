@@ -1,6 +1,6 @@
 // The night graveyard scene (spec 03). Layout from Main.dc.html L105–490: header, headline band,
 // map + right column, footer. Right column (task 7) and the candle timeline (task 8) follow.
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import * as copy from '../copy/graveyard';
 import {
   H, LANTERN_R, W, cardList, countList, creditLine, crossfade, exhumation, fireCallout, flakeCount, frames, graveCallout,
@@ -20,6 +20,9 @@ import { MapStack } from '../components/MapStack';
 import { Register } from '../components/Register';
 import { currentAudio } from '../audio/context';
 import { playCreak } from '../audio/creak';
+import { Gravekeeper, GravekeeperLive } from '../components/Gravekeeper';
+import * as gk from '../copy/gravekeeper';
+import { NIGHT_MS, introLine, line } from '../data/gravekeeper';
 import { useGraveyard, type RisingEvent, type UIState } from './useGraveyard';
 
 interface Props {
@@ -29,6 +32,8 @@ interface Props {
   focusHeadline?: boolean;
   /** Seam for spec 06 (spec 05 Requirement 6.1). */
   onRising?: (e: RisingEvent) => void;
+  /** Spec 06 Requirement 2.1: the Gravekeeper greets the viewer when the scene opens after nightfall. */
+  greet?: boolean;
 }
 
 /** What time is doing, for the footer sub-label (spec 05 Requirement 9.5). */
@@ -39,8 +44,27 @@ function footerSub(st: UIState): string {
   return copy.footer.playing(st.speed);
 }
 
-export function Graveyard({ data, tonight, focusHeadline = false, onRising }: Props) {
+export function Graveyard({ data, tonight, focusHeadline = false, onRising, greet = false }: Props) {
   const { state: st, act } = useGraveyard({ seasons: data.seasons, onRising });
+
+  // The Gravekeeper speaks at night arrival and at each season's start (spec 06 Requirements 2.1, 2.2).
+  const greeted = useRef(false);
+  useEffect(() => {
+    if (greeted.current || !greet) return;
+    greeted.current = true;
+    act({ type: 'say', line: line(gk.night(data.seasons.s2024.graves.length, data.seasons.s2024.year - 1), Date.now(), NIGHT_MS) });
+  }, [greet, act, data]);
+  // Compare with the last scene seen, not a first-run flag, so StrictMode's repeated mount effect stays silent.
+  const lastScene = useRef(st.scene);
+  useEffect(() => {
+    if (lastScene.current === st.scene) return;
+    lastScene.current = st.scene;
+    if (st.scene !== 'tonight') act({ type: 'say', line: line(introLine(data.seasons, st.scene), Date.now(), 7600) });
+  }, [st.scene, act, data]);
+  const onLantern = useCallback(() => {
+    if (!st.lantern.on) act({ type: 'say', line: line(gk.lanternLit, Date.now(), 4200) });
+    act({ type: 'lantern' });
+  }, [act, st.lantern.on]);
   const scene = st.scene === 'tonight' && !tonight ? 's2024' : st.scene;
   const isT = scene === 'tonight';
   const season = isT ? null : data.seasons[scene];
@@ -102,7 +126,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising }: Pr
       <Header
         tabs={tabList(data, tonight, scene)} onScene={(k) => act({ type: 'scene', scene: k })}
         lanternOn={st.lantern.on} compareOn={st.compare && !isT} compareDisabled={isT} night={st.night}
-        onLantern={() => act({ type: 'lantern' })} onCompare={() => act({ type: 'compare' })} onNight={() => act({ type: 'night' })}
+        onLantern={onLantern} onCompare={() => act({ type: 'compare' })} onNight={() => act({ type: 'night' })}
       />
       <HeadlineBand headline={head.headline} subline={head.subline} glow={head.glow} counts={countList(scene, views, tonight)} focusOnMount={focusHeadline} />
 
@@ -117,6 +141,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising }: Pr
           onLeave={() => st.lantern.on && act({ type: 'lanternMove', x: st.lantern.x, y: st.lantern.y, inside: false })}
           cursor={st.lantern.on ? 'none' : 'default'} overlays={overlays}
           panel={ex && <Exhumation ex={ex} onClose={closeEx} />}
+          narrator={<>{st.say && <Gravekeeper key={st.say.start} say={st.say} raised={st.cam !== null} />}<GravekeeperLive say={st.say} /></>}
         />
         {/* The aside takes the map's height and scrolls inside it (its content would otherwise stretch the row). */}
         <aside aria-label="Graves and parish register" style={{ flex: '1 1 340px', position: 'relative', minHeight: 480, background: '#070C0B' }}>

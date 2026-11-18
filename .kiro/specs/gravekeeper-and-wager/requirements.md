@@ -39,7 +39,7 @@ Out of scope: Tonight's narrator lines and Keep watch (spec 07); Is it chance? (
    - the text, revealed at 26 ms per character with a `▌` cursor;
    - a 2 px progress hairline.
    It sits bottom-left of the map, at 11 % from the bottom while the camera holds and 16 px otherwise.
-2. A line SHALL stay for its own duration: the given ms, or `max(4800, 30·length + 2800)` ms. A new line replaces the current one.
+2. A line SHALL stay for its own duration: the given ms, or `max(4800, 30·length + 2800)` ms. A new line replaces the current one, except the first-thaw line, which waits until no line is showing (Requirement 2.3).
 3. THE panel SHALL be a polite live region. The full line SHALL be announced once, not character by character.
 4. Under reduced motion, THE text SHALL appear whole, with no typewriter, and the eyes and candle SHALL not animate.
 
@@ -51,7 +51,7 @@ Out of scope: Tonight's narrator lines and Keep watch (spec 07); Is it chance? (
    - 2024: "Last autumn I buried {n} of them. The summer of {Y−1} burned more of this country than any I remember.\nMark three, or just watch the snow." The record claim is cited in the copy to Natural Resources Canada ("Canada's record-breaking wildfires in 2023": about 15 Mha, more than double the 1989 record) and to Jain et al. 2024, Nature Communications 15, "Drivers and impacts of the record-breaking 2023 wildfire season in Canada".
    - 2025 and 2026: "{n} more, from the fires of {Y−1}." followed by a comparison of the total area of this season's graves with the previous season's, from the published sizes: "A gentler summer: these {n} cover about {km} km², where {Y−2}'s covered {km′}." when smaller, or "A harder summer…" when larger. Then "\nLet us see whether they stay down." The totals are of the graves shown (the 24 largest scars in the region), and the line says so.
    This replaces the board's "Fewer, and smaller": every season has 24 graves, so "fewer" is false.
-3. **First thaw:** on the first day a grave's melt day is reached (and it doesn't rise that day): "The snow is leaving {id}.\nFifty days, now. If it means to rise, it will rise soon." Once per replay.
+3. **First thaw:** on the first played day, once a grave's melt day is reached, on which no other line is showing: "The snow is leaving {id}.\nFifty days, now. If it means to rise, it will rise soon." Once per replay. `{id}` is the grave that thawed most recently, still inside its 50-day window and not yet risen. The line waits for silence so it never cuts off the night or season line (in Spring 2024, G-10 thaws on day 1, while the night line is still being read).
 4. **Risings** (spec 05 `onRising`):
    - beats 1–3 use the board's three lines verbatim, with `{id}`, `{Y−1}` and the "{n} days ago" / "this very day" clause;
    - later risings rotate the board's five `RV_RISE_LINES`, with each grave's own day count;
