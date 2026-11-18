@@ -1,7 +1,9 @@
 // The opening (spec 04): daylight → nightfall → title card → the graveyard. One fixed path with no skip and
 // sound always on (design.md, "Immersion decision"). Board: Main.dc.html nightfall() L676.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { getAudio } from '../audio/context';
+import { playBell } from '../audio/bell';
+import { playBoom } from '../audio/boom';
+import { currentAudio, getAudio } from '../audio/context';
 import { playDrone } from '../audio/drone';
 import { startWind } from '../audio/wind';
 import { TitleCard } from '../components/TitleCard';
@@ -30,7 +32,13 @@ interface Props {
 }
 
 export function Opening({ data, tonight, onNight }: Props) {
-  const { phase, nightfall } = useNightfall({ onNight });
+  // Night arrives with the boom and one bell (spec 05 Requirement 5.4; board nightfall() L684), then any later seam.
+  const arrive = useCallback(() => {
+    playBoom(currentAudio());
+    playBell(currentAudio(), 1);
+    onNight?.();
+  }, [onNight]);
+  const { phase, nightfall } = useNightfall({ onNight: arrive });
   const keyframe = KEYFRAMES.s2024[0]!;
   const view = useMemo(() => daylightView(data.seasons.s2024, keyframe, FRAME_SATELLITE.s2024, data.static), [data, keyframe]);
   const daylit = phase === 'day' || phase === 'dusk';

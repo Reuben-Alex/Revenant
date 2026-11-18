@@ -30,20 +30,20 @@ These tasks add the rising cinematic and its sounds to the spec 03 graveyard. Th
   - **Property 6** the clock waits · **Property 7** the replay restarts cleanly
   - **Validates: Requirements 1.4, 4.1, 4.2, 9.2–9.4**
 
-- [ ] 4. View
+- [x] 4. View
 - [x] 4.1 `CandleTimeline` without the play button; the sub-labels in `copy.footer` (running at a speed, waiting while you look, the spring is over); `scrubStart` / `scrubEnd` on the range input. Spec 03 tests updated to the new footer. Done with task 3: removing the `play` action left the footer's button with nothing to call.
   - _Requirements: 9.1, 9.3, 9.5_
-- [ ] 4.2 `MapStack` camera layer (`.rv-cam`, the board transitions), the cinematic slot inside it, the letterbox outside it, and the lead's small hand hidden while the cinematic is up
+- [x] 4.2 `MapStack` camera layer (`.rv-cam`, the board transitions), the cinematic slot inside it, the letterbox outside it, and the lead's small hand hidden while the cinematic is up
   - _Requirements: 3.2–3.4_
-- [ ] 4.3 `Cinematic.tsx` (underglow, fissures and core, heave, hand, sparks) and `Sting.tsx` (flash keyed by `flashKey`, title, detail, live region); the map shake
+- [x] 4.3 `Cinematic.tsx` (underglow, fissures and core, heave, hand, sparks) and `Sting.tsx` (flash keyed by `flashKey`, title, detail, live region); the map shake
   - _Requirements: 2.1, 2.3, 2.4, 3.4_
-- [ ] 4.4 Creak on exhume; boom and bell on night arrival (`Opening` `onNight`)
+- [x] 4.4 Creak on exhume; boom and bell on night arrival (`Opening` `onNight`)
   - _Requirements: 5.4, 5.5_
-- [ ] 4.5 Reduced-motion CSS: the zoom cuts in and out (no transition), no shake, no sparks; the board's rules for the rest
+- [x] 4.5 Reduced-motion CSS: the zoom cuts in and out (no transition), no shake, no sparks; the board's rules for the rest
   - _Requirements: 7.1, 7.2_
-- [ ] 4.6 Component test (fake timers): the replay runs with no play button; the sting shows G-10 at day 17; the day holds 6 s; `onRising` gets beat 1; opening an exhumation ends the hold and the day waits until it closes
+- [x] 4.6 Component test (fake timers): the replay runs with no play button; the sting shows G-10 at day 17; the day holds 6 s; `onRising` gets beat 1; opening an exhumation ends the hold and the day waits until it closes
   - _Requirements: 1.1, 2.1, 4.1, 4.2, 6.1, 9.1–9.3_
-- [ ] 4.7 **Checkpoint:** link and screenshots of the G-10 rising at 0.3 / 1.5 / 3 s, with normal and with reduced motion, compared with the board values
+- [x] 4.7 **Checkpoint:** link and screenshots of the G-10 rising at 0.3 / 1.5 / 3 s, with normal and with reduced motion, compared with the board values
   - _Requirements: 8.1_
 
 - [ ] 5. Final check

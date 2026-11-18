@@ -9,9 +9,11 @@ interface Props {
   v: GraveView;
   selected: boolean;
   hovered: boolean;
+  /** The cinematic draws its own, larger hand for this grave (board handWrap, L943). */
+  hideHand?: boolean;
 }
 
-export function Tombstone({ v, selected, hovered }: Props) {
+export function Tombstone({ v, selected, hovered, hideHand = false }: Props) {
   const { cx, cy, rx, ry } = v;
   return (
     <svg viewBox="0 0 1060 716" aria-hidden="true" style={SVG}>
@@ -54,7 +56,7 @@ export function Tombstone({ v, selected, hovered }: Props) {
       {(v.risen || v.warm) && (
         <path className="rv-smoke" d={smokePath(rx, ry)} style={{ fill: 'none', stroke: '#E6DFD2', strokeWidth: v.warm ? 2.2 : 3.5, strokeLinecap: 'round' }} />
       )}
-      {v.risen && (
+      {v.risen && !hideHand && (
         <g className="rv-rise">
           <path className="rv-hand" d={handPath(rx, ry, 1)} style={{ fill: 'none', stroke: ACC, strokeWidth: 2.2, strokeLinecap: 'round', strokeLinejoin: 'round' }} />
         </g>

@@ -18,6 +18,8 @@ import { HeadlineBand } from '../components/HeadlineBand';
 import { Legend } from '../components/Legend';
 import { MapStack } from '../components/MapStack';
 import { Register } from '../components/Register';
+import { currentAudio } from '../audio/context';
+import { playCreak } from '../audio/creak';
 import { useGraveyard, type RisingEvent, type UIState } from './useGraveyard';
 
 interface Props {
@@ -54,9 +56,10 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising }: Pr
   const fireSel = season && st.fireSel ? season.fires.find((f) => f.id === st.fireSel) ?? null : null;
   // The board only hides the callout for exhumation and lantern; under the before/after split it showed
   // as a sliver at the divider, so it is hidden there too.
-  const overlayOpen = st.ex !== null || st.lantern.on || (st.compare && !isT);
+  // Spec 05: while the camera holds, the sting carries the news; a callout or tooltip would be scaled 2.4× with the map.
+  const overlayOpen = st.ex !== null || st.lantern.on || (st.compare && !isT) || st.cam !== null;
   const callout = overlayOpen ? null : fireSel ? fireCallout(fireSel, year) : graveCallout(selV, year);
-  const hovV = st.hover && !st.lantern.on ? views.find((v) => v.id === st.hover) : undefined;
+  const hovV = st.hover && !st.lantern.on && !st.cam ? views.find((v) => v.id === st.hover) : undefined;
   const tip = hovV ? tooltipFor(hovV, scene, year) : null;
 
   const comparing = st.compare && !isT;
@@ -66,6 +69,8 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising }: Pr
   const exV = st.ex ? views.find((v) => v.id === st.ex) : undefined;
   const ex = exV ? exhumation(exV, scene, st.day, year, tonight, data.meta.proximity_km) : null;
   const closeEx = useCallback(() => act({ type: 'exhume', id: null }), [act]);
+  // Opening a stone creaks (spec 05 Requirement 5.5; board playCreak on grave click and card pick).
+  const openEx = useCallback((id: string) => { playCreak(currentAudio()); act({ type: 'exhume', id }); }, [act]);
 
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!st.lantern.on) return;
@@ -106,7 +111,8 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising }: Pr
           frames={fr} weights={shownWeights} night={st.night} maskClass={MASK_CLASS[scene]} graves={views} fires={fires}
           fireSel={st.fireSel} clusters={isT ? tonight!.clusters : []} selected={st.selected} hover={st.hover}
           callout={callout} tip={tip} flakes={flakeCount(scene, st.day)} credit={creditLine(scene, st.day, tonight, year)}
-          onGrave={(id) => act({ type: 'exhume', id })} onFire={(id) => act({ type: 'selectFire', id })} onHover={(id) => act({ type: 'hover', id })}
+          cam={isT ? null : st.cam} sting={isT ? null : st.sting}
+          onGrave={openEx} onFire={(id) => act({ type: 'selectFire', id })} onHover={(id) => act({ type: 'hover', id })}
           onFocusGrave={onFocusGrave} onMove={onMove}
           onLeave={() => st.lantern.on && act({ type: 'lanternMove', x: st.lantern.x, y: st.lantern.y, inside: false })}
           cursor={st.lantern.on ? 'none' : 'default'} overlays={overlays}
@@ -121,7 +127,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising }: Pr
             <span style={{ fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 13, color: '#A3ADA8' }}>{isT ? copy.list.tonightSub : copy.list.sub(year)}</span>
           </div>
           {cardList(scene, views, year).map((c) => (
-            <GraveCard key={c.id} c={c} selected={st.selected === c.id} onPick={() => act({ type: 'exhume', id: c.id })} />
+            <GraveCard key={c.id} c={c} selected={st.selected === c.id} onPick={() => openEx(c.id)} />
           ))}
           <Legend {...legendItems(scene, data, tonight, year)} />
           </div>

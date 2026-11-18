@@ -107,3 +107,11 @@
   .rv-sunset{display:none}
   .rv-intro{animation:none}
 }
+
+/* Spec 05 Requirement 7: under reduced motion the camera still zooms onto the hotspot (user decision), but cuts in
+   and out instead of gliding. Sparks loop, so they go. The board's rules above already stop the shake, flash,
+   sting, letterbox slide, underglow, fissures, heave and hand burst, and show them in their final state. */
+@media (prefers-reduced-motion: reduce){
+  .rv-cam{transition:none !important}
+  .rv-spark{display:none}
+}

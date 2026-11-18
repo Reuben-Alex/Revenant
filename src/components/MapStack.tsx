@@ -1,5 +1,6 @@
 // The map (Main.dc.html L146–342): keyframes, grade, scar mask, fog, border, candles, tombstones,
-// snowfall, grain/vignette, callout, hit targets, tooltip, credit chip.
+// snowfall, grain/vignette, callout, hit targets, tooltip, credit chip. Spec 05: the content layer is the board's
+// camera (L147–261); the cinematic sits inside it, the letterbox and sting outside it.
 import type { ReactNode } from 'react';
 import * as copy from '../copy/graveyard';
 import type { CalloutView, GraveView } from '../data/derive';
@@ -7,7 +8,11 @@ import { H, W } from '../data/derive';
 import { fireFlame, fireTriangle } from '../data/geometry';
 import type { Keyframe } from '../data/imagery';
 import type { NewFire } from '../data/types';
+import { cameraTransform } from '../data/rising';
+import type { Cam, Sting as StingState } from '../scenes/useGraveyard';
 import { Callout, Tooltip } from './Callout';
+import { Cinematic, Letterbox } from './Cinematic';
+import { Sting } from './Sting';
 import { Tombstone } from './Tombstone';
 
 const SVG: React.CSSProperties = { position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' };
@@ -37,16 +42,27 @@ interface Props {
   cursor?: string;
   overlays?: ReactNode;
   panel?: ReactNode;
+  /** Spec 05: the camera on a rising's hotspot, and the sting. */
+  cam?: Cam | null;
+  sting?: StingState | null;
 }
 
 export function MapStack(p: Props) {
   const grade = p.night ? 'brightness(0.62) saturate(0.75) contrast(1.15)' : 'none';
+  const cam = p.cam ?? null;
+  const t = cam ? cameraTransform(cam.x, cam.y) : null;
+  // Board camStyle (L1255): ease in over 1.15 s, back out over 1.5 s. Reduced motion cuts instead (motion.css .rv-cam).
+  const camStyle: React.CSSProperties = {
+    position: 'absolute', inset: 0, transformOrigin: '0 0', willChange: 'transform',
+    transform: t ? `translate(${t.tx.toFixed(2)}%, ${t.ty.toFixed(2)}%) scale(${t.scale})` : 'translate(0%, 0%) scale(1)',
+    transition: `transform ${cam ? '1.15s cubic-bezier(.6,.05,.25,1)' : '1.5s cubic-bezier(.45,0,.2,1)'}`,
+  };
   return (
-    <div onMouseMove={p.onMove} onMouseLeave={p.onLeave}
+    <div onMouseMove={p.onMove} onMouseLeave={p.onLeave} className={p.sting ? 'rv-shake' : undefined}
       // alignSelf keeps the 1060:716 box: if the row stretched it, the images would distort while the
       // SVG layers (viewBox, letterboxed) would not, and graves would drift off their scars.
       style={{ flex: '999 1 560px', minWidth: 0, alignSelf: 'flex-start', position: 'relative', aspectRatio: '1060 / 716', overflow: 'hidden', borderRight: '1px solid #172120', background: '#060A09', cursor: p.cursor ?? 'default' }}>
-      <div style={{ position: 'absolute', inset: 0 }}>
+      <div className="rv-cam" style={camStyle}>
         {p.frames.map((f, i) => (
           <img key={f.src} className="rv-img" src={f.src} alt="" style={{ filter: grade, opacity: +(p.weights[i] ?? 0).toFixed(3) }} />
         ))}
@@ -89,8 +105,10 @@ export function MapStack(p: Props) {
         </svg>
 
         {p.graves.map((v) => (
-          <Tombstone key={v.id} v={v} selected={p.selected === v.id} hovered={p.hover === v.id} />
+          <Tombstone key={v.id} v={v} selected={p.selected === v.id} hovered={p.hover === v.id} hideHand={cam?.id === v.id} />
         ))}
+
+        {cam && <Cinematic key={`${cam.id}-${cam.until}`} x={cam.x} y={cam.y} />}
 
         <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
           {Array.from({ length: p.flakes }, (_, i) => {
@@ -129,6 +147,10 @@ export function MapStack(p: Props) {
 
         {p.tip && <Tooltip {...p.tip} />}
       </div>
+
+      {cam && <Letterbox key={`lb-${cam.until}`} />}
+      {p.sting && <Sting s={p.sting} />}
+      <span role="status" className="rv-sr">{p.sting?.live ?? ''}</span>
 
       {p.overlays}
 
