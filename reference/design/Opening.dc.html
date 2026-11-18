@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Revenant · opening frame</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&amp;family=IM+Fell+English+SC&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#05080A}
+a{color:#7FE0CF}a:hover{color:#B8F0E6}
+@keyframes rv-fall{0%{transform:translateY(-40px)}100%{transform:translateY(1120px)}}
+.rv-flake{animation:rv-fall linear infinite}
+@keyframes rv-ember{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(-160px);opacity:0}}
+.rv-ember{animation:rv-ember 3.6s ease-out infinite}
+@keyframes rv-breathe{0%,100%{opacity:.55}50%{opacity:1}}
+.rv-breathe{animation:rv-breathe 3.4s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.rv-flake,.rv-ember,.rv-breathe{animation:none}}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1080px; position: relative; overflow: hidden; background: #05080A; color: #ECE6D6; font-family: 'IM Fell English', Georgia, serif">
+
+  <div aria-hidden="true" style="position: absolute; left: 1420px; top: 110px; width: 120px; height: 120px; border-radius: 60px; background: #D8DFDD; opacity: 0.85; box-shadow: 0 0 120px 40px rgba(170,190,195,0.18)"></div>
+  <div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 600px; bottom: 0; background: linear-gradient(180deg, #11181A 0%, #0B1012 100%)"></div>
+  <div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 596px; height: 8px; background: #1E2729; opacity: 0.8"></div>
+
+  <sc-for list="{{tombs}}" as="t" hint-placeholder-count="24">
+    <div aria-hidden="true" style="{{t.style}}"></div>
+  </sc-for>
+
+  <div aria-hidden="true" class="rv-breathe" style="position: absolute; left: 880px; top: 880px; width: 260px; height: 120px; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,107,44,0.55), rgba(255,107,44,0))"></div>
+  <div aria-hidden="true" style="position: absolute; left: 960px; top: 830px; width: 96px; height: 130px; border-radius: 48px 48px 6px 6px; background: #0F1416; border: 2px solid #3A4446; border-top: 6px solid #DCE4E3; box-sizing: border-box; transform: rotate(-9deg)"></div>
+  <svg aria-hidden="true" width="300" height="80" viewBox="0 0 300 80" style="position: absolute; left: 860px; top: 950px"><path d="M20 40 L70 30 L100 46 L150 26 L190 44 L240 32 L280 42" style="fill: none; stroke: {{accent}}; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"></path><path d="M100 46 L112 66 M190 44 L198 62" style="fill: none; stroke: {{accent}}; stroke-width: 2; stroke-linecap: round"></path></svg>
+  <div aria-hidden="true" class="rv-ember" style="position: absolute; left: 990px; top: 940px; width: 5px; height: 5px; border-radius: 3px; background: {{accent}}"></div>
+  <div aria-hidden="true" class="rv-ember" style="position: absolute; left: 1030px; top: 950px; width: 4px; height: 4px; border-radius: 2px; background: #FFB86B; animation-delay: 1.2s"></div>
+  <div aria-hidden="true" class="rv-ember" style="position: absolute; left: 1010px; top: 945px; width: 6px; height: 6px; border-radius: 3px; background: {{accent}}; animation-delay: 2.4s"></div>
+
+  <sc-for list="{{flakes}}" as="f" hint-placeholder-count="70">
+    <div aria-hidden="true" class="rv-flake" style="{{f.style}}"></div>
+  </sc-for>
+
+  <div style="position: absolute; left: 0; right: 0; top: 220px; display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center">
+    <h1 style="margin: 0; font-family: 'IM Fell English SC', Georgia, serif; font-weight: 400; font-size: 200px; letter-spacing: 28px; line-height: 1; padding-left: 28px; color: #ECE6D6">Revenant</h1>
+    <p style="margin: 0; font-style: italic; font-size: 44px; color: #C7CFCB">Every winter, some wildfires don't die. They wait under the snow.</p>
+  </div>
+
+  <span style="position: absolute; left: 72px; bottom: 56px; font-family: 'JetBrains Mono', monospace; font-size: 20px; letter-spacing: 4px; color: #8E9994">KIROWEEN 2026 · COSTUME CONTEST</span>
+  <span style="position: absolute; right: 72px; bottom: 56px; font-family: 'JetBrains Mono', monospace; font-size: 18px; color: #75817C">NASA VIIRS · GIBS · REAL 2024–2026 DATA</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#FF6B2C","options":["#FF6B2C","#E8452C","#FF9A3C"]},"snow":{"editor":"range","min":0,"max":120,"step":10,"default":70},"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#FF6B2C';
+    const snowCount = this.props.snow ?? 70;
+    const rows = [
+      { y: 640, w: 26, h: 36, n: 11, x0: 140, gap: 150, stroke: '#20292B', cap: 3 },
+      { y: 760, w: 44, h: 60, n: 8, x0: 90, gap: 230, stroke: '#2C3537', cap: 4 },
+      { y: 950, w: 80, h: 110, n: 5, x0: 40, gap: 420, stroke: '#384244', cap: 6 }
+    ];
+    const tombs = [];
+    rows.forEach((r, ri) => {
+      for (let i = 0; i < r.n; i++) {
+        const x = r.x0 + i * r.gap + ((i * 37 + ri * 53) % 40) - 20;
+        if (ri === 2 && x > 820 && x < 1160) continue;
+        const tilt = ((i * 29 + ri * 17) % 9) - 4;
+        tombs.push({
+          style: 'position: absolute; left: ' + x + 'px; top: ' + (r.y - r.h) + 'px; width: ' + r.w + 'px; height: ' + r.h + 'px; border-radius: ' + (r.w / 2) + 'px ' + (r.w / 2) + 'px 4px 4px; background: #0D1214; border: 1.5px solid ' + r.stroke + '; border-top: ' + r.cap + 'px solid #C9D2D1; box-sizing: border-box; transform: rotate(' + tilt + 'deg)'
+        });
+      }
+    });
+    const flakes = [];
+    for (let i = 0; i < snowCount; i++) {
+      const x = (i * 271) % 1920;
+      const size = 2 + (i % 3);
+      const dur = 9 + (i % 7) * 1.7;
+      const delay = -((i * 1.37) % dur);
+      flakes.push({
+        style: 'position: absolute; left: ' + x + 'px; top: 0; width: ' + size + 'px; height: ' + size + 'px; border-radius: ' + size + 'px; background: #DCE4E3; opacity: ' + (0.25 + (i % 4) * 0.12) + '; animation-duration: ' + dur + 's; animation-delay: ' + delay.toFixed(2) + 's'
+      });
+    }
+    return { accent, tombs, flakes };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Revenant · field crew</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&amp;family=IM+Fell+English+SC&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#070B0A}
+a{color:#7FE0CF}a:hover{color:#B8F0E6}
+@keyframes rv-pulse{0%{opacity:.8;transform:scale(.7)}70%{opacity:0;transform:scale(1.3)}100%{opacity:0}}
+.rv-pulse{animation:rv-pulse 2.6s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@media (prefers-reduced-motion: reduce){.rv-pulse{animation:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #070B0A; color: #ECE6D6; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 22px 20px 10px">
+    <span style="font-family: 'IM Fell English SC', Georgia, serif; font-size: 22px; letter-spacing: 3px">Revenant</span>
+    <span style="border: 1px solid #3E6F67; color: #7FE0CF; padding: 3px 7px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px">VIIRS · 2024</span>
+  </header>
+
+  <section style="padding: 6px 20px 14px; display: flex; flex-direction: column; gap: 4px">
+    <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px; color: {{accent}}">APR 19, 2024 · NE BC PATROL</span>
+    <h1 style="margin: 0; font-family: 'IM Fell English', Georgia, serif; font-weight: 400; font-size: 30px; line-height: 1.1">Two graves have risen on your patrol route.</h1>
+  </section>
+
+  <div style="position: relative; margin: 0 20px; height: 250px; border-radius: 14px; overflow: hidden; border: 1px solid #22302C; background: #090E0D">
+    <svg viewBox="0 0 350 250" role="img" aria-label="Patrol map: your position, risen graves G-03 and G-20, and waking grave G-23 nearby" style="width: 100%; height: 100%; display: block">
+      <g style="fill: none; stroke: #141E1C; stroke-width: 1">
+        <path d="M0 40 C80 20 180 70 350 34"></path>
+        <path d="M0 110 C90 80 200 140 350 100"></path>
+        <path d="M0 180 C100 150 220 210 350 170"></path>
+      </g>
+      <path d="M60 210 C110 170 160 160 205 120 S270 70 300 58" style="fill: none; stroke: #4D5A55; stroke-width: 1.5; stroke-dasharray: 5 5"></path>
+      <path d="M248 40 C262 28 292 34 298 50 C304 66 284 76 268 74 C250 74 240 56 248 40 Z" style="fill: #2A170D; stroke: {{accent}}; stroke-opacity: 0.55"></path>
+      <circle class="rv-pulse" cx="274" cy="54" r="24" style="fill: none; stroke: {{accent}}; stroke-width: 1.5"></circle>
+      <g style="fill: none; stroke: {{accent}}; stroke-width: 2; stroke-linecap: round"><path d="M264 62 H284 M269 62 V56 H279 V62 M270 56 V49 M273 56 V46 M276 56 V47 M279 56 V51"></path></g>
+      <path d="M150 120 C162 108 188 114 192 128 C196 142 178 150 164 148 C148 148 142 132 150 120 Z" style="fill: #2A170D; stroke: {{accent}}; stroke-opacity: 0.55"></path>
+      <circle class="rv-pulse" cx="172" cy="132" r="24" style="fill: none; stroke: {{accent}}; stroke-width: 1.5; animation-delay: 1.2s"></circle>
+      <g style="fill: none; stroke: {{accent}}; stroke-width: 2; stroke-linecap: round"><path d="M162 140 H182 M167 140 V134 H177 V140 M168 134 V127 M171 134 V124 M174 134 V125 M177 134 V129"></path></g>
+      <circle cx="96" cy="78" r="30" style="fill: #7FE0CF; fill-opacity: 0.15; stroke: #7FE0CF; stroke-opacity: 0.5"></circle>
+      <path d="M90 86 V76 A6 6 0 0 1 102 76 V86 Z" style="fill: #10201D; stroke: #7FE0CF; stroke-width: 1.3"></path>
+      <circle cx="60" cy="210" r="16" style="fill: #ECE6D6; fill-opacity: 0.12"></circle>
+      <circle cx="60" cy="210" r="6" style="fill: #ECE6D6; stroke: #070B0A; stroke-width: 2"></circle>
+      <text x="74" y="230" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: #A3ADA8">YOU</text>
+      <text x="292" y="92" style="font-family: 'IM Fell English SC', Georgia, serif; font-size: 13px; fill: #ECE6D6" text-anchor="end">G-20</text>
+      <text x="200" y="168" style="font-family: 'IM Fell English SC', Georgia, serif; font-size: 13px; fill: #ECE6D6">G-03</text>
+      <text x="66" y="40" style="font-family: 'IM Fell English SC', Georgia, serif; font-size: 13px; fill: #7FE0CF">G-23</text>
+    </svg>
+  </div>
+
+  <article style="margin: 14px 20px 0; border: 1px solid {{accent}}; border-radius: 56px 56px 12px 12px; padding: 22px 20px 18px; background: #140F0C; display: flex; flex-direction: column; gap: 8px">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 3px; color: {{accent}}">RISEN · NEAREST</span>
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3ADA8">57.29°N 122.42°W</span>
+    </div>
+    <span style="font-family: 'IM Fell English SC', Georgia, serif; font-size: 26px">Grave G-03</span>
+    <span style="font-size: 13.5px; color: #C7CFCB; line-height: 1.45">Heat on its 2023 scar, 11 days after the snow left. A late snowfall had just melted.</span>
+    <div style="display: flex; gap: 10px; margin-top: 6px">
+      <a href="#navigate" style="flex: 1; display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 8px; background: #ECE6D6; color: #070B0A; font-weight: 600; font-size: 14px; text-decoration: none">Navigate</a>
+      <a href="#report" style="flex: 1; display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 8px; border: 1px solid #4D5A55; color: #ECE6D6; font-weight: 500; font-size: 14px; text-decoration: none">Report what you find</a>
+    </div>
+  </article>
+
+  <section style="margin: 14px 20px 0; display: flex; flex-direction: column; gap: 8px" aria-label="Quick report">
+    <span style="font-family: 'IM Fell English', Georgia, serif; font-style: italic; font-size: 14px; color: #A3ADA8">At the grave, what did you see?</span>
+    <div style="display: flex; gap: 8px">
+      <button type="button" style="flex: 1; min-height: 44px; border-radius: 22px; border: 1px solid {{accent}}; background: transparent; color: #ECE6D6; font: 500 13px Inter, sans-serif">Smoke</button>
+      <button type="button" style="flex: 1; min-height: 44px; border-radius: 22px; border: 1px solid #3A4A45; background: transparent; color: #ECE6D6; font: 500 13px Inter, sans-serif">Ground heat</button>
+      <button type="button" style="flex: 1; min-height: 44px; border-radius: 22px; border: 1px solid #3A4A45; background: transparent; color: #ECE6D6; font: 500 13px Inter, sans-serif">Nothing</button>
+    </div>
+  </section>
+
+  <nav aria-label="Main" style="margin-top: auto; display: flex; justify-content: space-around; border-top: 1px solid #1A2422; padding: 8px 10px 22px; background: #080D0C">
+    <a href="#map" style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 64px; min-height: 48px; justify-content: center; color: #ECE6D6; text-decoration: none; font-size: 11px">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5 L7 3 L13 5 L18 3 V15 L13 17 L7 15 L2 17 Z M7 3 V15 M13 5 V17" style="fill: none; stroke: #ECE6D6; stroke-width: 1.4; stroke-linejoin: round"></path></svg>Map</a>
+    <a href="#graves" style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 64px; min-height: 48px; justify-content: center; color: #A3ADA8; text-decoration: none; font-size: 11px">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 18 V8 A6 6 0 0 1 16 8 V18 Z M10 6 V12 M7.5 8.5 H12.5" style="fill: none; stroke: #A3ADA8; stroke-width: 1.4"></path></svg>Graves</a>
+    <a href="#alerts" style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 64px; min-height: 48px; justify-content: center; color: #A3ADA8; text-decoration: none; font-size: 11px">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 14 V9 A5 5 0 0 1 15 9 V14 L17 16 H3 Z M8 18 H12" style="fill: none; stroke: #A3ADA8; stroke-width: 1.4; stroke-linejoin: round"></path></svg>Alerts</a>
+    <a href="#reports" style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 64px; min-height: 48px; justify-content: center; color: #A3ADA8; text-decoration: none; font-size: 11px">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2 H12 L16 6 V18 H5 Z M8 10 H13 M8 13 H13" style="fill: none; stroke: #A3ADA8; stroke-width: 1.4; stroke-linejoin: round"></path></svg>Reports</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#FF6B2C","options":["#FF6B2C","#E8452C","#FF9A3C"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#FF6B2C' };
+  }
+}
+</script>
+</body>
+</html>

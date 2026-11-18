@@ -1,9 +1,14 @@
 {
   "version": "v1",
-  "hooks": [{
-    "name": "Keep the Kiro log",
-    "description": "Builds the 'how we used Kiro' writeup as we go.",
-    "trigger": "Stop",
-    "action": { "type": "agent", "prompt": "Append to docs/KIRO_LOG.md (create if missing) a dated entry of at most 3 lines: what changed this turn, which Kiro feature drove it (spec task, hook, steering, MCP, skill), and anything worth showing in the demo." }
-  }]
+  "hooks": [
+    {
+      "name": "kiro-log",
+      "trigger": "Stop",
+      "description": "Append a timestamped line of changed files to docs/KIRO_LOG.raw.md after each turn (no credits).",
+      "action": {
+        "type": "command",
+        "command": "node scripts/kiro-log.mjs"
+      }
+    }
+  ]
 }
