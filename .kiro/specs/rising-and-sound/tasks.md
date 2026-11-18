@@ -46,8 +46,8 @@ These tasks add the rising cinematic and its sounds to the spec 03 graveyard. Th
 - [x] 4.7 **Checkpoint:** link and screenshots of the G-10 rising at 0.3 / 1.5 / 3 s, with normal and with reduced motion, compared with the board values
   - _Requirements: 8.1_
 
-- [ ] 5. Final check
-- [ ] 5.1 `npm run check` and `npm run gate` green; a flash-rate check at 2× on Spring 2024 days 27–34; a `docs/KIRO_LOG.md` entry; commit
+- [x] 5. Final check
+- [x] 5.1 `npm run check` and `npm run gate` green; a flash-rate check at 2× on Spring 2024 days 27–34; a `docs/KIRO_LOG.md` entry; commit
   - _Requirements: 2.4, 8.2_
 
 ## Task Dependency Graph

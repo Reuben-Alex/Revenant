@@ -41,3 +41,19 @@ Feeds the "how Kiro was used" write-up. Newest entries last.
   - The checkpoint frames showed the night fonts loading only after the reveal, so the title card first appeared in Georgia. The opening now loads them during daylight.
   - The scale bar was 2 px long because of its border width. It now measures exactly 60 km at the map's width.
 - **Reduced motion:** nightfall keeps its full timing as a plain fade to black, and the title card holds without animation. Playwright confirmed no filter, sunset or marker sink runs.
+## 2026-11-18
+- **Spec 05 rising-and-sound done** (Kiro spec, 5 tasks). When the replay reaches a grave's published rise day:
+  - the map shakes and flashes, and a sting names the grave, the date and its own days since snowmelt;
+  - the camera zooms 2.4× onto the real hotspot, with a letterbox, underglow, fissures, a heave ring, a burning hand and sparks;
+  - a boom and crackle play, and a bell tolls once for each grave risen so far, up to 5.
+
+  The first three risings hold the replay for 6 s, and later ones for 3 s. Other sounds: a creak when a grave opens, and the boom and one bell when night falls. 78 Vitest tests pass, including 7 fast-check properties.
+- **User decisions:**
+  - The replay runs by itself, with no play/pause button. It waits while the viewer opens a grave, the lantern or before/after, or drags the candle.
+  - Reduced motion keeps the zoom, as an instant cut instead of a glide.
+  - The WCAG 2.2.2 trade-off (no pause control) is noted in the spec, like always-on sound in spec 04.
+- **Board error found:** when several graves rose on the same day, the board printed the first grave's day count for all of them. On Spring 2024 day 30 that would say G-24 rose 0 days after its snow left; the published figure is 26. Each grave now carries its own count.
+- **Seizure safety:** at 2× speed, Spring 2024 has risings on consecutive days, 325 ms apart. The flash and boom are limited to once a second (WCAG 2.3.1). Property 5 checks this. A browser run at 2× from day 26 measured a shortest gap of 4.8 s, and day 33's rising (400 ms after day 32) updated the text without flashing.
+- **Caught by checks:**
+  - Planted bugs (the board's shared day count, and a zoom that ignores 2× speed) failed 3 tests.
+  - A timer test exposed that a 1× day takes 700 ms, not 650, because of the 100 ms tick. The board has the same rounding, so it was kept and documented.
