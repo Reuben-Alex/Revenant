@@ -7,7 +7,7 @@ import seasonsRaw from '../../public/data/seasons.json';
 import tonightRaw from '../../public/data/tonight.json';
 import { PERIOD_MS } from '../data/derive';
 import { parseSeasons, parseTonight } from '../data/load';
-import { clueCard, firstThaw } from '../data/gravekeeper';
+import { clueCard, firstThaw, riddleCards, riddleHint } from '../data/gravekeeper';
 import { HOLD_BEAT_MS } from '../data/rising';
 import { Graveyard } from './Graveyard';
 
@@ -113,7 +113,39 @@ it('the wager holds day 0; marks, clues and the seal; the thaw waits for silence
     expect(day()).toBe(17);
     expect(screen.getByText(/waits while you look/)).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: /Close exhumation/i }));
+    // Then the riddle on G-10 (spec 06 Req 5): it holds the clock, takes focus, and gives it back on Let it lie.
+    const dialog = screen.getByRole('dialog', { name: 'Why did G-10 rise?' });
+    expect(dialog.contains(document.activeElement)).toBe(true);
+    tick(3 * DAY_MS);
+    expect(day()).toBe(17);
+    fireEvent.click(screen.getByRole('button', { name: 'Let it lie' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement?.getAttribute('aria-label')).toMatch(/^Grave G-10/);
     tick(DAY_MS);
     expect(day()).toBe(18);
+  });
+
+  it('the riddle: a wrong Dig gives the hint and keeps the choice; the right three open the exhumation (spec 06 Req 5)', () => {
+    render(<Graveyard data={DATA} tonight={TONIGHT} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Just watch' }));
+    tick(17 * DAY_MS);
+    tick(HOLD_BEAT_MS);
+    expect(screen.getByRole('dialog', { name: 'Why did G-10 rise?' })).toBeTruthy();
+    const cards = riddleCards(2024, DATA.meta.proximity_km);
+    expect(screen.getAllByRole('button', { pressed: false }).filter((b) => cards.some((c) => c.text === b.textContent)).map((b) => b.textContent))
+      .toEqual(cards.map((c) => c.text));
+    const pick = (text: string) => fireEvent.click(screen.getByRole('button', { name: text }));
+    const decoy = cards.find((c) => !c.truth)!;
+    const truths = cards.filter((c) => c.truth);
+    pick(decoy.text); pick(truths[0]!.text); pick(truths[1]!.text);
+    fireEvent.click(screen.getByRole('button', { name: 'Dig' }));
+    expect(screen.getByText(riddleHint(2024))).toBeTruthy();
+    expect(screen.getByRole('button', { name: decoy.text }).getAttribute('aria-pressed')).toBe('true');
+    pick(decoy.text); pick(truths[2]!.text);
+    fireEvent.click(screen.getByRole('button', { name: 'Dig' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.getByRole('button', { name: /Close exhumation/i })).toBeTruthy();
+    const live = screen.getAllByRole('status').map((e) => e.textContent ?? '').join(' | ');
+    expect(live).toContain('The Gravekeeper: Yes. All three, on G-10.');
   });
 });

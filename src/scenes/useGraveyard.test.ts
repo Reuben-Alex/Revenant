@@ -57,6 +57,30 @@ describe('graveyard state', () => {
     expect(reducer(sealed, { type: 'scene', scene: 'tonight' }).wager.open).toBe(false);
   });
 
+  it('the riddle: pending at beat 1, opens when the view clears, checks three, solves once (spec 06 Req 5)', () => {
+    const plan = planRising({ season: DATA.seasons.s2024, from: 16, to: 17, played: true, beatsSoFar: 0, speed: '1', lantern: false, compare: false, now: 1000, lastFlash: -Infinity })!;
+    const watched = reducer(initialState(), { type: 'watch' });
+    let s = reducer({ ...watched, day: 17 }, { type: 'rising', plan, sting: stingView(plan, 2024), now: 1000 });
+    expect(s.riddle).toEqual({ id: 'G-10', picked: [], hint: null, open: false, done: false });
+    expect(clockMayAdvance({ ...s, cam: null }, 0)).toBe(true); // pending does not hold the clock by itself
+    s = reducer(s, { type: 'endCam', until: s.cam!.until });
+    expect(s.riddle?.open).toBe(true);
+    expect(clockMayAdvance(s, 0)).toBe(false);
+    for (const key of ['t0', 'd']) s = reducer(s, { type: 'riddlePick', key });
+    expect(reducer(s, { type: 'riddleDig' }).riddle?.hint).toBe('three');
+    s = reducer(s, { type: 'riddlePick', key: 't1' });
+    s = reducer(s, { type: 'riddlePick', key: 't2' }); // a fourth pick is refused
+    expect(s.riddle?.picked).toEqual(['t0', 'd', 't1']);
+    s = reducer(s, { type: 'riddleDig' });
+    expect([s.riddle?.hint, s.riddle?.open, s.riddle?.picked]).toEqual(['decoy', true, ['t0', 'd', 't1']]);
+    s = reducer(reducer(s, { type: 'riddlePick', key: 'd' }), { type: 'riddlePick', key: 't2' });
+    s = reducer(s, { type: 'riddleDig' });
+    expect([s.riddle?.open, s.riddle?.done, s.ex, s.selected]).toEqual([false, true, 'G-10', 'G-10']);
+    // A later beat 1 in the same replay does not ask again; a new replay does.
+    expect(reducer({ ...s, ex: null }, { type: 'rising', plan, sting: stingView(plan, 2024), now: 2000 }).riddle?.done).toBe(true);
+    expect(reducer(s, { type: 'scene', scene: 's2024' }).riddle).toBeNull();
+  });
+
   it('scrubbing clamps to the season', () => {
     expect(reducer(initialState(), { type: 'day', day: 250 }).day).toBe(102);
     expect(reducer(initialState(), { type: 'day', day: -3 }).day).toBe(0);
@@ -144,6 +168,11 @@ describe('useGraveyard clock and risings (fake timers)', () => {
     advanceDays(20);
     expect(result.current.state.day).toBe(17);
     act(() => result.current.act({ type: 'exhume', id: null }));
+    // The riddle on G-10 was waiting for the view to clear (spec 06 Req 5.1); the clock waits while it is open.
+    expect(result.current.state.riddle).toMatchObject({ id: 'G-10', open: true });
+    advanceDays(3);
+    expect(result.current.state.day).toBe(17);
+    act(() => result.current.act({ type: 'riddleLeave' }));
     advanceDays(1);
     expect(result.current.state.day).toBe(18);
   });

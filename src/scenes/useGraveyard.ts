@@ -10,13 +10,19 @@ import { playBoom } from '../audio/boom';
 import { currentAudio } from '../audio/context';
 import { PERIOD_MS, type Speed } from '../data/derive';
 import * as gk from '../copy/gravekeeper';
-import { firstThaw, line, risingLine, type Line } from '../data/gravekeeper';
+import { checkRiddle, firstThaw, line, risingLine, type Line } from '../data/gravekeeper';
 import { planRising, stingView, type RisingPlan, type StingView } from '../data/rising';
 import type { SceneKey, SeasonData, SeasonKey } from '../data/types';
 
 export interface Cam { id: string; x: number; y: number; until: number }
 /** Spec 06 Requirement 4: the viewer's three marks, whether they were sealed, and whether the wager is still open. */
 export interface Wager { marks: string[]; sealed: boolean; open: boolean }
+/**
+ * Spec 06 Requirement 5: the riddle on the first beat's grave. It is pending from beat 1 until nothing else holds the
+ * view (camera, exhumation, lantern, before/after, wager), then open until it is solved or let lie (done).
+ * `hint` says why the last Dig failed: the decoy was chosen, or fewer than three were.
+ */
+export interface Riddle { id: string; picked: string[]; hint: 'decoy' | 'three' | null; open: boolean; done: boolean }
 export interface Sting extends StingView { until: number; flashKey: number }
 
 export interface UIState {
@@ -48,6 +54,7 @@ export interface UIState {
   say: Line | null;
   woke: boolean;
   rot: number;
+  riddle: Riddle | null;
 }
 
 export type Action =
@@ -75,7 +82,10 @@ export type Action =
   | { type: 'say'; line: Line }
   | { type: 'endSay'; until: number }
   | { type: 'woke' }
-  | { type: 'rot' };
+  | { type: 'rot' }
+  | { type: 'riddlePick'; key: string }
+  | { type: 'riddleDig' }
+  | { type: 'riddleLeave' };
 
 const SCENES: SceneKey[] = ['s2024', 's2025', 's2026', 'tonight'];
 
@@ -102,24 +112,36 @@ export function initialState(start: Start = DEFAULT_START): UIState {
     speed: '1', night: true, lantern: { on: false, x: 530, y: 358, inside: false },
     compare: false, split: 50, ex: null, hover: null, fireSel: null,
     cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null,
-    say: null, woke: false, rot: 0,
+    say: null, woke: false, rot: 0, riddle: null,
   };
 }
 
 /** Requirement 9.3 and 4.1: the clock moves only when nothing asks it to wait. */
 export function clockMayAdvance(s: UIState, now: number): boolean {
   return s.running && s.startGate && s.scene !== 'tonight' && s.ex === null && !s.lantern.on && !s.compare && !s.dragging
-    && !(s.cam !== null && now < s.cam.until);
+    && !(s.cam !== null && now < s.cam.until) && !s.riddle?.open;
+}
+
+/** A pending riddle opens as soon as nothing else holds the view (design.md, State). */
+function settle(s: UIState): UIState {
+  const r = s.riddle;
+  if (!r || r.open || r.done) return s;
+  if (s.cam !== null || s.ex !== null || s.lantern.on || s.compare || s.wager.open || s.scene === 'tonight') return s;
+  return { ...s, riddle: { ...r, open: true } };
 }
 
 export function reducer(s: UIState, a: Action): UIState {
+  return settle(step(s, a));
+}
+
+function step(s: UIState, a: Action): UIState {
   switch (a.type) {
     case 'scene':
       // Choosing any season (the same one too) restarts its replay from day 0 (Requirements 1.4, 9.2, 9.4).
       return withWager({
         ...s, scene: a.scene, day: 0, running: a.scene !== 'tonight', selected: 'G-01', ex: null, fireSel: null, hover: null,
         compare: a.scene === 'tonight' ? false : s.compare,
-        cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null, woke: false,
+        cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null, woke: false, riddle: null,
       }, freshWager(a.scene, 0));
     case 'day': {
       const day = Math.max(0, Math.min(102, a.day));
@@ -181,8 +203,28 @@ export function reducer(s: UIState, a: Action): UIState {
         sting: { ...a.sting, until: plan.stingUntil, flashKey },
         beats: s.beats + (plan.beat ? 1 : 0),
         lastFlash: plan.flash ? now : s.lastFlash,
+        // Once per replay, on the first beat's lead grave (Requirement 5.1, 5.4).
+        riddle: plan.beat === 1 && s.riddle === null
+          ? { id: plan.lead.id, picked: [], hint: null, open: false, done: false } : s.riddle,
       };
     }
+    case 'riddlePick': {
+      const r = s.riddle;
+      if (!r?.open) return s;
+      const has = r.picked.includes(a.key);
+      if (!has && r.picked.length >= 3) return s;
+      return { ...s, riddle: { ...r, picked: has ? r.picked.filter((k) => k !== a.key) : [...r.picked, a.key] } };
+    }
+    case 'riddleDig': {
+      // Requirement 5.3: right opens the grave's exhumation; wrong keeps the choice and gives a hint. No limit.
+      const r = s.riddle;
+      if (!r?.open) return s;
+      if (r.picked.length < 3) return { ...s, riddle: { ...r, hint: 'three' } };
+      if (!checkRiddle(r.picked)) return { ...s, riddle: { ...r, hint: 'decoy' } };
+      return { ...s, riddle: { ...r, hint: null, open: false, done: true }, ex: r.id, selected: r.id, fireSel: null, cam: null };
+    }
+    case 'riddleLeave':
+      return s.riddle?.open ? { ...s, riddle: { ...s.riddle, open: false, done: true } } : s;
     case 'endCam':
       return s.cam && s.cam.until === a.until ? { ...s, cam: null } : s;
     case 'endSting':

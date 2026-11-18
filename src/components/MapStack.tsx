@@ -149,7 +149,7 @@ export function MapStack(p: Props) {
         {p.graves.map((v) => {
           const marked = !!p.marks?.includes(v.id);
           return (
-          <button key={v.id} type="button" className="rv-hit"
+          <button key={v.id} type="button" className="rv-hit" data-grave={v.id}
             aria-label={p.wagerOpen ? gk.wager.markAria(v.id, marked) : copy.map.graveAria(v.id, v.label)}
             aria-pressed={p.wagerOpen ? marked : p.selected === v.id}
             onClick={() => p.onGrave(v.id)} onMouseEnter={() => p.onHover(v.id)} onMouseLeave={() => p.onHover(null)}

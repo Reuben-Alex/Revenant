@@ -60,7 +60,7 @@ flowchart LR
   - `open` is true at day 0 of each replay and drives `startGate = !open`.
   - `seal` sets `sealed` and closes the wager. `watch` closes it with no marks.
   - A scrub past day 0 while `open` counts as `watch`.
-- `riddle: { id, picked: string[], hint: string | null, done: boolean } | null`.
+- `riddle: { id, picked: string[], hint: 'decoy' | 'three' | null, open: boolean, done: boolean } | null`.
   - It opens after beat 1, when the beat's camera hold ends.
   - `clockMayAdvance` also needs `riddle === null`.
   - It is solved once per replay: `done` survives until the replay restarts.

@@ -33,10 +33,11 @@ These tasks add the Gravekeeper, the three puzzles, quiet years and the verdict.
 - [x] 3.2 **Checkpoint:** wager with a clue card and three marks
   - _Requirements: 9.1_
 
-- [ ] 4. The Gravekeeper's riddle
-- [ ] 4.1 `Riddle.tsx`: dialog after beat 1, four toggle cards, Dig / Let it lie, hint, the exhumation on success; the clock waits
+- [x] 4. The Gravekeeper's riddle
+- [x] 4.1 `Riddle.tsx`: dialog after beat 1, four toggle cards, Dig / Let it lie, hint, the exhumation on success; the clock waits
+  - The riddle state has an `open` flag besides `done`: it is pending from beat 1 and opens once no camera, exhumation, lantern, before/after or wager holds the view. Dig with fewer than three says "Choose three."; Escape lets it lie. Focus goes back to where it was, or to the grave's stone when nothing had focus.
   - _Requirements: 5.1–5.5, 8.1, 8.2_
-- [ ] 4.2 **Checkpoint:** riddle screenshots (open, wrong pick with hint, solved)
+- [x] 4.2 **Checkpoint:** riddle screenshots (open, wrong pick with hint, solved)
   - _Requirements: 9.1_
 
 - [ ] 5. Lantern hunt

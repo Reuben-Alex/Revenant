@@ -24,7 +24,8 @@ import { playCreak } from '../audio/creak';
 import { Gravekeeper, GravekeeperLive } from '../components/Gravekeeper';
 import * as gk from '../copy/gravekeeper';
 import { ClueCard, Wager } from '../components/Wager';
-import { NIGHT_MS, clueCard, introLine, lanternRadius, line } from '../data/gravekeeper';
+import { Riddle } from '../components/Riddle';
+import { NIGHT_MS, checkRiddle, clueCard, introLine, lanternRadius, line, riddleCards, riddleHint } from '../data/gravekeeper';
 import { useGraveyard, type RisingEvent, type UIState } from './useGraveyard';
 
 interface Props {
@@ -43,7 +44,7 @@ function footerSub(st: UIState): string {
   if (!st.running) return copy.footer.over;
   if (!st.startGate) return copy.footer.wager;
   if (st.cam) return copy.footer.rising;
-  if (st.ex !== null || st.lantern.on || st.compare || st.dragging) return copy.footer.waiting;
+  if (st.ex !== null || st.lantern.on || st.compare || st.dragging || st.riddle?.open) return copy.footer.waiting;
   return copy.footer.playing(st.speed);
 }
 
@@ -123,6 +124,19 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
     if (season) act({ type: 'say', line: line(introLine(data.seasons, season.key).split('\n')[0]!, Date.now(), 6000) });
   }, [act, data, season]);
 
+  // Spec 06 Requirement 5: the riddle after the first beat. The cards are fixed by the season year.
+  const cards = riddleCards(year, data.meta.proximity_km);
+  const rd = st.riddle;
+  const riddleHintText = rd?.hint === 'three' ? gk.riddle.chooseThree : rd?.hint === 'decoy' ? riddleHint(year) : null;
+  const onDig = useCallback(() => {
+    if (!rd?.open) return;
+    if (rd.picked.length === 3 && checkRiddle(rd.picked)) {
+      playCreak(currentAudio());
+      act({ type: 'say', line: line(gk.riddle.solved(rd.id), Date.now()) });
+    }
+    act({ type: 'riddleDig' });
+  }, [act, rd]);
+
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!st.lantern.on) return;
     const r = e.currentTarget.getBoundingClientRect();
@@ -186,6 +200,11 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           </div>
         </aside>
       </div>
+
+      {rd?.open && !isT && (
+        <Riddle id={rd.id} cards={cards} picked={rd.picked} hint={riddleHintText}
+          onPick={(key) => act({ type: 'riddlePick', key })} onDig={onDig} onLeave={() => act({ type: 'riddleLeave' })} />
+      )}
 
       {/* overflowX clip: the flame's 140 px glow is centred on the playhead and would widen the page at Jul 1 */}
       <footer style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18, padding: '14px 28px 18px', borderTop: '1px solid #172120', boxSizing: 'border-box', background: 'linear-gradient(180deg, #080C0B, #040605)', overflowX: 'clip' }}>
