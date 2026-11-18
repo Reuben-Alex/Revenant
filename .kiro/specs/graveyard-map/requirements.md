@@ -136,6 +136,9 @@ Daylight and nightfall (04), the rising cinematic and sound (05), narrator, wage
 
 ### Requirement 12: Candle timeline and replay
 **User Story:** As a viewer, I want to play the spring like a burning candle, so that time feels like it is running out.
+
+> **Amended by spec 05 (user decision, 2026-11-18):** there is no play/pause button. The replay runs by itself and waits while a grave, the lantern or before/after is open. See `rising-and-sound` Requirement 9, which supersedes criteria 1 and 2 below where they differ.
+
 #### Acceptance Criteria
 1. THE footer SHALL show a 50 px play/pause button, ½× 1× 2× speed buttons, the date ("{Mon d}, {Y}") and a sub-label for the state of play.
 2. WHILE playing, THE day SHALL advance by 1 every 1300 / 650 / 325 ms for ½× / 1× / 2×, stopping at day 102. Pressing play at day 102 restarts from day 0.

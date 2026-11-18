@@ -26,7 +26,8 @@ The board is the visual spec, and no board script is pasted in (AGENTS.md). Ever
 | `this.state.sound` gate on every sound | No Sound button (spec 04 immersion decision) | Sounds use `currentAudio()`. They are silent until the Night shift click creates the context, then always on |
 | Sting flash restarts on every rising | At 2× speed, Spring 2024 has risings on days 30, 31, 32 and 33, i.e. 325 ms apart: about 3 flashes a second | A rising within 1 s of the last flash updates the text only (Requirement 2.4). The boom is limited the same way |
 | Scrubbing plays a boom per crossed rising | Dragging across April would fire a boom on every input event | Same 1 s limit |
-| Reduced motion: `.rv-shake`, `.rv-flash`, `.rv-lbt/lbb` animations off, but the camera `transition` still zooms | The camera move is the largest motion on the page | No camera transform and no letterbox under reduced motion. The cinematic draws still on the unzoomed map |
+| Reduced motion: `.rv-shake`, `.rv-flash`, `.rv-lbt/lbb` animations off, but the camera `transition` still glides | The glide is the largest motion on the page; the user wants the close-up kept | The zoom stays, as an instant cut (`transition: none`). The letterbox appears at once. No shake or sparks |
+| Play/pause button (`togglePlay`, L1329) | User decision: the replay should feel like a story, not a player | No button. The replay starts by itself and waits while the viewer looks closer (Requirement 9). Amends spec 03 Requirement 12 |
 | Reduced motion: `.rv-heave{animation:none;opacity:1}` | The heave's final keyframe is invisible, so the rule shows its first frame | Kept (a still ring at the hotspot), which reads as "here" |
 | The camera stays on while the exhumation opens | The panel sits on a zoomed map | Opening an exhumation ends the hold (Requirement 4.2) |
 | `rvFissures`, `rvHand`, `rvClamp` | Board helpers | `fissuresPath()` in `src/data/geometry.ts`. `handPath(x, y, k)` exists from spec 03. `clamp()` is in `format.ts` |
@@ -90,10 +91,15 @@ interface RisingPlan {
   - `rising` applies a plan: it sets `cam`, `sting` and `selected`, increments `beats` on a beat, and sets `lastFlash` when the plan flashes.
   - `endCam` and `endSting` clear the camera and the sting.
 - **Ending the hold:**
-  - `play` (pause), `scene`, `day` (scrub), `lantern`, `compare` and `exhume` with an id all clear `cam`.
-  - `scene` also resets `beats`, `sting` and `lastFlash`.
-  - `play` from day 102 resets `beats`.
-- **Clock:** the interval skips `advance` while `cam && Date.now() < cam.until`.
+  - `scene`, `day` (scrub), `lantern`, `compare` and `exhume` with an id all clear `cam`.
+  - `scene` also resets `beats`, `sting` and `lastFlash`, sets `day: 0` and `running: true` (Tonight: `running: false`).
+- **Self-running replay (Requirement 9):**
+  - `playing` becomes `running`: true from the start (`initialState`) and after every `scene` change to a replay season.
+  - The `play` action and the play button are removed. `scrubStart` / `scrubEnd` set a `dragging` flag.
+  - `advance` at day 102 stops `running`. A `day` action (scrub) sets `running: day < 102`.
+  - Choosing the current season again dispatches `scene` and restarts from day 0, which also resets `beats`.
+  - `startGate: boolean` (default `true` = open) is the spec 06 wager seam. The clock doesn't run while it is closed.
+- **Clock:** the interval skips `advance` when `!running`, `!startGate`, `ex !== null`, `lantern.on`, `compare`, `dragging`, or `cam && Date.now() < cam.until`. One pure `clockMayAdvance(state, now)` holds this rule, so it can be tested.
 - **Timers:** one timeout per `cam.until` and per `sting.until` dispatches `endCam` / `endSting`.
 - **Detection hook:** the existing day-change effect, the spec 03 `onRiseCrossed` seam, now builds the plan. It knows whether the step was played: `advance` sets a `lastStep: 'play' | 'scrub'` field. It then dispatches `rising`, plays the boom when `flash` is true and the bell when `bells > 0`, and calls `onRising`.
 
@@ -102,8 +108,9 @@ interface RisingPlan {
 - **`Sting`:** renders outside the camera layer, inside the map box. It has `key = flashKey`, so the flash and the CSS animation restart only on a new flash. The title and detail update in place.
 - **Live region:** one visually hidden `role="status"` span in the map box, with the sentence "{title}. {date}, day {d} after snowmelt."
 - **Reduced motion (CSS):**
-  - `@media (prefers-reduced-motion: reduce) { .rv-cam { transform: none !important; transition: none } .rv-lbt, .rv-lbb, .rv-spark { display: none } }`.
+  - `@media (prefers-reduced-motion: reduce) { .rv-cam { transition: none !important } .rv-spark { display: none } }`. The zoom stays and cuts in and out. The board's rules already show the letterbox bars without sliding (`rv-lbt/lbb` with `animation: none`).
   - The board's existing rules already stop `rv-shake`, `rv-flash`, `rv-sting`, `rv-underglow`, `rv-fissure`, `rv-heave` and `rv-burst`, and show them in their final state.
+- **Footer:** `CandleTimeline` loses the play button. The sub-label comes from `copy.footer`: running at {speed}, waiting while you look, or the spring is over. The range input fires `scrubStart` on pointer down and key down, and `scrubEnd` on pointer up, key up and blur.
 
 ## Sound
 - **Boom, bell and creak:** use `currentAudio()` (spec 04 `context.ts`) and never create a context.
@@ -129,7 +136,13 @@ Generators: seasons of 1–24 graves, with melt in −1..102 and rise = 0 or `[d
 - **Property 3: the camera never shows the map's edge.** For any `x` in 0..1060 and `y` in 0..716, `cameraTransform` gives `tx, ty` in [−140, 0] %. The point lands at the frame centre unless clamped. When clamped, it lies inside the visible frame: `0 ≤ tx + 2.4·x/1060·100 ≤ 100`, and the same for y. **Validates: Requirement 3.2**
 - **Property 4: bells are bounded.** `bells` is 0 without a camera. Otherwise it is in 1..5 and equals `min(5, rises up to day to)`. **Validates: Requirement 5.3**
 - **Property 5: no more than one flash per second.** For any sequence of plans applied in time order, consecutive flashes are at least 1000 ms apart, and so are booms. **Validates: Requirements 2.4, 5.2**
-- **Property 6: the clock holds.** For any state with `cam.until > now`, `advance` driven by the clock doesn't change `day`. **Validates: Requirement 4.1**
+- **Property 6: the clock waits.** For any state, `clockMayAdvance(state, now)` is true iff:
+  - the replay is running, the start gate is open and the season is not Tonight;
+  - no exhumation, lantern, before/after or drag is active;
+  - no camera holds past `now`.
+
+  **Validates: Requirements 4.1, 9.2, 9.3**
+- **Property 7: the replay restarts cleanly.** After `scene` to any replay season, from any state: `day = 0`, `running = true`, `beats = 0`, `cam = null` and `sting = null`. **Validates: Requirements 1.4, 9.2, 9.4**
 
 Example tests:
 - the first Spring 2024 plan from the published file is G-10 on day 17 (Apr 7), 16 days after melt, beat 1, bell 1;
@@ -139,11 +152,12 @@ Example tests:
 
 ## Testing
 - **Vitest + fast-check:** `src/data/rising.test.ts` (Properties 1–5 and the examples), `src/scenes/useGraveyard.test.ts` (Property 6 and the hold-ending actions) and `src/audio/sounds.test.ts`.
-- **@testing-library/react, fake timers:** play Spring 2024 at 1× until day 17. Check that:
+- **@testing-library/react, fake timers:** open the graveyard. Check that:
+  - it runs by itself with no play button, at 1×, reaching day 17;
   - the sting shows "G-10 has risen";
   - the day stays at 17 for 6 s, then moves on;
   - `onRising` gets `beat: 1`;
-  - pausing ends the hold.
+  - opening an exhumation ends the hold and the day waits until the panel closes.
 - **Playwright checkpoint:** see Requirement 8.
 
 ## Error handling

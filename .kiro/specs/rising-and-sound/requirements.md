@@ -16,6 +16,8 @@ When the replay reaches a grave's published rise day:
 
 The first three risings of a replay are story beats that hold the clock for 6 s. Later risings hold for 3 s.
 
+The replay runs by itself (user decision, 2026-11-18). There is no play/pause button. Time starts when night arrives or a season is chosen. It waits while the viewer looks closer, and the viewer steers it by dragging the candle or changing speed (Requirement 9). This amends spec 03 Requirement 12.
+
 Every rising is a published result: the grave, its rise day, its rise point and its melt day come from `public/data/seasons.json` (honesty.md). The UI doesn't re-implement the rule.
 
 Sound is always on, with no Sound button (spec 04 immersion decision). The shared AudioContext only exists after the Night shift click, so nothing plays before that gesture.
@@ -40,7 +42,7 @@ Out of scope:
 1. WHEN the replay moves forward from `from` to `to` (by play or scrub), THE App SHALL find the graves of the current season whose published `rise.day` is in `(from, to]`. IF there are any, THEN THAT is a rising, with the first in published order as the lead.
 2. Moving backward, Tonight and seasons without risings SHALL never produce a rising.
 3. A rising reached by playing allows a beat and the camera. A rising reached by scrubbing gets the sting and the boom only (board `checkRise(from, v, false)`).
-4. THE beat count SHALL reset when the season changes and when play restarts from day 102. It SHALL NOT reset on scrubbing.
+4. THE beat count SHALL reset when the season changes and when the replay restarts from day 0 (Requirement 9.4). It SHALL NOT reset on scrubbing.
 
 ### Requirement 2: Sting
 **User Story:** As a viewer, I want a rising announced, so that I don't miss it.
@@ -76,7 +78,7 @@ Out of scope:
 **User Story:** As a viewer, I want the replay to wait while a grave rises, so that I can watch it.
 #### Acceptance Criteria
 1. WHILE the camera holds, THE replay clock SHALL NOT advance. It continues when the hold ends.
-2. Pausing, switching season, scrubbing, opening the lantern or before/after, or opening an exhumation SHALL end the hold, and the camera SHALL return.
+2. Switching season, scrubbing, opening the lantern or before/after, or opening an exhumation SHALL end the hold, and the camera SHALL return.
 3. THE lead SHALL become the selected grave (board `selected: g.id`).
 
 ### Requirement 5: Sounds
@@ -101,14 +103,34 @@ Out of scope:
 **User Story:** As a viewer who gets motion-sick, I want the risings without the camera moves.
 #### Acceptance Criteria
 1. WHEN `prefers-reduced-motion: reduce` is set:
-   - the camera SHALL NOT zoom or pan, and there SHALL be no letterbox and no shake;
-   - the cinematic SHALL show in its final, still state at the rise point on the unzoomed map: underglow, fissures, heave ring and hand, with no sparks;
+   - THE camera SHALL still zoom 2.4× onto the hotspot (user decision, 2026-11-18), but as an instant cut with no glide in or out;
+   - the letterbox SHALL appear and disappear at once, without sliding;
+   - there SHALL be no shake and no sparks;
+   - the cinematic SHALL show in its final, still state: underglow, fissures, heave ring and hand;
    - the flash SHALL show as a still glow for the 4.5 s of the sting, and the sting text SHALL appear without movement.
-   This is the board's reduced-motion rule set, plus the camera, which the board left moving.
-2. THE hold, the selection, the sting text and the sounds SHALL be the same as with motion.
+   This is the board's reduced-motion rule set, with the camera's glide replaced by a cut. The board left the glide on.
+2. THE hold, the zoom, the selection, the sting text and the sounds SHALL be the same as with motion.
 
 ### Requirement 8: Fidelity and checks
 **User Story:** As the designer, I want to see a rising next to the board before moving on.
 #### Acceptance Criteria
-1. AFTER the cinematic is built, THE team SHALL give the user the local link and Playwright screenshots of the first Spring 2024 rising (G-10, Apr 7) at 0.3, 1.5 and 3 s, with normal and with reduced motion. They SHALL be checked against the board's values; differences over 4 px SHALL be fixed or reported.
+1. AFTER the cinematic is built, THE team SHALL give the user the local link and Playwright screenshots of the first Spring 2024 rising (G-10, Apr 7) at 0.3, 1.5 and 3 s, with normal and with reduced motion (the reduced-motion shots show the cut-in zoom). They SHALL be checked against the board's values; differences over 4 px SHALL be fixed or reported.
 2. `npm run check` and `npm run gate` SHALL pass.
+
+### Requirement 9: The replay runs by itself
+**User Story:** As a viewer, I want the spring to unfold on its own, so that I stay inside the story instead of operating a player.
+#### Acceptance Criteria
+1. THE footer SHALL have no play/pause button. It keeps the ½× / 1× / 2× speed buttons, the date and sub-label, and the candle timeline (spec 03 Requirement 12.3–12.5).
+2. THE replay SHALL start by itself at day 0:
+   - when the graveyard opens after nightfall;
+   - when a replay season is chosen from a tab or the Parish Register.
+   It advances at the chosen speed (1300 / 650 / 325 ms per day) and stops at day 102. Tonight has no replay.
+3. THE replay SHALL wait, and resume when the viewer is done:
+   - while an exhumation panel is open;
+   - while the lantern or before/after is on;
+   - while the timeline is being dragged;
+   - during a rising's hold (Requirement 4).
+4. AT day 102 the replay SHALL stay on the last day. Dragging the candle back starts it again from that day. Choosing the same season again restarts it from day 0. Spec 06 adds the verdict and "Dig them up again" here.
+5. THE sub-label SHALL say what time is doing, from `src/copy/`: running at a speed, waiting while the viewer looks, or the spring is over.
+6. Spec 06 may hold the replay at day 0 for the wager through a `startGate` seam. The default is no gate.
+7. Caveat for the write-up: WCAG 2.2.2 (Pause, Stop, Hide) asks for a way to pause motion that starts by itself and lasts more than 5 s. Here the replay waits whenever the viewer opens anything, and the candle can be dragged to any day. Like always-on sound, this is a deliberate costume choice.
