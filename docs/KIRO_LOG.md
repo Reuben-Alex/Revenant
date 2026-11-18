@@ -24,3 +24,20 @@ Feeds the "how Kiro was used" write-up. Newest entries last.
   - **Contrast:** a probe flagged "Here lies" on the grave cards at 3.9:1 against the card's lightest stop, so it was raised to `--ash-3`.
   - **Reduced motion:** Playwright with `reducedMotion: 'reduce'` found no running `rv-*` animation and every one-shot element in its final state.
   - **Overflow:** the screenshots showed the flame glow widening the page by 42 px on Jul 1, so the footer now clips it.
+- **Spec 04 daylight-nightfall done** (Kiro spec, 6 tasks). The app opens as "Boreal Fire Watch", a plain agency viewer of Mar 21, 2024. "Night shift" drains the colour for 3.2 s, shows a 6 s title card, then opens the graveyard. 52 Vitest tests pass, including fast-check properties for the daylight numbers and the phase machine.
+- **Immersion decision (user):** the opening is one fixed path. Nothing skips it, and sound is always on.
+  - There is no sound toggle and no Sound button.
+  - Escape and clicks do nothing during nightfall.
+  - `?intro=0`, `?season=` and `?day=` work only on the dev server. The production build was served and tested with all three: each opened in daylight. The bundle contains no URL-reading code.
+  - The browser tab says "Boreal Fire Watch" until the title card, so it doesn't give away the reveal.
+- **Honesty:** the board's daylight claims the data can't back were replaced:
+  - "Live · updated 12 min ago" became "Spring 2024 archive".
+  - "Active hotspots 0" became "Re-ignited burn areas" (graves with a published rise by day 0).
+  - "Fire season has not begun" became "Snow still covers 20 of last year's 24 burn areas".
+  - The snow average is the opening-week mean over valid days (80%), instead of the board's 5-day maximum counting missing areas as zero (91%).
+  - The title card reads "ignoring 591 static heat sources" (`seasons.static`), not "320 gas flares".
+- **Caught by checks:**
+  - Planted bugs (the "12 min ago" chip, and an average that counts missing areas as zero) were caught by the property tests.
+  - The checkpoint frames showed the night fonts loading only after the reveal, so the title card first appeared in Georgia. The opening now loads them during daylight.
+  - The scale bar was 2 px long because of its border width. It now measures exactly 60 km at the map's width.
+- **Reduced motion:** nightfall keeps its full timing as a plain fade to black, and the title card holds without animation. Playwright confirmed no filter, sunset or marker sink runs.

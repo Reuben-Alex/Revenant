@@ -48,10 +48,10 @@ These tasks add the daylight viewer, nightfall and the title card in front of th
 - [x] 5.5 **Checkpoint:** nightfall frames at 0 / 1.6 / 6.2 / 9.2 s with normal and with reduced motion; link for the user
   - _Requirements: 10.2_
 
-- [ ] 6. Final check
-- [ ] 6.1 Keyboard and contrast pass on the daylight view and title card; reduced-motion pass with Playwright; build check that `dist` has no dev-only parameter reads
+- [x] 6. Final check
+- [x] 6.1 Keyboard and contrast pass on the daylight view and title card; reduced-motion pass with Playwright; build check that `dist` has no dev-only parameter reads
   - _Requirements: 1.1, 1.2, 8.1–8.4, 9.1, 9.2_
-- [ ] 6.2 **Final checkpoint:** `npm run check` and `npm run gate` green, screenshots, link, a `docs/KIRO_LOG.md` entry, commit
+- [x] 6.2 **Final checkpoint:** `npm run check` and `npm run gate` green, screenshots, link, a `docs/KIRO_LOG.md` entry, commit
   - _Requirements: 10.1, 10.2_
 
 ## Task Dependency Graph

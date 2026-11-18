@@ -52,7 +52,7 @@ export function Daylight({ view, src, maskClass, dusk, onNightShift }: Props) {
             <path d="M7 25 H25" style={{ stroke: '#7FC3E8', strokeWidth: 1.6, strokeLinecap: 'round' }} />
           </svg>
           <span style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <span style={{ fontWeight: 650, fontSize: 16, letterSpacing: -0.2 }}>{copy.brand.name}</span>
+            <h1 style={{ margin: 0, fontWeight: 650, fontSize: 16, lineHeight: 'normal', letterSpacing: -0.2 }}>{copy.brand.name}</h1>
             <span style={{ fontSize: 12, color: GREY }}>{copy.brand.sub}</span>
           </span>
         </div>
