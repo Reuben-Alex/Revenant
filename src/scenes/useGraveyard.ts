@@ -15,6 +15,8 @@ import { planRising, stingView, type RisingPlan, type StingView } from '../data/
 import type { SceneKey, SeasonData, SeasonKey } from '../data/types';
 
 export interface Cam { id: string; x: number; y: number; until: number }
+/** Spec 06 Requirement 4: the viewer's three marks, whether they were sealed, and whether the wager is still open. */
+export interface Wager { marks: string[]; sealed: boolean; open: boolean }
 export interface Sting extends StingView { until: number; flashKey: number }
 
 export interface UIState {
@@ -25,8 +27,9 @@ export interface UIState {
   running: boolean;
   /** The viewer is dragging the candle timeline. */
   dragging: boolean;
-  /** Spec 06 wager seam: the replay waits at day 0 while this is false. */
+  /** Spec 06 wager seam: the replay waits at day 0 while this is false. Always `!wager.open`. */
   startGate: boolean;
+  wager: Wager;
   speed: Speed;
   night: boolean;
   lantern: { on: boolean; x: number; y: number; inside: boolean };
@@ -63,7 +66,9 @@ export type Action =
   | { type: 'exhume'; id: string | null }
   | { type: 'advance' }
   | { type: 'speed'; speed: Speed }
-  | { type: 'gate'; open: boolean }
+  | { type: 'mark'; id: string }
+  | { type: 'seal' }
+  | { type: 'watch' }
   | { type: 'rising'; plan: RisingPlan; sting: StingView; now: number }
   | { type: 'endCam'; until: number }
   | { type: 'endSting'; until: number }
@@ -85,10 +90,15 @@ export function parseStart(search: string): Start {
   return { scene, day: Number.isFinite(d) ? Math.max(0, Math.min(102, Math.round(d))) : 0 };
 }
 
+/** The wager opens at day 0 of each replay season (Requirement 4.1). */
+const freshWager = (scene: SceneKey, day: number): Wager => ({ marks: [], sealed: false, open: scene !== 'tonight' && day === 0 });
+const withWager = (s: UIState, wager: Wager): UIState => ({ ...s, wager, startGate: !wager.open });
+
 export function initialState(start: Start = DEFAULT_START): UIState {
+  const wager = freshWager(start.scene, start.day);
   return {
     scene: start.scene, day: start.day, selected: 'G-01',
-    running: start.scene !== 'tonight' && start.day < 102, dragging: false, startGate: true,
+    running: start.scene !== 'tonight' && start.day < 102, dragging: false, startGate: !wager.open, wager,
     speed: '1', night: true, lantern: { on: false, x: 530, y: 358, inside: false },
     compare: false, split: 50, ex: null, hover: null, fireSel: null,
     cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null,
@@ -106,14 +116,16 @@ export function reducer(s: UIState, a: Action): UIState {
   switch (a.type) {
     case 'scene':
       // Choosing any season (the same one too) restarts its replay from day 0 (Requirements 1.4, 9.2, 9.4).
-      return {
+      return withWager({
         ...s, scene: a.scene, day: 0, running: a.scene !== 'tonight', selected: 'G-01', ex: null, fireSel: null, hover: null,
         compare: a.scene === 'tonight' ? false : s.compare,
         cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null, woke: false,
-      };
+      }, freshWager(a.scene, 0));
     case 'day': {
       const day = Math.max(0, Math.min(102, a.day));
-      return { ...s, day, running: s.scene !== 'tonight' && day < 102, cam: null, lastStep: 'scrub' };
+      const next: UIState = { ...s, day, running: s.scene !== 'tonight' && day < 102, cam: null, lastStep: 'scrub' };
+      // Dragging the candle past day 0 while the wager is open counts as Just watch (Requirement 4.6).
+      return s.wager.open && day > 0 ? withWager(next, { marks: [], sealed: false, open: false }) : next;
     }
     case 'scrubStart':
       return { ...s, dragging: true };
@@ -144,8 +156,21 @@ export function reducer(s: UIState, a: Action): UIState {
     }
     case 'speed':
       return { ...s, speed: a.speed };
-    case 'gate':
-      return { ...s, startGate: a.open };
+    case 'mark': {
+      // Requirement 4.2: mark or unmark, up to three, only while the wager is open.
+      if (!s.wager.open) return s;
+      const has = s.wager.marks.includes(a.id);
+      if (!has && s.wager.marks.length >= 3) return s;
+      const marks = has ? s.wager.marks.filter((m) => m !== a.id) : [...s.wager.marks, a.id];
+      return { ...s, selected: a.id, fireSel: null, wager: { ...s.wager, marks } };
+    }
+    case 'seal':
+      // Requirement 4.4: only with three marks. Board seal() also puts the lantern out.
+      if (!s.wager.open || s.wager.marks.length !== 3) return s;
+      return withWager({ ...s, lantern: { ...s.lantern, on: false } }, { ...s.wager, sealed: true, open: false });
+    case 'watch':
+      if (!s.wager.open) return s;
+      return withWager(s, { marks: [], sealed: false, open: false });
     case 'rising': {
       const { plan, now } = a;
       const flashKey = (s.sting?.flashKey ?? 0) + (plan.flash ? 1 : 0);
@@ -189,8 +214,6 @@ interface Options {
   seasons?: Record<SeasonKey, SeasonData>;
   /** Seam for spec 06: called once per rising. */
   onRising?: (e: RisingEvent) => void;
-  /** Spec 06 wager marks, so a marked grave's rising says Your mark. */
-  marks?: string[];
 }
 
 export function useGraveyard(opts: Options = {}) {
@@ -220,8 +243,6 @@ export function useGraveyard(opts: Options = {}) {
   const prev = useRef(state.day);
   const seasonsRef = useRef(opts.seasons);
   const risingCb = useRef(opts.onRising);
-  const marksRef = useRef<string[]>(opts.marks ?? []);
-  useEffect(() => { marksRef.current = opts.marks ?? []; });
   useEffect(() => { seasonsRef.current = opts.seasons; risingCb.current = opts.onRising; });
   useEffect(() => {
     const from = prev.current;
@@ -244,7 +265,7 @@ export function useGraveyard(opts: Options = {}) {
     if (!plan) return;
     dispatch({ type: 'rising', plan, sting: stingView(plan, season.year), now });
     const ev = { ids: plan.graves.map((g) => g.id), lead: plan.lead.id, days: plan.days, beat: plan.beat, year: season.year };
-    dispatch({ type: 'say', line: line(risingLine(ev, s.rot, marksRef.current), now, plan.beat ? 6400 : undefined) });
+    dispatch({ type: 'say', line: line(risingLine(ev, s.rot, s.wager.sealed ? s.wager.marks : []), now, plan.beat ? 6400 : undefined) });
     if (!plan.beat) dispatch({ type: 'rot' });
     if (plan.flash) playBoom(currentAudio());
     if (plan.bells > 0) playBell(currentAudio(), plan.bells);

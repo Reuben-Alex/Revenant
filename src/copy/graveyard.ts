@@ -157,6 +157,7 @@ export const footer = {
   playing: (speed: '0.5' | '1' | '2') => `The candle burns · ${{ '0.5': '0.75', '1': '1.5', '2': '3' }[speed]} days a second`,
   rising: 'The candle waits while the dead rise',
   waiting: 'The candle waits while you look',
+  wager: 'The candle waits for your wager',
   over: 'The candle is out · drag it back, or choose the spring again',
   tonightDate: (asOf: string) => `${fmtIso(asOf.slice(0, 10))}, ${asOf.slice(0, 4)}`,
   tonightSub: (year: number) => `The scars of ${year}, going under`,

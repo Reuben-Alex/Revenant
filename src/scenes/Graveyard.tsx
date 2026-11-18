@@ -19,10 +19,12 @@ import { Legend } from '../components/Legend';
 import { MapStack } from '../components/MapStack';
 import { Register } from '../components/Register';
 import { currentAudio } from '../audio/context';
+import { playBell } from '../audio/bell';
 import { playCreak } from '../audio/creak';
 import { Gravekeeper, GravekeeperLive } from '../components/Gravekeeper';
 import * as gk from '../copy/gravekeeper';
-import { NIGHT_MS, introLine, line } from '../data/gravekeeper';
+import { ClueCard, Wager } from '../components/Wager';
+import { NIGHT_MS, clueCard, introLine, lanternRadius, line } from '../data/gravekeeper';
 import { useGraveyard, type RisingEvent, type UIState } from './useGraveyard';
 
 interface Props {
@@ -39,8 +41,9 @@ interface Props {
 /** What time is doing, for the footer sub-label (spec 05 Requirement 9.5). */
 function footerSub(st: UIState): string {
   if (!st.running) return copy.footer.over;
+  if (!st.startGate) return copy.footer.wager;
   if (st.cam) return copy.footer.rising;
-  if (st.ex !== null || st.lantern.on || st.compare || st.dragging || !st.startGate) return copy.footer.waiting;
+  if (st.ex !== null || st.lantern.on || st.compare || st.dragging) return copy.footer.waiting;
   return copy.footer.playing(st.speed);
 }
 
@@ -85,6 +88,14 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   const callout = overlayOpen ? null : fireSel ? fireCallout(fireSel, year) : graveCallout(selV, year);
   const hovV = st.hover && !st.lantern.on && !st.cam ? views.find((v) => v.id === st.hover) : undefined;
   const tip = hovV ? tooltipFor(hovV, scene, year) : null;
+  // Spec 06 Requirement 4: the wager at day 0. While it is open a stone marks instead of opening, and the
+  // hover card shows the clues (published values only).
+  const wagerOpen = st.wager.open && !isT;
+  const marks = isT ? [] : st.wager.marks;
+  const clue = wagerOpen && hovV?.grave && tip ? (
+    <ClueCard title={tip.title} clue={clueCard(hovV.grave, year)} marked={marks.includes(hovV.id)} left={tip.left} top={tip.top} />
+  ) : null;
+  const lr = season ? lanternRadius(season, st.wager.marks, st.day, st.wager.sealed) : LANTERN_R;
 
   const comparing = st.compare && !isT;
   const shownWeights = comparing ? fr.map((_, i) => (i === fr.length - 1 ? 1 : 0)) : weights;
@@ -95,6 +106,22 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   const closeEx = useCallback(() => act({ type: 'exhume', id: null }), [act]);
   // Opening a stone creaks (spec 05 Requirement 5.5; board playCreak on grave click and card pick).
   const openEx = useCallback((id: string) => { playCreak(currentAudio()); act({ type: 'exhume', id }); }, [act]);
+  const onStone = useCallback((id: string) => {
+    if (!wagerOpen) { openEx(id); return; }
+    playCreak(currentAudio());
+    act({ type: 'mark', id });
+  }, [act, openEx, wagerOpen]);
+  const onSeal = useCallback(() => {
+    if (st.wager.marks.length !== 3) return;
+    act({ type: 'seal' });
+    act({ type: 'say', line: line(gk.wager.sealed(st.wager.marks), Date.now(), 5000) });
+    playBell(currentAudio(), 1);
+  }, [act, st.wager.marks]);
+  const onWatch = useCallback(() => {
+    act({ type: 'watch' });
+    // Board skip(): the first line of the season's intro.
+    if (season) act({ type: 'say', line: line(introLine(data.seasons, season.key).split('\n')[0]!, Date.now(), 6000) });
+  }, [act, data, season]);
 
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!st.lantern.on) return;
@@ -115,8 +142,8 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           onSplit={(n) => act({ type: 'split', split: n })} />
       )}
       {st.lantern.on && (
-        <Lantern x={st.lantern.x} y={st.lantern.y} r={LANTERN_R} inside={st.lantern.inside} src={fr[topFrame]!.src}
-          names={lanternNames(views, st.lantern.x, st.lantern.y)} />
+        <Lantern x={st.lantern.x} y={st.lantern.y} r={lr} inside={st.lantern.inside} src={fr[topFrame]!.src}
+          names={lanternNames(views, st.lantern.x, st.lantern.y, lr)} />
       )}
     </>
   );
@@ -136,16 +163,17 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           fireSel={st.fireSel} clusters={isT ? tonight!.clusters : []} selected={st.selected} hover={st.hover}
           callout={callout} tip={tip} flakes={flakeCount(scene, st.day)} credit={creditLine(scene, st.day, tonight, year)}
           cam={isT ? null : st.cam} sting={isT ? null : st.sting}
-          onGrave={openEx} onFire={(id) => act({ type: 'selectFire', id })} onHover={(id) => act({ type: 'hover', id })}
+          onGrave={onStone} onFire={(id) => act({ type: 'selectFire', id })} onHover={(id) => act({ type: 'hover', id })}
           onFocusGrave={onFocusGrave} onMove={onMove}
           onLeave={() => st.lantern.on && act({ type: 'lanternMove', x: st.lantern.x, y: st.lantern.y, inside: false })}
-          cursor={st.lantern.on ? 'none' : 'default'} overlays={overlays}
+          cursor={st.lantern.on ? 'none' : 'default'} overlays={overlays} wagerOpen={wagerOpen} marks={marks} clue={clue}
           panel={ex && <Exhumation ex={ex} onClose={closeEx} />}
           narrator={<>{st.say && <Gravekeeper key={st.say.start} say={st.say} raised={st.cam !== null} />}<GravekeeperLive say={st.say} /></>}
         />
         {/* The aside takes the map's height and scrolls inside it (its content would otherwise stretch the row). */}
         <aside aria-label="Graves and parish register" style={{ flex: '1 1 340px', position: 'relative', minHeight: 480, background: '#070C0B' }}>
           <div style={{ position: 'absolute', inset: 0, overflowY: 'auto', boxSizing: 'border-box', padding: '18px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {wagerOpen && <Wager marks={marks} onSeal={onSeal} onWatch={onWatch} />}
           <Register rows={registerRows(data, scene)} note={registerNote(data)} onPick={(k) => act({ type: 'scene', scene: k })} />
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginTop: 4 }}>
             <h2 style={{ margin: 0, fontFamily: 'var(--font-fell-sc)', fontWeight: 400, fontSize: 24, letterSpacing: 1 }}>{isT ? copy.list.tonightTitle : copy.list.title}</h2>

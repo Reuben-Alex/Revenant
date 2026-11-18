@@ -42,6 +42,21 @@ describe('graveyard state', () => {
     expect(reducer(s, { type: 'scene', scene: 'tonight' }).running).toBe(false);
   });
 
+  it('the wager: marks up to three, seals only with three, and a scrub past day 0 counts as Just watch (spec 06 Req 4)', () => {
+    let s = initialState();
+    expect([s.wager.open, s.startGate]).toEqual([true, false]);
+    for (const id of ['G-01', 'G-02', 'G-03', 'G-04']) s = reducer(s, { type: 'mark', id });
+    expect(s.wager.marks).toEqual(['G-01', 'G-02', 'G-03']);
+    expect(reducer(reducer(s, { type: 'mark', id: 'G-02' }), { type: 'seal' }).wager.open).toBe(true); // two marks: no seal
+    const sealed = reducer(s, { type: 'seal' });
+    expect([sealed.wager.sealed, sealed.wager.open, sealed.startGate]).toEqual([true, false, true]);
+    expect(reducer(sealed, { type: 'mark', id: 'G-09' }).wager.marks).toEqual(['G-01', 'G-02', 'G-03']);
+    const scrubbed = reducer(s, { type: 'day', day: 12 });
+    expect([scrubbed.wager.open, scrubbed.wager.sealed, scrubbed.wager.marks, scrubbed.startGate]).toEqual([false, false, [], true]);
+    expect(reducer(sealed, { type: 'scene', scene: 's2025' }).wager).toEqual({ marks: [], sealed: false, open: true });
+    expect(reducer(sealed, { type: 'scene', scene: 'tonight' }).wager.open).toBe(false);
+  });
+
   it('scrubbing clamps to the season', () => {
     expect(reducer(initialState(), { type: 'day', day: 250 }).day).toBe(102);
     expect(reducer(initialState(), { type: 'day', day: -3 }).day).toBe(0);
@@ -104,6 +119,9 @@ describe('useGraveyard clock and risings (fake timers)', () => {
   it('runs by itself, holds 6 s at the first rising (G-10, day 17), then moves on', () => {
     const onRising = vi.fn();
     const { result } = renderHook(() => useGraveyard({ seasons: DATA.seasons, onRising }));
+    advanceDays(5);
+    expect(result.current.state.day).toBe(0); // the wager holds day 0 (spec 06 Req 4.1)
+    act(() => result.current.act({ type: 'watch' }));
     advanceDays(17);
     expect(result.current.state.day).toBe(17);
     expect(result.current.state.cam?.id).toBe('G-10');
@@ -118,6 +136,7 @@ describe('useGraveyard clock and risings (fake timers)', () => {
 
   it('waits while an exhumation is open, and opening it ends the hold', () => {
     const { result } = renderHook(() => useGraveyard({ seasons: DATA.seasons }));
+    act(() => result.current.act({ type: 'watch' }));
     advanceDays(17);
     expect(result.current.state.cam).not.toBeNull();
     act(() => result.current.act({ type: 'exhume', id: 'G-10' }));

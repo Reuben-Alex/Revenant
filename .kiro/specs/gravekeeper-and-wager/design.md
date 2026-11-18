@@ -23,6 +23,7 @@ Pure functions in `src/data/gravekeeper.ts` decide every line, card, score and m
 | Verdict wager line | Compares with blind chance only | Also names the Gravekeeper's own bet (the three largest), so the viewer has a rival |
 | Thin margin | Not shown | Added when 1–2 graves would flip the verdict (method.md: say the 2025 margin) |
 | `RV_RISE_LINES` "{days}" uses the lead's count | The same shared-day error as spec 05's sting | Each line names the lead and the lead's own count |
+| Wager panel at the top centre of the map (580 × 204 px at 1440) | It covers 11 of the 24 Spring 2024 stones, which then can't be read or marked | Same markup and styles at the top of the right column, above the Parish Register (task 3 checkpoint) |
 | Glitch text replaces the live text | Screen readers would read ▓▒░ | Glitch is visual only. The live region and labels keep the true text |
 
 Kept verbatim: the night line (with `{n}` and `{Y−1}` from data), the first-thaw line, the three beat lines, the five later-rising lines, "Your mark…", the lantern line, the four whispers, the four wager verdicts, the verdict lines, "Again, then. Mark three, or just watch.", "Sealed: …\nNow we watch the snow.", "The Gravekeeper's wager", "Seal the wager", "Just watch" and "Dig them up again".

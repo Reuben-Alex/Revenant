@@ -3,6 +3,7 @@
 // camera (L147–261); the cinematic sits inside it, the letterbox and sting outside it.
 import type { ReactNode } from 'react';
 import * as copy from '../copy/graveyard';
+import * as gk from '../copy/gravekeeper';
 import type { CalloutView, GraveView } from '../data/derive';
 import { H, W } from '../data/derive';
 import { fireFlame, fireTriangle } from '../data/geometry';
@@ -47,6 +48,10 @@ interface Props {
   sting?: StingState | null;
   /** Spec 06: the Gravekeeper's panel and its live region, outside the camera. */
   narrator?: ReactNode;
+  /** Spec 06 Requirement 4: while the wager is open, a stone's button marks it; the clue card replaces the tooltip. */
+  wagerOpen?: boolean;
+  marks?: string[];
+  clue?: ReactNode;
 }
 
 export function MapStack(p: Props) {
@@ -108,7 +113,7 @@ export function MapStack(p: Props) {
         </svg>
 
         {p.graves.map((v) => (
-          <Tombstone key={v.id} v={v} selected={p.selected === v.id} hovered={p.hover === v.id} hideHand={cam?.id === v.id} />
+          <Tombstone key={v.id} v={v} selected={p.selected === v.id} hovered={p.hover === v.id} hideHand={cam?.id === v.id} marked={p.marks?.includes(v.id)} />
         ))}
 
         {cam && <Cinematic key={`${cam.id}-${cam.until}`} x={cam.x} y={cam.y} />}
@@ -141,14 +146,19 @@ export function MapStack(p: Props) {
           <button key={f.id} type="button" className="rv-hit" aria-label={copy.map.fireAria(f.id)} aria-pressed={p.fireSel === f.id} onClick={() => p.onFire(f.id)}
             style={{ position: 'absolute', left: pct(f.x, W), top: pct(f.y, H), width: 28, height: 28, margin: '-16px 0 0 -14px', borderRadius: 14, background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} />
         ))}
-        {p.graves.map((v) => (
-          <button key={v.id} type="button" className="rv-hit" aria-label={copy.map.graveAria(v.id, v.label)} aria-pressed={p.selected === v.id}
+        {p.graves.map((v) => {
+          const marked = !!p.marks?.includes(v.id);
+          return (
+          <button key={v.id} type="button" className="rv-hit"
+            aria-label={p.wagerOpen ? gk.wager.markAria(v.id, marked) : copy.map.graveAria(v.id, v.label)}
+            aria-pressed={p.wagerOpen ? marked : p.selected === v.id}
             onClick={() => p.onGrave(v.id)} onMouseEnter={() => p.onHover(v.id)} onMouseLeave={() => p.onHover(null)}
             onFocus={() => { p.onHover(v.id); p.onFocusGrave?.(v.id); }} onBlur={() => p.onHover(null)}
             style={{ position: 'absolute', left: pct(v.cx, W), top: pct(v.cy, H), width: 40, height: 40, margin: '-20px 0 0 -20px', borderRadius: 20, background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} />
-        ))}
+          );
+        })}
 
-        {p.tip && <Tooltip {...p.tip} />}
+        {p.clue ?? (p.tip && <Tooltip {...p.tip} />)}
       </div>
 
       {cam && <Letterbox key={`lb-${cam.until}`} />}

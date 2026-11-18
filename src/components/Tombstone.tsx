@@ -1,5 +1,5 @@
 // One grave on the map (Main.dc.html L179–208; values from renderVals() L898–956).
-import { capPath, cracksPath, crossPath, handPath, smokePath, steamPath, tombPath } from '../data/geometry';
+import { capPath, cracksPath, crossPath, handPath, markBody, markFlame, smokePath, steamPath, tombPath } from '../data/geometry';
 import type { GraveView } from '../data/derive';
 
 const SVG: React.CSSProperties = { position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible' };
@@ -11,9 +11,11 @@ interface Props {
   hovered: boolean;
   /** The cinematic draws its own, larger hand for this grave (board handWrap, L943). */
   hideHand?: boolean;
+  /** Spec 06: the viewer marked this grave in the wager (board markWrap, L190–193). */
+  marked?: boolean;
 }
 
-export function Tombstone({ v, selected, hovered, hideHand = false }: Props) {
+export function Tombstone({ v, selected, hovered, hideHand = false, marked = false }: Props) {
   const { cx, cy, rx, ry } = v;
   return (
     <svg viewBox="0 0 1060 716" aria-hidden="true" style={SVG}>
@@ -40,6 +42,12 @@ export function Tombstone({ v, selected, hovered, hideHand = false }: Props) {
           )}
         </g>
       </g>
+      {marked && (
+        <g className="rv-pick">
+          <path d={markBody(cx, cy)} style={{ fill: '#E9DFC8', stroke: '#6E1E12', strokeWidth: 0.8 }} />
+          <path className="rv-candle" d={markFlame(cx, cy)} style={{ fill: '#FFB86B' }} />
+        </g>
+      )}
       {v.thawing && (
         <>
           <path className="rv-thaw" d={steamPath(cx, cy)} style={{ fill: 'none', stroke: '#DCE8E8', strokeWidth: 2, strokeLinecap: 'round', opacity: 0.8 }} />

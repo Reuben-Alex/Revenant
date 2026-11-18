@@ -7,7 +7,7 @@ import seasonsRaw from '../../public/data/seasons.json';
 import tonightRaw from '../../public/data/tonight.json';
 import { PERIOD_MS } from '../data/derive';
 import { parseSeasons, parseTonight } from '../data/load';
-import { NIGHT_MS, firstThaw } from '../data/gravekeeper';
+import { clueCard, firstThaw } from '../data/gravekeeper';
 import { HOLD_BEAT_MS } from '../data/rising';
 import { Graveyard } from './Graveyard';
 
@@ -27,6 +27,7 @@ describe('Graveyard rising', () => {
     render(<Graveyard data={DATA} tonight={TONIGHT} onRising={onRising} />);
     expect(screen.queryAllByRole('button', { name: /play|pause/i })).toHaveLength(0);
     expect(camLayer().style.transform).toBe('translate(0%, 0%) scale(1)');
+    fireEvent.click(screen.getByRole('button', { name: 'Just watch' }));
 
     tick(17 * DAY_MS);
     expect(day()).toBe(17);
@@ -47,17 +48,38 @@ describe('Graveyard rising', () => {
     expect(document.querySelector('.rv-lbt')).toBeNull();
   });
 
-  it('the Gravekeeper greets the night, names the first thaw, and speaks the first beat (spec 06 Req 1, 2)', () => {
+it('the wager holds day 0; marks, clues and the seal; the thaw waits for silence; "Your mark" at the beat (spec 06 Req 1, 2, 4)', () => {
     // StrictMode, as in main.tsx: the repeated mount effects must not replace the night line with the season intro.
     render(<StrictMode><Graveyard data={DATA} tonight={TONIGHT} greet /></StrictMode>);
     const live = () => screen.getAllByRole('status').map((e) => e.textContent ?? '').join(' | ');
     expect(live()).toContain('The Gravekeeper: You were looking at fire scars. Look again. These are graves, twenty-four of them, from the summer of 2023.');
-    // G-10 thaws on day 1, while the night line is still being read; the thaw line waits for silence.
+    tick(5 * DAY_MS);
+    expect(day()).toBe(0);
+    expect(screen.getByRole('region', { name: "The Gravekeeper's wager" })).toBeTruthy();
+    const seal = screen.getByRole('button', { name: 'Seal the wager' });
+    expect(seal.getAttribute('aria-disabled')).toBe('true');
+
+    // A stone's clue card holds its published values; pressing it marks it and does not open the exhumation.
+    const g10 = screen.getByRole('button', { name: 'Mark grave G-10' });
+    fireEvent.focus(g10);
+    const c = clueCard(DATA.seasons.s2024.graves.find((g) => g.id === 'G-10')!, 2024);
+    const tip = screen.getByRole('tooltip').textContent ?? '';
+    for (const s of [c.footprint, c.latitude, c.thaw, c.early]) expect(tip).toContain(s);
+    for (const id of ['G-10', 'G-01', 'G-02']) fireEvent.click(screen.getByRole('button', { name: `Mark grave ${id}` }));
+    expect(screen.queryByRole('button', { name: /Close exhumation/i })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Unmark grave G-10' }).getAttribute('aria-pressed')).toBe('true');
+    expect(document.querySelectorAll('.rv-pick')).toHaveLength(3);
+    expect(screen.getByText('Three marked. Seal it, and we watch.')).toBeTruthy();
+
+    fireEvent.click(seal);
+    expect(screen.queryByRole('region', { name: "The Gravekeeper's wager" })).toBeNull();
+    expect(live()).toContain('The Gravekeeper: Sealed: G-10, G-01, G-02. Now we watch the snow.');
+
+    // G-10 thaws on day 1, while the sealed line is still showing; the thaw line waits for silence.
     tick(DAY_MS);
     expect(day()).toBe(1);
-    expect(live()).toContain('The Gravekeeper: You were looking at fire scars.');
     expect(live()).not.toContain('The snow is leaving');
-    const quietDay = Math.ceil(NIGHT_MS / DAY_MS);
+    const quietDay = Math.ceil(5000 / DAY_MS);
     const w = firstThaw(DATA.seasons.s2024, quietDay);
     expect(w).not.toBeNull();
     tick((quietDay - 1) * DAY_MS);
@@ -65,12 +87,24 @@ describe('Graveyard rising', () => {
     expect(live()).toContain(`The Gravekeeper: The snow is leaving ${w?.id}. Fifty days, now.`);
     tick((17 - quietDay) * DAY_MS);
     expect(day()).toBe(17);
-    expect(live()).toContain('G-10. I buried it last autumn, under the fires of 2023. The snow let go of it 16 days ago. It was not ready to stay down.');
+    expect(live()).toContain('Your mark. G-10. I buried it last autumn, under the fires of 2023. The snow let go of it 16 days ago. It was not ready to stay down.');
     expect(document.querySelector('.rv-say')).not.toBeNull();
+    expect(document.querySelectorAll('.rv-pick')).toHaveLength(3);
+  });
+
+  it('dragging the candle past day 0 counts as Just watch (spec 06 Req 4.6)', () => {
+    render(<Graveyard data={DATA} tonight={TONIGHT} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Mark grave G-01' }));
+    fireEvent.change(screen.getByLabelText(/Replay day/i), { target: { value: '5' } });
+    expect(screen.queryByRole('region', { name: "The Gravekeeper's wager" })).toBeNull();
+    expect(document.querySelectorAll('.rv-pick')).toHaveLength(0);
+    tick(DAY_MS);
+    expect(day()).toBe(6);
   });
 
   it('opening the risen grave ends the hold; the day waits until the panel closes', () => {
     render(<Graveyard data={DATA} tonight={TONIGHT} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Just watch' }));
     tick(17 * DAY_MS);
     expect(document.querySelector('.rv-lbt')).not.toBeNull();
     fireEvent.click(screen.getByRole('button', { name: /^Grave G-10/ }));

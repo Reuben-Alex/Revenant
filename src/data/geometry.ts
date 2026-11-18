@@ -46,3 +46,8 @@ export const lanternIcon = (x: number, y: number) =>
   `M${x - 5} ${y - 9} H${x + 5} M${x} ${y - 13} V${y - 9} M${x - 6} ${y - 7} H${x + 6} L${x + 5} ${y + 7} H${x - 5} Z`;
 export const lanternFlame = (x: number, y: number) =>
   `M${x} ${y + 4} C${x + 2.5} ${y + 1} ${x + 2} ${y - 2} ${x} ${y - 4} C${x - 2} ${y - 2} ${x - 2.5} ${y + 1} ${x} ${y + 4} Z`;
+
+/** The small candle on a grave the viewer marked in the wager (board markBody / markFlame, L953–954). */
+export const markBody = (cx: number, cy: number) => `M${cx + 10} ${cy + 10} V${cy + 1} H${cx + 14} V${cy + 10} Z`;
+export const markFlame = (cx: number, cy: number) =>
+  `M${cx + 12} ${cy + 1} C${cx + 14.5} ${cy - 2} ${cx + 13.5} ${cy - 5} ${cx + 12} ${cy - 7} C${cx + 10.5} ${cy - 5} ${cx + 9.5} ${cy - 2} ${cx + 12} ${cy + 1} Z`;

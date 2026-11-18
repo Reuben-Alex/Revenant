@@ -26,10 +26,11 @@ These tasks add the Gravekeeper, the three puzzles, quiet years and the verdict.
 - [x] 2.3 **Checkpoint:** narrator screenshots (night line, a beat line); link for the user
   - _Requirements: 9.1_
 
-- [ ] 3. Read the stones
-- [ ] 3.1 Wager state (marks, sealed, skipped), start gate at day 0, mark-by-stone with creak, clue card on hover/focus, mark candles, seal / just watch, lantern growth
+- [x] 3. Read the stones
+- [x] 3.1 Wager state (marks, sealed, skipped), start gate at day 0, mark-by-stone with creak, clue card on hover/focus, mark candles, seal / just watch, lantern growth
+  - The checkpoint moved the panel from the map to the right column: on the map it hid 11 stones.
   - _Requirements: 4.1–4.6, 8.1, 8.2_
-- [ ] 3.2 **Checkpoint:** wager with a clue card and three marks
+- [x] 3.2 **Checkpoint:** wager with a clue card and three marks
   - _Requirements: 9.1_
 
 - [ ] 4. The Gravekeeper's riddle

@@ -74,7 +74,7 @@ Out of scope: Tonight's narrator lines and Keep watch (spec 07); Is it chance? (
 ### Requirement 4: Read the stones (the wager)
 **User Story:** As a viewer, I want to bet on which graves rise, using the same clues the data gives, so that I think like the rule.
 #### Acceptance Criteria
-1. AT day 0 of each replay (night arrival, season start, "Dig them up again"), THE replay SHALL wait through spec 05's `startGate`. The wager panel matches the board's `wagerOpen` markup: title, prompt line, three slots, "Seal the wager" and "Just watch".
+1. AT day 0 of each replay (night arrival, season start, "Dig them up again"), THE replay SHALL wait through spec 05's `startGate`. The wager panel matches the board's `wagerOpen` markup: title, prompt line, three slots, "Seal the wager" and "Just watch". It sits at the top of the right column rather than over the map, so that no stone is hidden (design.md).
 2. WHILE the wager is open, clicking or pressing a stone SHALL mark or unmark it, up to three, with a creak. It SHALL NOT open the exhumation.
 3. WHILE the wager is open, hovering or focusing a stone SHALL show its clue card. The card holds only published values:
    - footprint ≈ {km} km²;
