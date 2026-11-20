@@ -33,7 +33,7 @@ import {
 import { useGraveyard, type RisingEvent, type UIState } from './useGraveyard';
 import { useNow } from './useNow';
 import * as tcopy from '../copy/tonight';
-import { cardLines, keepNeed, keepWatchScore, tonightClue, tonightFooter, tonightLine } from '../data/tonight';
+import { cardLines, keepNeed, keepWatchScore, tonightClue, tonightFooter, tonightLine, tonightYear } from '../data/tonight';
 import { KeepWatch } from '../components/KeepWatch';
 import { download, drawEpitaphCard } from '../components/EpitaphCard';
 
@@ -170,10 +170,10 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
     if (!tonight || !keep) return;
     setSaving(true);
     drawEpitaphCard(cardLines(keep.marks, tonight))
-      .then((b) => download(b, tcopy.card.file(year + 1)))
+      .then((b) => download(b, tcopy.card.file(tonightYear(tonight) + 1)))
       .catch(() => undefined)
       .finally(() => setSaving(false));
-  }, [keep, tonight, year]);
+  }, [keep, tonight]);
   const onSeal = useCallback(() => {
     if (st.wager.marks.length !== 3) return;
     act({ type: 'seal' });
