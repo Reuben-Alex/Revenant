@@ -27,6 +27,8 @@
   <a href="#what-the-data-says">Results</a> ·
   <a href="#inside-the-graveyard">The graveyard</a> ·
   <a href="#puzzles">Puzzles</a> ·
+  <a href="#tonight-live">Tonight</a> ·
+  <a href="#out-in-the-field">Field pages</a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="#how-it-was-built">How it was built</a> ·
   <a href="#honest-caveats">Caveats</a> ·
@@ -42,7 +44,7 @@ Some wildfires don't go out in the fall. They smoulder all winter in peat and de
 **Revenant** is an early-warning map for them across northeast British Columbia and northern Alberta, built on NASA satellite data. It's dressed as a graveyard: every burn scar is a grave, and every spooky thing on screen is a data rule.
 
 > [!NOTE]
-> Revenant is an entry in the [Kiroween 2026](https://kiroween.devpost.com/) Costume Contest, and it's still being built. See [Status](#status) for what works today.
+> Revenant is an entry in the [Kiroween 2026](https://kiroween.devpost.com/) Costume Contest. The graveyard, all three spring replays, Tonight (live) and the field pages work today; the public site and the nightly refresh are next. See [Status](#status).
 
 ## Two realities
 
@@ -126,6 +128,12 @@ The replay runs by itself and waits whenever you stop to look. When a grave rise
   </tr>
 </table>
 
+When the replay reaches July 1, the Gravekeeper gives his **verdict** on a tombstone card: how many rose, against how many chance alone would raise. In a quiet year he says so, and the map glitches while voices under the snow whisper that *"it is only chance."*
+
+<p align="center">
+  <img src="docs/img/verdict.jpg" alt="The verdict of spring 2024: fourteen of 24 rose. The same shapes on unburned ground caught heat 26% of the time, so these scars woke 2.2 times as often as chance. A zombie year." width="100%">
+</p>
+
 Turn your sound on. The wind, drone, bell, boom and creak are all made live with WebAudio; there are no audio files.
 
 ## Puzzles
@@ -136,12 +144,57 @@ Five puzzles teach the rule by playing it.
 |---|---|---|---|
 | 1 | **Read the stones** | Bet on three graves using size, latitude, thaw date and early heat. Each hit makes your lantern burn brighter. | ✅ Built |
 | 2 | **The Gravekeeper's riddle** | After the first rising, pick the three conditions that made it a revenant, and avoid the decoy. | ✅ Built |
-| 3 | **Lantern hunt** | Search the dark for new fires that aren't revenants. | 🚧 Next |
-| 4 | **Keep watch** | On Tonight, set three lanterns on this autumn's still-warm scars as your watch list for spring 2027. | 📋 Planned |
+| 3 | **Lantern hunt** | The map goes dark. Sweep your lantern over it to find the season's new fires, the ones that aren't revenants. | ✅ Built |
+| 4 | **Keep watch** | On Tonight, set three lanterns on this autumn's still-warm scars, seal them against the published watch list, and save your epitaph card. | ✅ Built |
 | 5 | **Is it chance?** | Drag a grave's own shape onto unburned ground and see whether that spot caught heat, using the chance test's real offsets. | 📋 Planned |
 
+<table>
+  <tr>
+    <td width="50%"><img src="docs/img/riddle.jpg" alt="The Gravekeeper's riddle: Why did G-10 rise? Four cards; three are true and one is a decoy."></td>
+    <td width="50%"><img src="docs/img/lantern.jpg" alt="Lantern hunt: the map is dark except for the lantern's circle, which shows true-colour ground and a new fire. 1 of 10 new fires found. The Gravekeeper: That one is not mine."></td>
+  </tr>
+  <tr>
+    <td align="center"><b>The riddle</b><br><sub>Three true conditions and one decoy.</sub></td>
+    <td align="center"><b>Lantern hunt</b><br><sub>"That one is not mine. F-14 burned more than about 15 km from every scar."</sub></td>
+  </tr>
+</table>
+
+## Tonight (live)
+
+The fourth tab is this autumn, read from the latest nightly data. The 24 largest scars of 2026 are going under snow, and some of them were still warm when it came.
+
 <p align="center">
-  <img src="docs/img/riddle.jpg" alt="The Gravekeeper's riddle: Why did G-10 rise? Four cards; three are true and one is a decoy." width="72%">
+  <img src="docs/img/tonight.jpg" alt="Tonight, Nov 19, 2026: they are going to sleep. Nine of 24 scars of 2026 showed heat in the last two weeks; ten already lie under snow. Three lanterns are set on G-24, G-02 and G-16 in the Keep watch panel." width="100%">
+</p>
+
+- **Buried, snow settling, still warm:** each scar's state comes from that night's snow cover and its heat over the last 14 days. On the Nov 20 run, 9 of 24 were still warm and 10 already lay under snow.
+- **Heat clusters:** the last 7 days of FIRMS points, with recurring industrial sources removed.
+- **The 2027 watch list** ranks the scars by size and late heat. It's a guide for where to look in spring, not a forecast.
+- **They will wake:** the likely thaw window comes from the 72 melt days already published, not from a guess.
+- **Crews confirm:** late-autumn heat can be slash-pile burning, so every still-warm scar says so.
+- **Stale data says so.** If the data is more than two days old, the tab reads "AS OF", the footer counts the days and the Gravekeeper mentions it.
+
+## Out in the field
+
+Three more pages, each built from the same published files.
+
+<table>
+  <tr>
+    <td width="68%"><img src="docs/img/dossier.jpg" alt="The grave dossier for G-03, spring 2024: risen May 26, 2024 at 59.66°N 112.27°W. Here lies some 3,100 km² burned in the summer of 2023, in northern Alberta. Three satellite crops: buried on Mar 25, waking on Apr 18, risen on Jun 18."></td>
+    <td width="32%"><img src="docs/img/phone.jpg" alt="The field-crew phone at 390 px: Fourteen graves rose in spring 2024. A cropped map of the risen graves, and the card for G-03, sent from the dossier, with Navigate and Report buttons."></td>
+  </tr>
+  <tr>
+    <td align="center"><b>The grave dossier</b> · <code>/dossier#s2024/G-03</code><br><sub>Any replay grave: three satellite crops, the snow curve, the rule checks and a KML export.</sub></td>
+    <td align="center"><b>The field-crew phone</b> · <code>/phone</code><br><sub>Nearest grave and a quick report. Your position stays on the phone.</sub></td>
+  </tr>
+</table>
+
+- **The dossier** opens from any exhumation panel. *Send to field crew* opens that grave on the phone.
+- **The phone** finds the nearest grave only when you press *Use my location*, and the position never leaves the device. *Navigate* opens Google Maps. Reports go through your phone's share sheet, marked "Not an official report".
+- **The opening frame** (`/opening`) is a still 1920 × 1080 title card for the demo video.
+
+<p align="center">
+  <img src="docs/img/opening.jpg" alt="The opening frame: Revenant. Every winter, some wildfires don't die. They wait under the snow. A moonlit graveyard, with one stone glowing and cracked at its base." width="100%">
 </p>
 
 ## Quick start
@@ -153,13 +206,21 @@ npm install
 npm run dev      # http://localhost:5173
 ```
 
-The app opens in daylight; press **Night shift**. On the dev server only, `?intro=0` skips to the graveyard, and `?season=s2025&day=40` opens a season on a given day.
+The app opens in daylight; press **Night shift**. On the dev server only, `?intro=0` skips to the graveyard, and `?season=s2025&day=40` opens a season on a given day. The production build ignores both: there, the night always starts with the reveal.
+
+| Page | Dev server |
+|---|---|
+| The graveyard | `http://localhost:5173/` |
+| A grave dossier | `/dossier.html#s2024/G-03` (any season and grave) |
+| The field-crew phone | `/phone.html`, or `/phone.html#s2024/G-03` for one grave |
+| The opening frame | `/opening.html` at 1920 × 1080 |
 
 | Command | What it does |
 |---|---|
 | `npm test` | Vitest and fast-check tests for the UI |
 | `npm run check` | ESLint, then the TypeScript check |
-| `npm run build` | Production build into `dist/` |
+| `npm run build` | Production build of all four pages into `dist/` |
+| `npm run gate` | Tests, build, then a bundle check that the main page reads no URL |
 
 ### The data pipeline
 
@@ -177,7 +238,7 @@ Each file is checked by [`scripts/validate-data.mjs`](scripts/validate-data.mjs)
 
 Revenant was built in [Kiro](https://kiro.dev) one spec at a time, and everything Kiro used is in [`.kiro/`](.kiro).
 
-- **Specs** ([`.kiro/specs/`](.kiro/specs)): requirements, design and tasks for each part: rule engine, data pipeline, graveyard map, daylight and nightfall, rising and sound, Gravekeeper and wager.
+- **Specs** ([`.kiro/specs/`](.kiro/specs)): requirements, design and tasks for each part: rule engine, data pipeline, graveyard map, daylight and nightfall, rising and sound, Gravekeeper and puzzles, and Tonight with the field pages.
 - **Steering** ([`.kiro/steering/`](.kiro/steering)): the honesty rules, the costume rules, the Gravekeeper's voice, the pipeline method and the tech stack.
 - **Hooks** ([`.kiro/hooks/`](.kiro/hooks)): pipeline tests, a data contract check, an honesty review of copy, UI checks and a task gate.
 - **Skills and agents:** design-board reading and porting, FIRMS and GIBS fetchers, and a `gravekeeper` agent that writes only copy.
@@ -192,8 +253,10 @@ The build log is in [docs/KIRO_LOG.md](docs/KIRO_LOG.md).
 | Path | Contents |
 |---|---|
 | `src/data/` | Loaders, types and pure derivations of the published data |
-| `src/scenes/` | Daylight, nightfall and the graveyard |
-| `src/components/` | Tombstones, Gravekeeper, wager, riddle, exhumation, register, candle timeline |
+| `src/scenes/` | Daylight, nightfall, the graveyard, the dossier, the phone and the opening frame |
+| `src/entries/`, `*.html` | The four Vite pages |
+| `src/components/` | Tombstones, Gravekeeper, wager, riddle, lantern, Keep watch, exhumation, register, candle timeline |
+| `scripts/` | The data validator and guard, the bundle check and the Kiro log tool |
 | `src/audio/` | Wind, drone, bell, boom and creak in WebAudio |
 | `src/copy/` | Every line on screen, including the Gravekeeper's |
 | `pipeline/` | FIRMS, GIBS and NBAC fetch, and the rule engine in `pipeline/rules/` |
@@ -212,9 +275,12 @@ The build log is in [docs/KIRO_LOG.md](docs/KIRO_LOG.md).
 - [x] Daylight viewer and the nightfall reveal
 - [x] The rising cinematic and sound
 - [x] The Gravekeeper's narration, the wager and the riddle
-- [ ] Lantern hunt, the verdict and quiet-year whispers
-- [ ] Tonight (live), the field-crew phone view and the grave dossier
+- [x] Lantern hunt, the verdict and quiet-year whispers
+- [x] Tonight (live) and Keep watch
+- [x] The grave dossier, the field-crew phone and the opening frame
+- [ ] Public site on Vercel, deployed by GitHub Actions after the checks pass
 - [ ] Nightly data refresh with GitHub Actions
+- [ ] Puzzle 5: *Is it chance?*
 
 ## Honest caveats
 
