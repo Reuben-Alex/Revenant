@@ -34,9 +34,12 @@ Fonts: **IM Fell English** + **IM Fell English SC** (display, epitaphs, narrator
 | Rest | stone sinks 5 px, 45% opacity, 1.4 s |
 | Quiet-year glitch | every ~5 s for 0.33 s: map jitter/hue, ▓▒░ substitution in narrator + register |
 | Replay speed | ½× 1× 2× = 0.75 / 1.5 / 3 days per second |
+| Daylight slips (added, not on the boards) | First at 14 s, then every 18–28 s, one at a time in turn: headline smears one letter (0.24 s, screen readers keep the real text) · one marker shows as a stone (0.28 s) · map dims to night (0.16 s). No value changes. Off during dusk and under reduced motion |
+| Gravekeeper's gaze (added) | Eyes turn toward the pointer, up to 2.6 × 1.8 hood units, 0.35 s ease-out. Still under reduced motion |
+| Haunted tab (added) | Night only: while the page is hidden, the tab title is a line from the graves on screen and the icon is lit (`public/icon-haunted.svg`); both restore on return |
 
 ## Sound (WebAudio, no files)
-Wind: looped brown noise → low-pass 420 Hz with 0.08 Hz LFO. Rising: 70→32 Hz sine boom + high-pass crackle. Bell: 164 Hz partials ×1, 2.4, 3.0, 4.5, 3.4 s decay. Creak: band-passed saw 110→70 Hz. Nightfall drone: 55/82/110 Hz glide, 8 s.
+Wind: looped brown noise → low-pass 420 Hz with 0.08 Hz LFO. Rising: 70→32 Hz sine boom + high-pass crackle; with the camera, a heartbeat of 4 lub-dub pairs (62→38 Hz sine thumps) at 0.12, 0.62, 0.98 and 1.22 s, ending before the hand at 1.45 s (added). Bell: 164 Hz partials ×1, 2.4, 3.0, 4.5, 3.4 s decay. Creak: band-passed saw 110→70 Hz. Nightfall drone: 55/82/110 Hz glide, 8 s.
 
 ## Gravekeeper lines (verbatim)
 - Nightfall: "You were looking at fire scars. Look again. These are graves, twenty-four of them, from the summer of 2023. Wager with me: mark three you think will rise."

@@ -32,6 +32,9 @@ import {
 } from '../data/gravekeeper';
 import { useGraveyard, type RisingEvent, type UIState } from './useGraveyard';
 import { useNow } from './useNow';
+import { useHauntedTab } from './useHauntedTab';
+import { awayLine } from '../data/tab';
+import * as dayCopy from '../copy/daylight';
 import * as tcopy from '../copy/tonight';
 import { cardLines, keepNeed, keepWatchScore, tonightClue, tonightFooter, tonightLine, tonightYear } from '../data/tonight';
 import { KeepWatch } from '../components/KeepWatch';
@@ -91,6 +94,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   const weights = isT ? [1] : crossfade(st.day, fr.map((f) => f.day));
   const fires = season ? visibleFires(season.fires, st.day) : [];
   const head = headlineFor(scene, views, year);
+  useHauntedTab(awayLine(views, isT), dayCopy.docTitle.night);
 
   const selV = views.find((v) => v.id === st.selected) ?? views[0]!;
   const fireSel = season && st.fireSel ? season.fires.find((f) => f.id === st.fireSel) ?? null : null;

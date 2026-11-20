@@ -1,10 +1,16 @@
 // The Gravekeeper's panel (spec 06 Requirement 1). Markup and values: Main.dc.html `hasSay` L308–323 and `say` in
 // renderVals() L1276–1290. The text types at 26 ms a character; the live region carries the whole line once, so
 // screen readers hear it once and never the glitch. Under reduced motion the text appears whole.
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as copy from '../copy/gravekeeper';
 import { typed, type Line } from '../data/gravekeeper';
+import { useGaze } from '../motion/useGaze';
 import { useReducedMotion } from '../motion/useReducedMotion';
+
+// The eyes sit between x 22.5 and 31.5 at y 30 in the 54 × 64 hood; the face is dark from about x 16 to 38 and
+// y 18 to 40, so a turn of 2.6 across and 1.8 up or down keeps them inside it.
+const EYE = { x: 27, y: 30, w: 54, h: 64 };
+const TURN = { x: 2.6, y: 1.8 };
 
 interface Props {
   say: Line;
@@ -16,6 +22,8 @@ interface Props {
 
 export function Gravekeeper({ say, raised, glitch }: Props) {
   const reduced = useReducedMotion();
+  const hood = useRef<SVGSVGElement>(null);
+  const gaze = useGaze(hood, EYE, TURN, reduced);
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 40);
@@ -36,11 +44,13 @@ export function Gravekeeper({ say, raised, glitch }: Props) {
       background: 'linear-gradient(180deg, rgba(14,12,9,0.95), rgba(6,6,5,0.95))', border: '1px solid #4A3E2C', borderRadius: 6,
       boxShadow: '0 10px 40px rgba(0,0,0,0.7), inset 0 0 20px rgba(0,0,0,0.5)',
     }}>
-      <svg width="54" height="64" viewBox="0 0 54 64" aria-hidden="true" style={{ flex: 'none' }}>
+      <svg ref={hood} width="54" height="64" viewBox="0 0 54 64" aria-hidden="true" style={{ flex: 'none' }}>
         <path d="M27 4 C14 4 8 16 8 28 C8 40 6 52 3 62 H51 C48 52 46 40 46 28 C46 16 40 4 27 4 Z" style={{ fill: '#0B0F0E', stroke: '#4D5A55', strokeWidth: 1.2 }} />
         <path d="M16 30 C16 20 21 14 27 14 C33 14 38 20 38 30 C38 38 33 43 27 43 C21 43 16 38 16 30 Z" style={{ fill: '#020303' }} />
-        <circle className="rv-eyes" cx="22.5" cy="30" r="1.6" style={{ fill: 'var(--ember)' }} />
-        <circle className="rv-eyes" cx="31.5" cy="30" r="1.6" style={{ fill: 'var(--ember)' }} />
+        <g data-gaze="" style={{ transform: `translate(${gaze.x}px, ${gaze.y}px)`, transition: reduced ? 'none' : 'transform 0.35s ease-out' }}>
+          <circle className="rv-eyes" cx="22.5" cy="30" r="1.6" style={{ fill: 'var(--ember)' }} />
+          <circle className="rv-eyes" cx="31.5" cy="30" r="1.6" style={{ fill: 'var(--ember)' }} />
+        </g>
         <path d="M44 44 V40 M40 46 H48 L49 58 H39 Z" style={{ fill: 'none', stroke: '#8A7A5A', strokeWidth: 1.2 }} />
         <path className="rv-candle" d="M44 56 C46 53 45.5 50 44 48.5 C42.5 50 42 53 44 56 Z" style={{ fill: '#FFB86B' }} />
       </svg>

@@ -4,6 +4,8 @@
 import type { CSSProperties } from 'react';
 import * as copy from '../copy/daylight';
 import { SCALE_60KM_PCT, type DaylightView } from '../data/daylight';
+import { useReducedMotion } from '../motion/useReducedMotion';
+import { smear, useSlip } from '../motion/useSlip';
 import '../styles/daylight.css';
 
 interface Props {
@@ -35,6 +37,10 @@ const Check = () => (
 
 export function Daylight({ view, src, maskClass, dusk, onNightShift }: Props) {
   const t = view.text;
+  // The disguise slips now and then (never during dusk or under reduced motion). Visual only: no value changes.
+  const reduced = useReducedMotion();
+  const slip = useSlip(!dusk && !reduced);
+  const stoneAt = slip?.kind === 'stone' && view.dots.length ? slip.n % view.dots.length : -1;
   const nightBtn: CSSProperties = { minHeight: 40, padding: '0 14px', borderRadius: 10, font: '600 13px Inter, sans-serif', cursor: 'pointer' };
 
   return (
@@ -78,7 +84,7 @@ export function Daylight({ view, src, maskClass, dusk, onNightShift }: Props) {
 
       <div style={{ flex: '1 1 auto', display: 'flex', flexWrap: 'wrap', minHeight: 0, gap: 0 }}>
         <div className="rv-day-map" style={{ flex: '999 1 560px', minWidth: 0, position: 'relative', aspectRatio: '1060 / 716', overflow: 'hidden', background: '#CFD8DC', alignSelf: 'flex-start' }}>
-          <img className="rv-img" src={src} alt={copy.map.alt} style={{ opacity: 1, filter: 'saturate(1.08) contrast(1.04)' }} />
+          <img className="rv-img" src={src} alt={copy.map.alt} style={{ opacity: 1, filter: slip?.kind === 'dim' ? 'grayscale(1) brightness(0.32) contrast(1.2)' : 'saturate(1.08) contrast(1.04)' }} />
           <div className={`rv-scars ${maskClass}`} aria-hidden="true" style={{ background: '#F2913A', opacity: 0.42 }} />
           <svg viewBox="0 0 1060 716" aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
             <path d="M374 0 V716" style={{ fill: 'none', stroke: '#FFFFFF', strokeOpacity: 0.8, strokeWidth: 1.4, strokeDasharray: '6 5' }} />
@@ -86,10 +92,20 @@ export function Daylight({ view, src, maskClass, dusk, onNightShift }: Props) {
             <text x="386" y="700" style={LABEL_STROKE}>{copy.map.ab}</text>
           </svg>
           <svg viewBox="0 0 1060 716" aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible' }}>
-            {view.dots.map((p) => (
+            {view.dots.map((p, i) => (
               <g key={p.id}>
-                <circle className="rv-dot" cx={p.x} cy={p.y} r={13} style={{ fill: 'var(--day-brand)', fillOpacity: 0.18 }} />
-                <circle className="rv-dot" cx={p.x} cy={p.y} r={6.5} style={{ fill: 'var(--day-brand)', stroke: '#FFFFFF', strokeWidth: 2.2 }} />
+                {i === stoneAt ? (
+                  // For a moment the marker is what it is at night: a stone on the same burn area.
+                  <g data-slip="stone">
+                    <path d={`M${p.x - 7} ${p.y + 8} V${p.y - 1} A7 7 0 0 1 ${p.x + 7} ${p.y - 1} V${p.y + 8} Z`} style={{ fill: '#10201D', stroke: '#ECE6D6', strokeWidth: 1.6 }} />
+                    <path d={`M${p.x} ${p.y - 4} V${p.y + 5} M${p.x - 3} ${p.y - 1} H${p.x + 3}`} style={{ fill: 'none', stroke: '#ECE6D6', strokeWidth: 1.4, strokeLinecap: 'round' }} />
+                  </g>
+                ) : (
+                  <>
+                    <circle className="rv-dot" cx={p.x} cy={p.y} r={13} style={{ fill: 'var(--day-brand)', fillOpacity: 0.18 }} />
+                    <circle className="rv-dot" cx={p.x} cy={p.y} r={6.5} style={{ fill: 'var(--day-brand)', stroke: '#FFFFFF', strokeWidth: 2.2 }} />
+                  </>
+                )}
                 {p.label && <text className="rv-dot" x={p.lx} y={p.ly} style={DOT_LABEL}>{p.id}</text>}
               </g>
             ))}
@@ -131,7 +147,11 @@ export function Daylight({ view, src, maskClass, dusk, onNightShift }: Props) {
                   <path d="M15 8.5 V16.5 M15 20.5 V21" style={{ fill: 'none', stroke: '#B4541A', strokeWidth: 2.6, strokeLinecap: 'round' }} />
                 </svg>
               )}
-              <span style={{ fontSize: 24, fontWeight: 650, letterSpacing: -0.3 }}>{t.headline}</span>
+              {slip?.kind === 'text' ? (
+                <span style={{ fontSize: 24, fontWeight: 650, letterSpacing: -0.3 }}>
+                  <span aria-hidden="true" data-slip="text">{smear(t.headline)}</span><span className="rv-sr">{t.headline}</span>
+                </span>
+              ) : <span style={{ fontSize: 24, fontWeight: 650, letterSpacing: -0.3 }}>{t.headline}</span>}
             </span>
             <span style={{ fontSize: 13.5, color: '#3D4F5D', lineHeight: 1.55 }}>{t.status}</span>
           </section>

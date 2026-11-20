@@ -7,6 +7,7 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import { playBell } from '../audio/bell';
 import { playBoom } from '../audio/boom';
+import { playHeartbeat } from '../audio/heart';
 import { currentAudio } from '../audio/context';
 import { PERIOD_MS, visibleFires, type Speed } from '../data/derive';
 import * as gk from '../copy/gravekeeper';
@@ -346,6 +347,8 @@ export function useGraveyard(opts: Options = {}) {
     dispatch({ type: 'say', line: line(risingLine(ev, s.rot, s.wager.sealed ? s.wager.marks : []), now, plan.beat ? 6400 : undefined) });
     if (!plan.beat) dispatch({ type: 'rot' });
     if (plan.flash) playBoom(currentAudio());
+    // A heartbeat under the camera push, quickening until the hand breaks through.
+    if (plan.camera) playHeartbeat(currentAudio());
     if (plan.bells > 0) playBell(currentAudio(), plan.bells);
     risingCb.current?.({
       ids: plan.graves.map((g) => g.id), lead: plan.lead.id, days: plan.days, beat: plan.beat,

@@ -8,7 +8,9 @@ import { playDrone } from '../audio/drone';
 import { startWind } from '../audio/wind';
 import { TitleCard } from '../components/TitleCard';
 import * as copy from '../copy/daylight';
+import * as tabCopy from '../copy/tab';
 import { daylightView } from '../data/daylight';
+import { setIcon } from '../data/tab';
 import { FRAME_SATELLITE, KEYFRAMES, MASK_CLASS } from '../data/imagery';
 import type { SeasonsFile, TonightFile } from '../data/types';
 import { Daylight } from './Daylight';
@@ -52,8 +54,10 @@ export function Opening({ data, tonight, onNight }: Props) {
   }, []);
 
   // Requirement 2.6: the tab keeps the agency name until the title card.
+  // The icon follows: the agency's flame by day, the stone from the title card on.
   useEffect(() => {
     document.title = daylit ? copy.docTitle.day : copy.docTitle.night;
+    setIcon(daylit ? tabCopy.icon.day : tabCopy.icon.night);
   }, [daylit]);
 
   // Sound starts inside the click: browsers allow audio only after a user gesture (Requirement 7.2).
