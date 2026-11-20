@@ -1,0 +1,28 @@
+/* The opening frame's motion (reference/design/Opening.dc.html helmet). Its own names, because the board's ember
+   and breathe differ from the graveyard's (motion.css): embers rise 160 px here, and the glow breathes from .55. */
+@keyframes rv-o-fall {
+  0% { transform: translateY(-40px); }
+  100% { transform: translateY(1120px); }
+}
+@keyframes rv-o-ember {
+  0% { transform: translateY(0); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translateY(-160px); opacity: 0; }
+}
+@keyframes rv-o-breathe {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+.rv-o-flake { animation: rv-o-fall linear infinite; }
+.rv-o-ember { animation: rv-o-ember 3.6s ease-out infinite; }
+.rv-o-breathe { animation: rv-o-breathe 3.4s ease-in-out infinite; }
+
+/* Spec 07 Requirement 7.3: snow, embers and glow hold still. Each flake stays where the moving frame shows it at
+   t = 0 (--rest, set per flake), so the snow is spread over the frame instead of lined up along the top edge.
+   Embers stay lit at their start so the hero stone still reads as burning. */
+@media (prefers-reduced-motion: reduce) {
+  .rv-o-flake,
+  .rv-o-ember,
+  .rv-o-breathe { animation: none; }
+  .rv-o-flake { transform: translateY(var(--rest, 0px)); }
+}

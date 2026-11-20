@@ -72,10 +72,10 @@ Task 1 needs a live `tonight` run, which uses the FIRMS key. Task 8 needs steps 
 - [x] 6.4 **Checkpoint:** phone at 390 × 844, next to the board
   - _Requirements: 9.3_
 
-- [ ] 7. The opening frame
-- [ ] 7.1 `OpeningFrame.tsx` + `opening.html` at 1920 × 1080, with the credit line fixed and reduced motion
+- [x] 7. The opening frame
+- [x] 7.1 `OpeningFrame.tsx` + `opening.html` at 1920 × 1080, with the credit line fixed and reduced motion
   - _Requirements: 7.1–7.3_
-- [ ] 7.2 **Checkpoint:** opening at 1920 × 1080, next to the board
+- [x] 7.2 **Checkpoint:** opening at 1920 × 1080, next to the board
   - _Requirements: 9.3_
 
 - [ ] 8. Deploy
