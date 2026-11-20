@@ -1,0 +1,68 @@
+# Spec 07 Requirement 8: gate, then build and deploy to Vercel production ("Deploying from an External CI/CD
+# Pipeline"). Vercel's own Git deploys are off (vercel.json git.deploymentEnabled: false), so nothing reaches the
+# site unless the tests, the build and the bundle check pass here first.
+# Secrets: VERCEL_TOKEN (project-scoped), VERCEL_ORG_ID, VERCEL_PROJECT_ID. The CLI reads them from the
+# environment; the token never appears on a command line (GHSA-pgf8-2hgj-grqg affects --token only).
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  # A push made with the workflow's GITHUB_TOKEN starts no other workflow, so the nightly data job
+  # (spec 02 task 11) calls this one after it commits (Requirement 8.4).
+  workflow_call:
+    secrets:
+      VERCEL_TOKEN:
+        required: true
+      VERCEL_ORG_ID:
+        required: true
+      VERCEL_PROJECT_ID:
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Gate (tests, build, bundle check)
+        run: npm run gate
+
+      - name: Check the Vercel secrets are set
+        run: |
+          for v in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [ -z "${!v}" ]; then echo "::error::Repository secret $v is not set"; exit 1; fi
+          done
+
+      - name: Pull the production settings
+        run: npx --yes vercel@66.6.0 pull --yes --environment=production
+
+      - name: Build for production
+        run: npx --yes vercel@66.6.0 build --prod
+
+      - name: Deploy the prebuilt output
+        run: npx --yes vercel@66.6.0 deploy --prebuilt --prod

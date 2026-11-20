@@ -79,7 +79,7 @@ Task 1 needs a live `tonight` run, which uses the FIRMS key. Task 8 needs steps 
   - _Requirements: 9.3_
 
 - [ ] 8. Deploy
-- [ ] 8.1 `.github/workflows/deploy.yml`: on push to `main` and by hand; actions pinned to SHAs; `contents: read`; `npm ci`, `npm run gate`, then `vercel pull` / `vercel build --prod` / `vercel deploy --prebuilt --prod`, with the three secrets in `env`
+- [x] 8.1 `.github/workflows/deploy.yml`: on push to `main` and by hand; actions pinned to SHAs; `contents: read`; `npm ci`, `npm run gate`, then `vercel pull` / `vercel build --prod` / `vercel deploy --prebuilt --prod`, with the three secrets in `env`
   - _Requirements: 8.1, 8.4_
 - [ ] 8.2 **User steps:** `vercel link` (Hobby), a project-scoped token, the secrets `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` in GitHub, then push. After that, check the live site: all four pages, data, images, and the Tonight dates
   - _Requirements: 8.1, 8.2, 8.5_

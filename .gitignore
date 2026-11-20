@@ -15,3 +15,5 @@ __pycache__/
 
 # Raw FIRMS downloads
 pipeline/cache/
+# Vercel CLI link (vercel link / vercel pull)
+.vercel/
