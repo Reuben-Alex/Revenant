@@ -57,3 +57,24 @@ Feeds the "how Kiro was used" write-up. Newest entries last.
 - **Caught by checks:**
   - Planted bugs (the board's shared day count, and a zoom that ignores 2× speed) failed 3 tests.
   - A timer test exposed that a 1× day takes 700 ms, not 650, because of the 100 ms tick. The board has the same rounding, so it was kept and documented.
+## 2026-11-20
+- **Spec 06 gravekeeper-and-wager done** (Kiro spec, 7 tasks). The graveyard gains a narrator and three of the five puzzles. 103 Vitest tests pass, including 8 fast-check properties for the Gravekeeper's lines, the wager, the riddle, the margin, the hunt and the glitch.
+  - **The Gravekeeper** types each line at 26 ms a character, at night arrival, each season's start, the first thaw, the risings, the lantern and the verdict. The live region reads each line once, in full.
+  - **Read the stones:** the replay waits at day 0 for a wager. Clue cards show only published values (footprint, latitude, thaw date, early heat). Marked graves carry a candle, and each one that rises grows the lantern by 30 px.
+  - **The riddle:** after the first rising, choose the three conditions that made it a revenant. The decoy is fixed by the year. The right answer opens the grave.
+  - **Lantern hunt:** new fires hide in the dark until the lantern finds them, by pointer or keyboard, with a counter.
+  - **The verdict:** the board's tombstone card, three bells in a zombie year and one in a quiet year, and "Dig them up again". In quiet years (only 2026, from the published flag), whispers come on days 22, 48 and 76 and the map glitches. The glitch is visual only, and off under reduced motion.
+- **Honesty:** board lines the data can't back were replaced. "Press play" (there is no play button), "Fewer, and smaller" (every season has 24 graves; the line now compares published areas: 34,600 → 13,500 → 11,600 km²), "after the great fires of 2023" (wrong for 2025), "about as often as chance" (2026 woke at 8 % against 12 %), and the clue "the biggest scars, where the snow leaves first". The 2023 record is cited to NRCan and Jain et al. 2024. Spring 2025 states its thin margin: two fewer risings and it would be chance.
+- **User decisions:** the Gravekeeper bets on the three largest graves, so the viewer has a rival, and the thin-margin line was added. All five puzzles are in scope; the last two come with specs 07 and 08.
+- **Caught by the checkpoints:**
+  - The first-thaw line cut off the 9.5 s night greeting (G-10 thaws on day 1). It now waits for silence and names the latest thaw still in its window.
+  - React StrictMode's repeated mount effect replaced the night line with the season intro. The scene now compares against the last scene, and the test renders under StrictMode.
+  - At the board's place, the wager panel covered 11 of the 24 Spring 2024 stones. It moved to the right column.
+  - The lantern's true-colour image covered the fire marks inside its own light, so the hunt couldn't be won. The lantern now draws the fires it shows.
+  - The grave callout sat under the verdict card, and now gives way.
+  - With nothing focused, closing the riddle sent focus to the page body. It now goes to the grave's stone.
+- **Final pass (task 7):**
+  - **Keyboard:** stones mark with Enter or Space. Seal, the riddle cards, Dig, Let it lie and "Dig them up again" are native buttons, 40 px or taller, with a 2 px focus ring. The riddle dialog keeps Tab inside it, and Escape lets it lie.
+  - **Contrast:** 20 text pairs on the new panels, measured against each panel's lightest stop, range from 6.6:1 (the wager hint) to 16.9:1.
+  - **Reduced motion:** Playwright found no running animation on the wager, riddle, verdict or hunt.
+  - **Copy review:** the honesty-review hook runs only on an editor save, so `src/copy/gravekeeper.ts` was reviewed by hand against honesty.md and the voice guide. Every number in it is a template filled from published fields. It has no exclamation marks and no line with more than one break.

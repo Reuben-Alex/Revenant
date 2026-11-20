@@ -59,8 +59,9 @@ These tasks add the Gravekeeper, the three puzzles, quiet years and the verdict.
 - [x] 6.4 **Checkpoint:** zombie and quiet verdicts, a whisper with the glitch
   - _Requirements: 9.1_
 
-- [ ] 7. Final check
-- [ ] 7.1 Keyboard, contrast and reduced-motion pass on the new panels; `npm run check` and `npm run gate`; a `docs/KIRO_LOG.md` entry; commit
+- [x] 7. Final check
+- [x] 7.1 Keyboard, contrast and reduced-motion pass on the new panels; `npm run check` and `npm run gate`; a `docs/KIRO_LOG.md` entry; commit
+  - The honesty-review hook runs on editor saves only, so `src/copy/gravekeeper.ts` was reviewed by hand against honesty.md and the voice guide (see the log).
   - _Requirements: 8.1–8.4, 9.2_
 
 ## Task Dependency Graph
