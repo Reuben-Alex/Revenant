@@ -170,6 +170,13 @@ export function validateTonight(data) {
       c.int(snow, `${p}[6]`, -1, 100, 'snow_pct_now');
     });
   }
+  // spec 07 Requirement 2.2: the watch ranking is a permutation of the grave indices.
+  if (c.need(Array.isArray(data.watch), '$.watch', 'watch must be an array of grave indices') && Array.isArray(data.g)) {
+    const n = data.g.length;
+    const ok = data.watch.length === n && data.watch.every((v) => Number.isInteger(v) && v >= 0 && v < n)
+      && new Set(data.watch).size === n;
+    c.need(ok, '$.watch', `watch must be a permutation of 0..${n - 1}`);
+  }
   if (c.list(data.r, '$.r', MAX_CLUSTERS, 'clusters')) {
     data.r.forEach((r, i) => {
       const p = `$.r[${i}]`;

@@ -35,6 +35,7 @@ function seasons() {
 function tonight() {
   return {
     g: [[1202, 460, 645, '2026-10-26', 3, [462, 663], 40], [900, 300, 100, '2026-09-01', 0, 0, -1]],
+    watch: [0, 1],
     r: [[10, 20, 5]],
     static: 7,
     as_of: '2026-11-11T10:05:00Z', frame_date: '2026-11-09', points_through: '2026-11-10',
@@ -118,6 +119,10 @@ const tonightBreaks = {
   'static missing': (t) => { delete t.static; },
   'credit missing': (t) => { t.credit = ''; },
   'credit without FIRMS': (t) => { t.credit = 'NASA GIBS/VIIRS · Scholten et al. 2021'; },
+  'watch missing': (t) => { delete t.watch; },
+  'watch with a duplicate index': (t) => { t.watch = [0, 0]; },
+  'watch missing an index': (t) => { t.watch = [1]; },
+  'watch index out of range': (t) => { t.watch = [0, 2]; },
 };
 
 test('tonight credit need not name NBAC (its scars are detection hulls)', () => {

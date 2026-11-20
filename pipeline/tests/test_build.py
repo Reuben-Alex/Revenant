@@ -146,7 +146,9 @@ def test_property_9_rows_match_the_engine(melts, raw) -> None:
     try:
         b = assemble_season(YEAR, scars, pts, frames)
     except BuildError:
-        assert all(m is None for m in melts)
+        # The build fails only when no grave gets a melt day. A frame melt on day m is detected only if the
+        # 7-day window from m holds >= 3 valid days inside the season (days 0..102), i.e. m <= 100.
+        assert all(m is None or 103 - m < 3 for m in melts)
         return
     for row, r in zip(b.block["g"], b.result.graves):
         assert row[3] == (-1 if r.melt_day is None else r.melt_day)

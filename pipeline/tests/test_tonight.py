@@ -8,9 +8,11 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+from hypothesis import given
+from hypothesis import strategies as st
 from PIL import Image
 
-from pipeline.build import BuildError, assemble_tonight, recurring_cells_for
+from pipeline.build import WATCH_W_LATE, WATCH_W_SIZE, BuildError, assemble_tonight, recurring_cells_for, watch_order
 from pipeline.config import GRID_H, GRID_W
 from pipeline.keyframe import pick, score, to_webp
 from pipeline.points import Point, csv_cells, decode_cell, encode_cell, parse, recurring_cells, recurring_from_keys
@@ -227,3 +229,39 @@ def test_tonight_document_passes_the_validator(tmp_path: Path) -> None:
                          None, ["NASA FIRMS test"])
     out = publish_json(t.doc, tmp_path / "tonight.json", "tonight")
     assert json.loads(out.read_text(encoding="utf-8"))["frame_date"] == (TODAY - timedelta(days=1)).isoformat()
+
+
+# --- watch ranking (spec 07 Requirement 2) -----------------------------------------------------
+
+row = st.tuples(st.integers(1, 5000), st.integers(0, 300)).map(lambda t: [t[0], 500, 300, "2026-11-01", t[1], 0, 10])
+
+
+def _score(rows, i):
+    ms, ml = max(r[0] for r in rows), max(r[4] for r in rows)
+    return WATCH_W_SIZE * rows[i][0] / ms + (WATCH_W_LATE * rows[i][4] / ml if ml > 0 else 0.0)
+
+
+@given(st.lists(row, min_size=1, max_size=24))
+def test_watch_order_is_a_ranked_permutation(rows) -> None:
+    """Property 1: a permutation, scores never increase, ties keep (larger scar, lower index)."""
+    order = watch_order(rows)
+    assert sorted(order) == list(range(len(rows)))
+    for a, b in zip(order, order[1:]):
+        sa, sb = _score(rows, a), _score(rows, b)
+        assert sa >= sb
+        if sa == sb:
+            assert (rows[a][0], -a) >= (rows[b][0], -b)
+
+
+def test_watch_order_examples() -> None:
+    rows = [[100, 0, 0, "d", 0, 0, 0], [50, 0, 0, "d", 120, 0, 0], [100, 0, 0, "d", 0, 0, 0]]
+    assert watch_order(rows) == [1, 0, 2]  # late heat outweighs size; equal scars keep their order
+    assert watch_order([[10, 0, 0, "d", 0, 0, 0], [30, 0, 0, "d", 0, 0, 0]]) == [1, 0]  # no late heat: by size
+    assert watch_order([]) == []
+
+
+def test_assemble_tonight_publishes_the_watch_ranking() -> None:
+    a, b, late = season_points()
+    t = assemble_tonight(TODAY, AS_OF, a + b + late, set(), snow_days([[], []]), (TODAY - timedelta(days=1), b"j"),
+                         None, ["test"])
+    assert t.doc["watch"] == watch_order(t.doc["g"])

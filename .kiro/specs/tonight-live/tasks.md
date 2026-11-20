@@ -12,12 +12,14 @@ These tasks run in four groups:
 Task 1 needs a live `tonight` run, which uses the FIRMS key. Task 8 needs steps from the user: creating the Vercel project, adding three repository secrets, and pushing.
 
 ## Tasks
-- [ ] 1. Publish the watch ranking
-- [ ] 1.1 `pipeline/build.py`: `watch_order(rows)` and `watch` in `assemble_tonight`; `scripts/validate-data.mjs`: the permutation check; `docs/method.md`: the field, the formula, "a guide, not a forecast"
+- [x] 1. Publish the watch ranking
+- [x] 1.1 `pipeline/build.py`: `watch_order(rows)` and `watch` in `assemble_tonight`; `scripts/validate-data.mjs`: the permutation check; `docs/method.md`: the field, the formula, "a guide, not a forecast"
   - _Requirements: 2.1, 2.2_
-- [ ] 1.2 Tests: pytest + Hypothesis for Property 1; node tests for the validator (accept, duplicate, missing)
+- [x] 1.2 Tests: pytest + Hypothesis for Property 1; node tests for the validator (accept, duplicate, missing)
+  - Also fixed a wrong assumption in spec 02's Property 9 test, found by Hypothesis: a melt on day 101 or 102 has fewer than 3 valid days left in its window, so it is never detected.
   - _Requirements: 2.1, 2.2_
-- [ ] 1.3 Run `uv run --python 3.12 python -m pipeline tonight` to republish `tonight.json` with `watch` (fresh data). Report the new `as_of`, warm count and top three to the user
+- [x] 1.3 Run `uv run --python 3.12 python -m pipeline tonight` to republish `tonight.json` with `watch` (fresh data). Report the new `as_of`, warm count and top three to the user
+  - as_of 2026-11-20T12:31:07Z, points through Nov 19, frame Nov 16; 9 still warm, 10 buried; `watch` opens G-24, G-01, G-02; still-warm top three G-24, G-02, G-16.
   - _Requirements: 2.1_
 
 - [ ] 2. Tonight, live

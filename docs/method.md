@@ -97,10 +97,17 @@ meta: { generated_at, method, proximity_km, sources: [...], credit }
 ### `public/data/tonight.json` (nightly; spec `tonight-live` builds the view)
 ```
 { g: [[size_px, cx, cy, "last_burn YYYY-MM-DD", late_hits_14d, [x, y]|0, snow_pct_now|-1], ...≤24],
+  watch: [i, ...],                         // indices of g, the 2027 watch ranking, best first
   r: [[x, y, point_count], ...≤30],        // last-7-day clusters, flares removed
   static: int,                             // recurring cells removed from NRT points
   as_of, frame_date, points_through, sources: [...], credit }
 ```
+
+**Watch ranking (`watch`).** It orders Tonight's scars by size and late heat. It is a guide for where to look in spring, not a forecast.
+- score = 0.45 × size_px / largest size_px + 0.55 × late_hits_14d / largest late_hits_14d. The late-heat term is 0 when no scar has late heat.
+- Ties go to the larger scar, then to the lower index.
+- The weights are the design board's, normalised by the night's own maxima instead of the research constants.
+- The validator checks that `watch` is a permutation of the grave indices.
 
 ### `data/seasons.json` (research, frozen)
 This file uses the same `g` and `f` rows without `chance`, `zombie` or `meta`. It also has `t` (Tonight, same rows as `tonight.json` `g` and `r`) and `static: 320`. Its snow series is rounded to whole percent, while its melt days were computed on unrounded fractions. Recomputing melt from the series matches 70 of 72 graves. The exceptions are 2024 G-16 (stored 21, recomputed 22) and 2025 G-10 (stored 54, recomputed 59); neither rose, so Risen counts are unaffected.

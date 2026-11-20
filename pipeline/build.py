@@ -197,6 +197,26 @@ class TonightBuild:
     recurring: set[Cell]
 
 
+WATCH_W_SIZE = 0.45  # board RV_TONIGHT weights (Main.dc.html L655–659), normalised by the night's own maxima
+WATCH_W_LATE = 0.55
+
+
+def watch_order(rows: Sequence[Sequence]) -> list[int]:
+    """The 2027 watch ranking (spec 07 Requirement 2.1): indices of `rows` (published Tonight `g` rows), best first.
+
+    score = 0.45 * size/max size + 0.55 * late hits/max late hits (0 when no scar has late hits). Ties go to the
+    larger scar, then the lower index. A guide for where to look in spring, not a forecast."""
+    if not rows:
+        return []
+    max_size = max(r[0] for r in rows)
+    max_late = max(r[4] for r in rows)
+
+    def score(r) -> float:
+        return WATCH_W_SIZE * r[0] / max_size + (WATCH_W_LATE * r[4] / max_late if max_late > 0 else 0.0)
+
+    return sorted(range(len(rows)), key=lambda i: (-score(rows[i]), -rows[i][0], i))
+
+
 def _late_window(today: date) -> tuple[date, date]:
     """The 14 days ending today; NRT data exists only for completed days, so today itself is empty."""
     return today - timedelta(days=LATE_HITS_DAYS - 1), today
@@ -251,6 +271,7 @@ def assemble_tonight(
         raise BuildError("Tonight: no usable true-colour frame in the last 5 days and no previous frame to keep")
     doc = {
         "g": rows,
+        "watch": watch_order(rows),
         "r": [[grid_int(c.x, GRID_W), grid_int(c.y, GRID_H), c.n_points] for c in clusters],
         "static": len(recurring),
         "as_of": as_of,
