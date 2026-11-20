@@ -1,7 +1,7 @@
 // Tonight, live (spec 07 design.md, "Pure logic"): staleness, the wake window from published melt days, the
 // Gravekeeper's Tonight line and the published watch order. Pure; the clock is passed in.
 import * as copy from '../copy/tonight';
-import { MONTHS, fmtDay, fmtIso } from './format';
+import { MONTHS, coords, fmtDay, fmtIso, km2, lat } from './format';
 import type { SeasonData, SeasonKey, TonightFile, TonightScar } from './types';
 
 export const STALE_MS = 48 * 3600 * 1000;
@@ -75,4 +75,43 @@ export const watchList = (t: TonightFile): TonightScar[] => t.watch.map((i) => t
 /** Rank position (0 = top) of each scar id. */
 export function watchRank(t: TonightFile): Map<string, number> {
   return new Map(t.watch.map((i, r) => [t.scars[i]!.id, r]));
+}
+
+// --- Keep watch (Requirement 4) ------------------------------------------------------------------
+
+/** How many lanterns the watch needs: three, or every still-warm scar when fewer are warm. */
+export const keepNeed = (t: TonightFile) => Math.min(3, t.scars.filter((s) => s.late > 0).length);
+
+/** The ranking's top still-warm scars, as many as the watch needs (Requirement 4.4). */
+export const rankedWarm = (t: TonightFile): string[] =>
+  t.watch.map((i) => t.scars[i]!).filter((s) => s.late > 0).slice(0, keepNeed(t)).map((s) => s.id);
+
+export function keepWatchScore(marks: string[], t: TonightFile): { k: number; top: string[] } {
+  const top = rankedWarm(t);
+  return { k: marks.filter((id) => top.includes(id)).length, top };
+}
+
+export function tonightClue(s: TonightScar): string[] {
+  return [`Footprint ≈ ${km2(s.size)} km² · ${lat(s.cy).toFixed(1)}°N`, copy.clue.late(s.late), copy.clue.last(fmtIso(s.lastBurn)), copy.clue.snow(s.snowNow)];
+}
+
+export interface CardLines { kicker: string; title: string; rows: { id: string; line: string }[]; result: string; caveat: string; sealed: string; credit: string; site: string }
+
+/** Everything the epitaph card draws (Requirement 4.5). Pure, so the PNG holds only what these lines say. */
+export function cardLines(marks: string[], t: TonightFile): CardLines {
+  const { k, top } = keepWatchScore(marks, t);
+  const d = new Date(Date.parse(t.asOf));
+  return {
+    kicker: copy.card.kicker(tonightYear(t) + 1),
+    title: copy.card.title,
+    rows: marks.map((id) => {
+      const s = t.scars.find((x) => x.id === id)!;
+      return { id, line: copy.card.row(s.late, coords(s.cx, s.cy).replace('  ', ' ')) };
+    }),
+    result: copy.keep.result(k, top),
+    caveat: copy.keep.caveat,
+    sealed: copy.card.sealedOn(`${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`),
+    credit: t.credit,
+    site: copy.card.site,
+  };
 }

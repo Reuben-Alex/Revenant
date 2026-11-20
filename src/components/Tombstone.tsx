@@ -1,5 +1,5 @@
 // One grave on the map (Main.dc.html L179–208; values from renderVals() L898–956).
-import { capPath, cracksPath, crossPath, handPath, markBody, markFlame, smokePath, steamPath, tombPath } from '../data/geometry';
+import { capPath, cracksPath, crossPath, handPath, lanternFlame, lanternIcon, markBody, markFlame, smokePath, steamPath, tombPath } from '../data/geometry';
 import type { GraveView } from '../data/derive';
 
 const SVG: React.CSSProperties = { position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible' };
@@ -13,9 +13,11 @@ interface Props {
   hideHand?: boolean;
   /** Spec 06: the viewer marked this grave in the wager (board markWrap, L190–193). */
   marked?: boolean;
+  /** Spec 07 Keep watch: the viewer set a lantern on this scar. */
+  lantern?: boolean;
 }
 
-export function Tombstone({ v, selected, hovered, hideHand = false, marked = false }: Props) {
+export function Tombstone({ v, selected, hovered, hideHand = false, marked = false, lantern = false }: Props) {
   const { cx, cy, rx, ry } = v;
   return (
     <svg viewBox="0 0 1060 716" aria-hidden="true" style={SVG}>
@@ -46,6 +48,12 @@ export function Tombstone({ v, selected, hovered, hideHand = false, marked = fal
         <g className="rv-pick">
           <path d={markBody(cx, cy)} style={{ fill: '#E9DFC8', stroke: '#6E1E12', strokeWidth: 0.8 }} />
           <path className="rv-candle" d={markFlame(cx, cy)} style={{ fill: '#FFB86B' }} />
+        </g>
+      )}
+      {lantern && (
+        <g className="rv-pick" transform={`translate(${cx + 13} ${cy - 1}) scale(0.62) translate(${-(cx + 13)} ${-(cy - 1)})`}>
+          <path d={lanternIcon(cx + 13, cy - 1)} style={{ fill: '#1A120B', stroke: '#FFE7C2', strokeWidth: 1.6, strokeLinejoin: 'round' }} />
+          <path className="rv-candle" d={lanternFlame(cx + 13, cy - 1)} style={{ fill: '#FFB86B' }} />
         </g>
       )}
       {v.thawing && (

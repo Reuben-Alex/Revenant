@@ -144,8 +144,38 @@ it('the wager holds day 0; marks, clues and the seal; the thaw waits for silence
     expect(verdictView(DATA.seasons.s2026, [], false).bells).toBe(1);
   });
 
-  it('dragging the candle past day 0 counts as Just watch (spec 06 Req 4.6)', () => {
+  it('Keep watch: lanterns only on still-warm scars; the seal compares with the ranking and says crews confirm (spec 07 Req 4)', () => {
+    vi.setSystemTime(Date.parse(TONIGHT.asOf) + 3600 * 1000);
     render(<Graveyard data={DATA} tonight={TONIGHT} />);
+    fireEvent.click(screen.getByRole('button', { name: /^Tonight/ }));
+    expect(screen.getByRole('region', { name: 'Keep watch' })).toBeTruthy();
+    const warm = TONIGHT.scars.filter((s) => s.late > 0);
+    const cold = TONIGHT.scars.find((s) => s.late === 0)!;
+    // A cold stone takes no lantern; it opens as usual.
+    fireEvent.click(screen.getByRole('button', { name: new RegExp(`^Grave ${cold.id}`) }));
+    expect(screen.getByRole('button', { name: /Close exhumation/i })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: /Close exhumation/i }));
+    const seal = screen.getByRole('button', { name: 'Seal the watch' });
+    expect(seal.getAttribute('aria-disabled')).toBe('true');
+    const picks = warm.slice(-3).map((s) => s.id); // the three least-ranked warm scars in file order
+    for (const id of picks) fireEvent.click(screen.getByRole('button', { name: `Set a lantern on ${id}` }));
+    expect(screen.getByRole('button', { name: `Take the lantern from ${picks[0]}` }).getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(screen.getByRole('button', { name: `Set a lantern on ${warm[0]!.id}` })); // a fourth is refused
+    expect(screen.queryByRole('button', { name: `Take the lantern from ${warm[0]!.id}` })).toBeNull();
+    fireEvent.click(seal);
+    const top = TONIGHT.watch.map((i) => TONIGHT.scars[i]!).filter((s) => s.late > 0).slice(0, 3).map((s) => s.id);
+    const k = picks.filter((id) => top.includes(id)).length;
+    const panel = screen.getByRole('region', { name: 'Keep watch' }).textContent ?? '';
+    expect(panel).toContain(`(${top.join(', ')})`);
+    expect(panel).toContain('Late heat can be slash-pile burning; crews confirm.');
+    const live = screen.getAllByRole('status').map((e) => e.textContent ?? '').join(' | ');
+    expect(live).toContain(['Your lanterns stand apart', 'One of your lanterns', 'Two of your lanterns', 'We keep the same watch'][k]!);
+    expect(screen.getByRole('button', { name: 'Save the epitaph card' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Watch again' }));
+    expect(screen.getByRole('button', { name: 'Seal the watch' })).toBeTruthy();
+  });
+
+  it('dragging the candle past day 0 counts as Just watch (spec 06 Req 4.6)', () => {    render(<Graveyard data={DATA} tonight={TONIGHT} />);
     fireEvent.click(screen.getByRole('button', { name: 'Mark grave G-01' }));
     fireEvent.change(screen.getByLabelText(/Replay day/i), { target: { value: '5' } });
     expect(screen.queryByRole('region', { name: "The Gravekeeper's wager" })).toBeNull();

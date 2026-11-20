@@ -5,7 +5,12 @@ import seasonsRaw from '../../public/data/seasons.json';
 import tonightRaw from '../../public/data/tonight.json';
 import { fmtDay } from './format';
 import { parseSeasons, parseTonight } from './load';
-import { STALE_MS, meltSpread, staleness, tonightFooter, tonightLine, tonightTab, wakeView, watchList } from './tonight';
+import * as copy from '../copy/tonight';
+import { initialState, reducer } from '../scenes/useGraveyard';
+import { coords } from './format';
+import {
+  STALE_MS, cardLines, keepNeed, keepWatchScore, meltSpread, rankedWarm, staleness, tonightFooter, tonightLine, tonightTab, wakeView, watchList,
+} from './tonight';
 import type { SeasonData, SeasonKey } from './types';
 
 const DATA = parseSeasons(seasonsRaw);
@@ -68,5 +73,58 @@ describe('Published examples', () => {
 
   it('the watch list is the published order', () => {
     expect(watchList(T).map((s) => s.id)).toEqual(T.watch.map((i) => T.scars[i]!.id));
+  });
+});
+
+describe('Keep watch (spec 07 Requirement 4)', () => {
+  const warmIds = T.scars.filter((s) => s.late > 0).map((s) => s.id);
+  const idArb = fc.constantFrom(...T.scars.map((s) => s.id));
+
+  it('Property 4: lanterns only on still-warm scars, at most the need; k is the overlap; lines never promise a return', () => {
+    fc.assert(fc.property(fc.array(idArb, { maxLength: 12 }), (presses) => {
+      let s = { ...initialState({ scene: 'tonight', day: 0 }) };
+      const need = keepNeed(T);
+      for (const id of presses) s = reducer(s, { type: 'keepMark', id, warm: warmIds.includes(id), need });
+      const marks = s.keep!.marks;
+      expect(marks.every((id) => warmIds.includes(id))).toBe(true);
+      expect(marks.length).toBeLessThanOrEqual(need);
+      expect(new Set(marks).size).toBe(marks.length);
+      const { k, top } = keepWatchScore(marks, T);
+      expect(k).toBe(marks.filter((id) => top.includes(id)).length);
+      expect(k >= 0 && k <= 3).toBe(true);
+      const sealed = reducer(s, { type: 'keepSeal', need });
+      expect(sealed.keep!.sealed).toBe(marks.length === need);
+      for (let j = 0; j <= 3; j++) {
+        expect(copy.keep.sealed(j)).toContain('crews confirm');
+        expect(copy.keep.sealed(j)).not.toMatch(/will (return|rise|burn)/i);
+      }
+    }), { numRuns: 300 });
+  });
+
+  it('the ranking held to the same choice: the first three still-warm scars of `watch`', () => {
+    const top = rankedWarm(T);
+    expect(top).toHaveLength(3);
+    expect(top.every((id) => warmIds.includes(id))).toBe(true);
+    const order = T.watch.map((i) => T.scars[i]!.id).filter((id) => warmIds.includes(id));
+    expect(top).toEqual(order.slice(0, 3));
+    expect(keepWatchScore(top, T).k).toBe(3);
+  });
+
+  it('Property 5: the card carries only published numbers (Req 4.5)', () => {
+    fc.assert(fc.property(fc.subarray(warmIds, { minLength: 3, maxLength: 3 }), (marks) => {
+      const l = cardLines(marks, T);
+      const allowed = new Set<string>();
+      const add = (s: string) => (s.replace(/(\d),(\d)/g, '$1$2').match(/\d+(\.\d+)?/g) ?? []).forEach((n) => allowed.add(n));
+      for (const id of marks) {
+        const s = T.scars.find((x) => x.id === id)!;
+        add(String(s.late)); add(coords(s.cx, s.cy)); add(id);
+      }
+      add(T.asOf.slice(0, 10).replace(/-0?/g, ' ')); add(String(new Date(T.asOf).getUTCDate())); add('2027'); add(String(keepWatchScore(marks, T).k));
+      for (const id of rankedWarm(T)) add(id);
+      add(T.credit);
+      const text = [l.kicker, l.title, ...l.rows.flatMap((r) => [r.id, r.line]), l.result, l.caveat, l.sealed, l.credit].join(' ');
+      for (const n of text.replace(/(\d),(\d)/g, '$1$2').match(/\d+(\.\d+)?/g) ?? []) expect(allowed.has(n)).toBe(true);
+      expect(l.caveat).toBe('Late heat can be slash-pile burning; crews confirm.');
+    }), { numRuns: 100 });
   });
 });

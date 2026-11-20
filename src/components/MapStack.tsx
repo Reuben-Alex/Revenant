@@ -57,6 +57,9 @@ interface Props {
   hunting?: boolean;
   found?: string[];
   onFocusFire?: (id: string) => void;
+  /** Spec 07 Keep watch: lanterns on stones, and stone button names and pressed states while it is open. */
+  lanterns?: string[];
+  stoneAria?: (v: GraveView) => { label: string; pressed: boolean } | null;
   /** Spec 06 quiet-year glitch: the map jitters (board mapClass rv-glitch). */
   glitch?: boolean;
 }
@@ -120,7 +123,7 @@ export function MapStack(p: Props) {
         </svg>
 
         {p.graves.map((v) => (
-          <Tombstone key={v.id} v={v} selected={p.selected === v.id} hovered={p.hover === v.id} hideHand={cam?.id === v.id} marked={p.marks?.includes(v.id)} />
+          <Tombstone key={v.id} v={v} selected={p.selected === v.id} hovered={p.hover === v.id} hideHand={cam?.id === v.id} marked={p.marks?.includes(v.id)} lantern={p.lanterns?.includes(v.id)} />
         ))}
 
         {cam && <Cinematic key={`${cam.id}-${cam.until}`} x={cam.x} y={cam.y} />}
@@ -157,10 +160,11 @@ export function MapStack(p: Props) {
         ))}
         {p.graves.map((v) => {
           const marked = !!p.marks?.includes(v.id);
+          const over = p.stoneAria?.(v) ?? null;
           return (
           <button key={v.id} type="button" className="rv-hit" data-grave={v.id}
-            aria-label={p.wagerOpen ? gk.wager.markAria(v.id, marked) : copy.map.graveAria(v.id, v.label)}
-            aria-pressed={p.wagerOpen ? marked : p.selected === v.id}
+            aria-label={over ? over.label : p.wagerOpen ? gk.wager.markAria(v.id, marked) : copy.map.graveAria(v.id, v.label)}
+            aria-pressed={over ? over.pressed : p.wagerOpen ? marked : p.selected === v.id}
             onClick={() => p.onGrave(v.id)} onMouseEnter={() => p.onHover(v.id)} onMouseLeave={() => p.onHover(null)}
             onFocus={() => { p.onHover(v.id); p.onFocusGrave?.(v.id); }} onBlur={() => p.onHover(null)}
             style={{ position: 'absolute', left: pct(v.cx, W), top: pct(v.cy, H), width: 40, height: 40, margin: '-20px 0 0 -20px', borderRadius: 20, background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} />

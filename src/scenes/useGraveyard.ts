@@ -59,6 +59,8 @@ export interface UIState {
   found: string[];
   /** Spec 06 Requirement 7: the replay played through to day 102. */
   verdict: boolean;
+  /** Spec 07 Requirement 4: Keep watch on Tonight (null elsewhere). */
+  keep: { marks: string[]; sealed: boolean } | null;
 }
 
 export type Action =
@@ -91,7 +93,10 @@ export type Action =
   | { type: 'riddleDig' }
   | { type: 'riddleLeave' }
   | { type: 'found'; ids: string[] }
-  | { type: 'again' };
+  | { type: 'again' }
+  | { type: 'keepMark'; id: string; warm: boolean; need: number }
+  | { type: 'keepSeal'; need: number }
+  | { type: 'keepAgain' };
 
 const SCENES: SceneKey[] = ['s2024', 's2025', 's2026', 'tonight'];
 
@@ -119,6 +124,7 @@ export function initialState(start: Start = DEFAULT_START): UIState {
     compare: false, split: 50, ex: null, hover: null, fireSel: null,
     cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null,
     say: null, woke: false, rot: 0, riddle: null, found: [], verdict: false,
+    keep: start.scene === 'tonight' ? { marks: [], sealed: false } : null,
   };
 }
 
@@ -148,6 +154,7 @@ function step(s: UIState, a: Action): UIState {
         ...s, scene: a.scene, day: 0, running: a.scene !== 'tonight', selected: 'G-01', ex: null, fireSel: null, hover: null,
         compare: a.scene === 'tonight' ? false : s.compare,
         cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null, woke: false, riddle: null, found: [], verdict: false,
+        keep: a.scene === 'tonight' ? { marks: [], sealed: false } : null,
       }, freshWager(a.scene, 0));
     case 'day': {
       const day = Math.max(0, Math.min(102, a.day));
@@ -232,6 +239,18 @@ function step(s: UIState, a: Action): UIState {
     case 'again':
       // Requirement 7.6: the same season from day 0, with the wager open again.
       return s.scene === 'tonight' ? s : { ...step(s, { type: 'scene', scene: s.scene }), selected: s.selected };
+    case 'keepMark': {
+      // Lanterns go only on still-warm scars, up to the number the watch needs, and not once sealed.
+      const k = s.keep;
+      if (!k || k.sealed || !a.warm) return s;
+      const has = k.marks.includes(a.id);
+      if (!has && k.marks.length >= a.need) return s;
+      return { ...s, selected: a.id, keep: { ...k, marks: has ? k.marks.filter((m) => m !== a.id) : [...k.marks, a.id] } };
+    }
+    case 'keepSeal':
+      return s.keep && !s.keep.sealed && a.need > 0 && s.keep.marks.length === a.need ? { ...s, keep: { ...s.keep, sealed: true } } : s;
+    case 'keepAgain':
+      return s.keep ? { ...s, keep: { marks: [], sealed: false } } : s;
     case 'found': {
       const add = a.ids.filter((id) => !s.found.includes(id));
       return add.length ? { ...s, found: [...s.found, ...add] } : s;

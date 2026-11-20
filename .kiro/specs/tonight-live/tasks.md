@@ -33,14 +33,16 @@ Task 1 needs a live `tonight` run, which uses the FIRMS key. Task 8 needs steps 
 - [x] 2.4 **Checkpoint:** Tonight screenshots at 1440 × 1000, fresh and stale; link for the user
   - _Requirements: 9.3_
 
-- [ ] 3. Keep watch
-- [ ] 3.1 `keep` state and actions; `KeepWatch.tsx` (panel, slots, clue card, Seal the watch, Watch again); lantern marks on stones; the seal line and bell
+- [x] 3. Keep watch
+- [x] 3.1 `keep` state and actions; `KeepWatch.tsx` (panel, slots, clue card, Seal the watch, Watch again); lantern marks on stones; the seal line and bell
+  - A cold stone opens its exhumation as usual (it takes no lantern). `ClueCard` now takes plain lines, shared with the wager.
   - _Requirements: 4.1–4.4, 4.6, 4.7_
-- [ ] 3.2 `EpitaphCard.ts` and `cardLines`: the 1200 × 630 PNG, drawn after fonts load, downloaded locally
+- [x] 3.2 `EpitaphCard.ts` and `cardLines`: the 1200 × 630 PNG, drawn after fonts load, downloaded locally
+  - The site address is left blank until task 8. The credit is the file's own `credit`.
   - _Requirements: 4.5_
-- [ ] 3.3 Tests: Property 4; Property 5 for `cardLines`; a component test (only warm scars take lanterns; seal compares with `watch`)
+- [x] 3.3 Tests: Property 4; Property 5 for `cardLines`; a component test (only warm scars take lanterns; seal compares with `watch`)
   - _Requirements: 4.2, 4.4, 4.5_
-- [ ] 3.4 **Checkpoint:** Keep watch sealed, and the PNG card
+- [x] 3.4 **Checkpoint:** Keep watch sealed, and the PNG card
   - _Requirements: 9.3_
 
 - [ ] 4. Multi-page build

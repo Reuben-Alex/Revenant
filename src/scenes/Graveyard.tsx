@@ -1,6 +1,6 @@
 // The night graveyard scene (spec 03). Layout from Main.dc.html L105–490: header, headline band,
 // map + right column, footer. Right column (task 7) and the candle timeline (task 8) follow.
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as copy from '../copy/graveyard';
 import {
   H, LANTERN_R, W, cardList, countList, creditLine, crossfade, exhumation, fireCallout, flakeCount, frames, graveCallout,
@@ -28,12 +28,14 @@ import { Riddle } from '../components/Riddle';
 import { Verdict } from '../components/Verdict';
 import { useGlitch } from '../motion/useGlitch';
 import {
-  NIGHT_MS, checkRiddle, clueCard, glitchText, huntView, introLine, lanternRadius, line, quiet, riddleCards, riddleHint, verdictView,
+  NIGHT_MS, checkRiddle, clueCard, clueLines, glitchText, huntView, introLine, lanternRadius, line, quiet, riddleCards, riddleHint, verdictView,
 } from '../data/gravekeeper';
 import { useGraveyard, type RisingEvent, type UIState } from './useGraveyard';
 import { useNow } from './useNow';
 import * as tcopy from '../copy/tonight';
-import { tonightFooter, tonightLine } from '../data/tonight';
+import { cardLines, keepNeed, keepWatchScore, tonightClue, tonightFooter, tonightLine } from '../data/tonight';
+import { KeepWatch } from '../components/KeepWatch';
+import { download, drawEpitaphCard } from '../components/EpitaphCard';
 
 interface Props {
   data: SeasonsFile;
@@ -104,9 +106,22 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   // hover card shows the clues (published values only).
   const wagerOpen = st.wager.open && !isT;
   const marks = isT ? [] : st.wager.marks;
+  // Spec 07 Requirement 4: Keep watch on Tonight. Lanterns go only on still-warm scars.
+  const keep = isT ? st.keep : null;
+  const keepOpen = !!keep && !keep.sealed;
+  const need = isT && tonight ? keepNeed(tonight) : 0;
+  const lanterns = keep?.marks ?? [];
+  const [saving, setSaving] = useState(false);
   const clue = wagerOpen && hovV?.grave && tip ? (
-    <ClueCard title={tip.title} clue={clueCard(hovV.grave, year)} marked={marks.includes(hovV.id)} left={tip.left} top={tip.top} />
+    <ClueCard title={tip.title} lines={clueLines(clueCard(hovV.grave, year))} action={gk.clue.action(marks.includes(hovV.id))}
+      marked={marks.includes(hovV.id)} left={tip.left} top={tip.top} />
+  ) : keepOpen && hovV?.scar && tip ? (
+    <ClueCard title={tip.title} lines={tonightClue(hovV.scar)} action={tcopy.clue.action(hovV.warm, lanterns.includes(hovV.id), false)}
+      marked={lanterns.includes(hovV.id)} left={tip.left} top={tip.top} />
   ) : null;
+  const stoneAria = keepOpen
+    ? (v: { id: string; warm: boolean }) => (v.warm ? { label: tcopy.keep.markAria(v.id, lanterns.includes(v.id)), pressed: lanterns.includes(v.id) } : null)
+    : undefined;
   const lr = season ? lanternRadius(season, st.wager.marks, st.day, st.wager.sealed) : LANTERN_R;
   // Spec 06 Requirement 6: the lantern hunt. While the lantern is on, new fires hide unless lit or found.
   const hunting = st.lantern.on && !isT;
@@ -134,10 +149,31 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   // Opening a stone creaks (spec 05 Requirement 5.5; board playCreak on grave click and card pick).
   const openEx = useCallback((id: string) => { playCreak(currentAudio()); act({ type: 'exhume', id }); }, [act]);
   const onStone = useCallback((id: string) => {
+    if (keepOpen) {
+      const v = views.find((g) => g.id === id);
+      if (!v?.warm) { openEx(id); return; }
+      playCreak(currentAudio());
+      act({ type: 'keepMark', id, warm: true, need });
+      return;
+    }
     if (!wagerOpen) { openEx(id); return; }
     playCreak(currentAudio());
     act({ type: 'mark', id });
-  }, [act, openEx, wagerOpen]);
+  }, [act, openEx, wagerOpen, keepOpen, views, need]);
+  const onKeepSeal = useCallback(() => {
+    if (!tonight || !keep || keep.marks.length !== need) return;
+    act({ type: 'keepSeal', need });
+    act({ type: 'say', line: line(tcopy.keep.sealed(keepWatchScore(keep.marks, tonight).k), Date.now(), 7600) });
+    playBell(currentAudio(), 1);
+  }, [act, keep, need, tonight]);
+  const onKeepSave = useCallback(() => {
+    if (!tonight || !keep) return;
+    setSaving(true);
+    drawEpitaphCard(cardLines(keep.marks, tonight))
+      .then((b) => download(b, tcopy.card.file(year + 1)))
+      .catch(() => undefined)
+      .finally(() => setSaving(false));
+  }, [keep, tonight, year]);
   const onSeal = useCallback(() => {
     if (st.wager.marks.length !== 3) return;
     act({ type: 'seal' });
@@ -213,7 +249,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           onGrave={onStone} onFire={(id) => act({ type: 'selectFire', id })} onHover={(id) => act({ type: 'hover', id })}
           onFocusGrave={onFocusGrave} onMove={onMove} hunting={hunting} found={st.found} onFocusFire={onFocusFire} glitch={glitch.on}
           onLeave={() => st.lantern.on && act({ type: 'lanternMove', x: st.lantern.x, y: st.lantern.y, inside: false })}
-          cursor={st.lantern.on ? 'none' : 'default'} overlays={overlays} wagerOpen={wagerOpen} marks={marks} clue={clue}
+          cursor={st.lantern.on ? 'none' : 'default'} overlays={overlays} wagerOpen={wagerOpen} marks={marks} clue={clue} lanterns={lanterns} stoneAria={stoneAria}
           panel={ex && <Exhumation ex={ex} onClose={closeEx} />}
           narrator={<>{st.say && <Gravekeeper key={st.say.start} say={st.say} raised={st.cam !== null} glitch={gl} />}<GravekeeperLive say={st.say} /></>}
         />
@@ -221,6 +257,11 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
         <aside aria-label="Graves and parish register" style={{ flex: '1 1 340px', position: 'relative', minHeight: 480, background: '#070C0B' }}>
           <div style={{ position: 'absolute', inset: 0, overflowY: 'auto', boxSizing: 'border-box', padding: '18px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
       {wagerOpen && <Wager marks={marks} onSeal={onSeal} onWatch={onWatch} />}
+          {keep && tonight && (
+            <KeepWatch year={year + 1} need={need} marks={keep.marks} sealed={keep.sealed} saving={saving}
+              result={keep.sealed ? tcopy.keep.result(keepWatchScore(keep.marks, tonight).k, keepWatchScore(keep.marks, tonight).top) : null}
+              onSeal={onKeepSeal} onAgain={() => act({ type: 'keepAgain' })} onSave={onKeepSave} />
+          )}
           <Register rows={registerRows(data, scene)} note={registerNote(data)} onPick={(k) => act({ type: 'scene', scene: k })} glitch={gl} />
           {/* Wraps the sub under the title rather than squeezing the title (Tonight's sub is long). */}
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', justifyContent: 'space-between', gap: '2px 12px', marginTop: 4 }}>

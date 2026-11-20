@@ -31,3 +31,49 @@ export const keeper = {
   stale: (days: number, through: string) =>
     `The satellites have not spoken to me for ${w(days)} ${days === 1 ? 'day' : 'days'}. What you see is from ${through}.`,
 };
+
+/** Keep watch, puzzle 4 (spec 07 Requirement 4). Lantern marks go only on still-warm scars, as the brief says. Every
+ *  sealed line carries the slash-pile caveat and none says a fire will return (honesty.md). */
+export const keep = {
+  title: 'Keep watch',
+  aria: 'Keep watch',
+  prompt: (year: number, need: number, marked: number) =>
+    marked === 0 ? `Set ${w(need)} lanterns on the scars you would watch in spring ${year}.`
+      : marked < need ? `${w(need - marked)} more.` : 'Your lanterns are set. Seal the watch.',
+  hint: 'Only still-warm scars can take a lantern. Hover or focus one to read it.',
+  empty: '·  ·  ·',
+  seal: 'Seal the watch',
+  again: 'Watch again',
+  save: 'Save the epitaph card',
+  saving: 'Drawing the card…',
+  result: (k: number, ids: string[]) =>
+    `${word(k)} of your ${ids.length === 1 ? 'lantern matches' : 'lanterns match'} the ranking's top ${w(ids.length)} still-warm scars (${ids.join(', ')}).`,
+  caveat: 'Late heat can be slash-pile burning; crews confirm.',
+  /** The Gravekeeper's line on sealing, by the number of matches. */
+  sealed: (k: number) =>
+    [
+      'Your lanterns stand apart from mine. Spring will show us which ground was only cooling.',
+      'One of your lanterns hangs where mine does.',
+      'Two of your lanterns hang where mine do.',
+      'We keep the same watch, you and I.',
+    ][Math.max(0, Math.min(3, k))]! + '\nLate heat can be slash-pile burning; crews confirm.',
+  markAria: (id: string, on: boolean) => (on ? `Take the lantern from ${id}` : `Set a lantern on ${id}`),
+};
+
+export const clue = {
+  late: (n: number) => (n > 0 ? `${n} late ${n === 1 ? 'hotspot' : 'hotspots'} in the last 14 days` : 'Cold for two weeks: nothing to watch here'),
+  last: (date: string) => `Last heat ${date}`,
+  snow: (pct: number) => (pct < 0 ? 'Snow now: unseen (cloud)' : `Snow now ${pct}%`),
+  action: (warm: boolean, on: boolean, sealed: boolean) =>
+    sealed ? 'Press to exhume' : !warm ? 'Press to exhume' : on ? 'Your lantern · press to take it down' : 'Press to set a lantern',
+};
+
+export const card = {
+  kicker: (year: number) => `Keep watch · spring ${year}`,
+  title: 'My lanterns',
+  row: (late: number, where: string) => `${late} late ${late === 1 ? 'hotspot' : 'hotspots'} · ${where}`,
+  sealedOn: (date: string) => `Sealed ${date}, from data as of that day`,
+  /** Filled in when the site is hosted (spec 07 task 8). */
+  site: '',
+  file: (year: number) => `revenant-keep-watch-${year}.png`,
+};

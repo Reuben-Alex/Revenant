@@ -5,7 +5,6 @@
 // holds only published values (`clueCard`).
 import type { CSSProperties } from 'react';
 import * as copy from '../copy/gravekeeper';
-import type { ClueCard as Clue } from '../data/gravekeeper';
 import { ironStyle } from './IronButton';
 
 interface Props {
@@ -49,24 +48,24 @@ export function Wager({ marks, onSeal, onWatch }: Props) {
 
 interface ClueProps {
   title: string;
-  clue: Clue;
+  /** Published values only, one per line. */
+  lines: string[];
+  action: string;
   marked: boolean;
   left: number;
   top: number;
 }
 
-/** The hover/focus card while the wager is open (Requirement 4.3). */
-export function ClueCard({ title, clue, marked, left, top }: ClueProps) {
+/** The hover/focus card while the wager (spec 06 Requirement 4.3) or Keep watch (spec 07 Requirement 4.3) is open. */
+export function ClueCard({ title, lines, action, marked, left, top }: ClueProps) {
   return (
     <div role="tooltip" style={{
       position: 'absolute', left: `${left.toFixed(1)}%`, top: `calc(${top.toFixed(1)}% + 24px)`, display: 'flex', flexDirection: 'column', gap: 2,
       fontSize: 12, background: 'rgba(6,10,9,0.95)', border: '1px solid #3A4A45', borderRadius: 6, padding: '7px 10px', pointerEvents: 'none', whiteSpace: 'nowrap', zIndex: 3,
     }}>
       <b style={{ fontFamily: 'var(--font-fell-sc)', fontWeight: 400, fontSize: 15 }}>{title}</b>
-      <span style={{ color: '#A3ADA8' }}>{clue.footprint} · {clue.latitude}</span>
-      <span style={{ color: '#A3ADA8' }}>{clue.thaw}</span>
-      <span style={{ color: '#A3ADA8' }}>{clue.early}</span>
-      <span style={{ color: marked ? '#FFB86B' : '#7FE0CF' }}>{copy.clue.action(marked)}</span>
+      {lines.map((l) => <span key={l} style={{ color: '#A3ADA8' }}>{l}</span>)}
+      <span style={{ color: marked ? '#FFB86B' : '#7FE0CF' }}>{action}</span>
     </div>
   );
 }

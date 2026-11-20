@@ -91,6 +91,9 @@ export const glitchOn = (now: number) => Math.floor(now / 110) % 46 < 3;
 
 export interface ClueCard { footprint: string; latitude: string; thaw: string; early: string }
 
+/** The clue card's lines, in the order shown. */
+export const clueLines = (c: ClueCard) => [`${c.footprint} · ${c.latitude}`, c.thaw, c.early];
+
 /** Read the stones (Requirement 4.3): only published values. */
 export function clueCard(g: Grave, year: number): ClueCard {
   return {
