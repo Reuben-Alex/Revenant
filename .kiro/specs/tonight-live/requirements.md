@@ -79,7 +79,7 @@ Tonight already works in the app (spec 03): the published 2026 scars, snow and l
 1. ON Tonight, THE aside SHALL show a "Keep watch" panel, in the wager panel's style: "Set three lanterns on the scars you would watch in spring {Y+1}." Then three slots and "Seal the watch".
 2. Pressing a still-warm stone SHALL set or remove a lantern on it, up to three, with a creak. A stone that is not still warm SHALL show "Cold for two weeks: nothing to watch here" on its clue card and SHALL take no lantern. WHEN fewer than three scars are still warm, THE watch SHALL need only that many.
 3. WHILE Keep watch is open, hovering or focusing a stone SHALL show a clue card with published values only: footprint ≈ km², late hits in 14 days, last heat date, snow now (or "unseen"). Lanterned stones SHALL show a small lantern mark.
-4. "Seal the watch" SHALL compare the lanterns with the top three of `watch`. It shows "{k word} of your three match the ranking's top three ({ids})" and the ranking's top three. The Gravekeeper says a line from copy, and one bell tolls. Every line SHALL end with "Late heat can be slash-pile burning; crews confirm." No line SHALL say a fire will return.
+4. "Seal the watch" SHALL compare the lanterns with the first three still-warm scars in `watch` (today G-02, G-16 and G-04). The viewer can only choose still-warm scars, so the ranking is held to the same choice. It shows "{k word} of your three match the ranking's top three still-warm scars ({ids})" and those three. The Gravekeeper says a line from copy, and one bell tolls. Every line SHALL end with "Late heat can be slash-pile burning; crews confirm." No line SHALL say a fire will return.
 5. AFTER sealing, "Save the epitaph card" SHALL draw a 1200 × 630 PNG in the browser (canvas) and download it. Nothing is uploaded. The card holds:
    - "Keep watch · spring {Y+1}";
    - the three ids with their late hits and coordinates;
@@ -140,14 +140,21 @@ Tonight already works in the app (spec 03): the published 2026 scars, snow and l
 2. THE bottom-right credit SHALL read "NASA FIRMS · NASA GIBS/VIIRS · NBAC · REAL 2024–2026 DATA". The board's line omits FIRMS and NBAC (honesty.md).
 3. Under reduced motion, snow, embers and glow SHALL hold still.
 
-### Requirement 8: Hosting
+### Requirement 8: Hosting (user decision: GitHub Actions with Vercel)
 **User Story:** As the team, I want a public link that stays up, free, through the judging period.
 #### Acceptance Criteria
-1. THE site SHALL be built as four pages, `index.html`, `dossier.html`, `phone.html` and `opening.html`, and deployed to **GitHub Pages** from the public repo by a GitHub Actions workflow on every push to `main`. The workflow runs `npm ci`, `npm run gate`, then the Pages deploy. The address is `https://reuben-alex.github.io/Revenant/`.
-2. EVERY data, image and page URL SHALL resolve under the Pages sub-path (Vite `base`). No URL may start with `/` alone.
+1. THE site SHALL be built as four pages, `index.html`, `dossier.html`, `phone.html` and `opening.html`, and deployed to **Vercel** by a GitHub Actions workflow on every push to `main`.
+   - The workflow runs `npm ci` and `npm run gate`. Only if those pass does it run `vercel pull --yes --environment=production`, `vercel build --prod` and `vercel deploy --prebuilt --prod` (Vercel, "Deploying from an External CI/CD Pipeline").
+   - The Vercel CLI reads `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` from repository secrets. No token appears in a file, a command line or a log.
+2. `vercel.json` SHALL set the Vite build (`dist`), `cleanUrls` (so `/dossier`, `/phone` and `/opening` work), and `git.deploymentEnabled: false`, so that only the workflow deploys, after the checks.
 3. THE main page SHALL keep spec 04's rule: no URL parameter or hash skips daylight, nightfall or the title card. The other pages read only their own hash.
 4. THE spec 02 nightly workflow (task 11), when built, SHALL publish new data by a commit to `main`, which redeploys. Until then, Tonight shows its staleness (Requirement 1.3).
-5. Enabling Pages in the repository settings (Source: GitHub Actions) and pushing are the user's steps. The tasks stop and ask for them.
+5. THE user's steps, which the tasks stop and ask for:
+   - create the Vercel project (`vercel link`, Hobby plan);
+   - make a project-scoped token;
+   - add the three secrets to the GitHub repository;
+   - push.
+   The production address is the project's `*.vercel.app` domain, which the README then links.
 
 ### Requirement 9: Honesty, accessibility and checks
 **User Story:** As a judge, I want the new pages held to the same standard as the graveyard.

@@ -9,7 +9,7 @@ These tasks run in four groups:
 3. The multi-page build and the three new pages, each with its own checkpoint.
 4. Deploy, then a final check.
 
-Task 1 needs a live `tonight` run, which uses the FIRMS key. Task 8 needs two steps from the user: enabling Pages and pushing.
+Task 1 needs a live `tonight` run, which uses the FIRMS key. Task 8 needs steps from the user: creating the Vercel project, adding three repository secrets, and pushing.
 
 ## Tasks
 - [ ] 1. Publish the watch ranking
@@ -40,8 +40,8 @@ Task 1 needs a live `tonight` run, which uses the FIRMS key. Task 8 needs two st
 - [ ] 3.4 **Checkpoint:** Keep watch sealed, and the PNG card
   - _Requirements: 9.3_
 
-- [ ] 4. Multi-page build and base path
-- [ ] 4.1 `src/data/assets.ts` and every runtime URL through `asset()`; `vite.config.ts` `base` and `rollupOptions.input` for the four pages; the Property 9 source scan; check that the prod bundle of `index.html` reads no URL
+- [ ] 4. Multi-page build
+- [ ] 4.1 `vite.config.ts` `rollupOptions.input` for the four pages; `vercel.json` (`dist`, `cleanUrls`, `git.deploymentEnabled: false`); the Property 9 bundle scan (the `index.html` bundle reads no URL)
   - _Requirements: 8.2, 8.3_
 
 - [ ] 5. The grave dossier
@@ -71,9 +71,9 @@ Task 1 needs a live `tonight` run, which uses the FIRMS key. Task 8 needs two st
   - _Requirements: 9.3_
 
 - [ ] 8. Deploy
-- [ ] 8.1 `.github/workflows/deploy.yml` (checkout, setup-node, `npm ci`, `npm run gate`, upload-pages-artifact, deploy-pages; permissions `pages: write`, `id-token: write`)
+- [ ] 8.1 `.github/workflows/deploy.yml`: on push to `main` and by hand; actions pinned to SHAs; `contents: read`; `npm ci`, `npm run gate`, then `vercel pull` / `vercel build --prod` / `vercel deploy --prebuilt --prod`, with the three secrets in `env`
   - _Requirements: 8.1, 8.4_
-- [ ] 8.2 **User steps:** enable Pages (Source: GitHub Actions) and push. Then check the live site: all four pages, data, images, and the Tonight dates
+- [ ] 8.2 **User steps:** `vercel link` (Hobby), a project-scoped token, the secrets `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` in GitHub, then push. After that, check the live site: all four pages, data, images, and the Tonight dates
   - _Requirements: 8.1, 8.2, 8.5_
 
 - [ ] 9. Final check
