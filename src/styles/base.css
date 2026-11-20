@@ -34,6 +34,10 @@ input {
   border-color: #6f6250 !important;
   color: #f4eee2 !important;
 }
+.rv-btn.rv-btn-light:hover {
+  color: #070b0a !important;
+  background: #f4eee2 !important;
+}
 
 .rv-sr {
   position: absolute;

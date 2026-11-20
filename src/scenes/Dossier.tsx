@@ -71,7 +71,7 @@ export function Dossier() {
             <p style={{ margin: 0, fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 20, color: '#C7CFCB' }}>{v.lede}</p>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-            <a className="rv-btn" href={`phone.html#${v.season}/${v.id}`} style={{ ...BTN, background: '#ECE6D6', color: '#070B0A', fontWeight: 600 }}>{copy.hero.send}</a>
+            <a className="rv-btn rv-btn-light" href={`phone.html#${v.season}/${v.id}`} style={{ ...BTN, background: '#ECE6D6', color: '#070B0A', fontWeight: 600 }}>{copy.hero.send}</a>
             <button type="button" className="rv-btn" title={copy.hero.kmlNote} aria-describedby="rv-kml-note"
               onClick={() => download(new Blob([kml(v)], { type: 'application/vnd.google-earth.kml+xml' }), copy.kml.file(v.season, v.id))}
               style={{ ...BTN, border: '1px solid #4D5A55', color: '#ECE6D6', background: 'transparent', fontWeight: 500, font: '500 14px var(--font-ui)' }}>{copy.hero.kml}</button>

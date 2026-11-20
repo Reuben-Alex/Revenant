@@ -62,14 +62,14 @@ Task 1 needs a live `tonight` run, which uses the FIRMS key. Task 8 needs steps 
 - [x] 5.4 **Checkpoint:** dossier for 2024 G-03 at 1440 wide, next to the board
   - _Requirements: 9.3_
 
-- [ ] 6. The field-crew phone
-- [ ] 6.1 `src/data/phone.ts` + `src/copy/phone.ts`: `haversineKm`, `nearest`, `phoneView`, `shareText`, `mapsLink`
+- [x] 6. The field-crew phone
+- [x] 6.1 `src/data/phone.ts` + `src/copy/phone.ts`: `haversineKm`, `nearest`, `phoneView`, `shareText`, `mapsLink`
   - _Requirements: 6.2–6.5_
-- [ ] 6.2 `Phone.tsx` + `phone.html`: header, season switch, map crop, "Use my location" (on-device), the card, the quick report and share, nav, the hash
+- [x] 6.2 `Phone.tsx` + `phone.html`: header, season switch, map crop, "Use my location" (on-device), the card, the quick report and share, nav, the hash
   - _Requirements: 6.1–6.7_
-- [ ] 6.3 Tests: Properties 5 and 7; a component test without and with a mocked position
+- [x] 6.3 Tests: Properties 5 and 7; a component test without and with a mocked position
   - _Requirements: 6.3–6.5_
-- [ ] 6.4 **Checkpoint:** phone at 390 × 844, next to the board
+- [x] 6.4 **Checkpoint:** phone at 390 × 844, next to the board
   - _Requirements: 9.3_
 
 - [ ] 7. The opening frame
