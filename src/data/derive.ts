@@ -6,6 +6,7 @@ import { FRAME_SATELLITE, KEYFRAMES, TONIGHT_FRAME, type Keyframe } from './imag
 import { displayState, since as sinceMelt, type DisplayState } from './state';
 import type { Grave, NewFire, SceneKey, SeasonData, SeasonsFile, TonightFile, TonightScar } from './types';
 import { SEASON_KEYS } from './types';
+import { tonightTab, watchRank } from './tonight';
 
 export const W = 1060;
 export const H = 716;
@@ -85,8 +86,9 @@ export function graveViews(season: SeasonData, day: number): GraveView[] {
 }
 
 export function tonightViews(t: TonightFile): GraveView[] {
-  const maxSize = Math.max(1, ...t.scars.map((s) => s.size));
-  const maxLate = Math.max(0, ...t.scars.map((s) => s.late));
+  // Spec 07 Requirement 2.3: the order is the published \watch\; \score\ is only the rank position, top = 1.
+  const rank = watchRank(t);
+  const n = t.scars.length;
   return t.scars.map((s, i) => {
     const st: SceneState = s.snowNow >= 50 ? 'buried' : s.snowNow >= 15 ? 'settling' : 'open';
     const warm = s.late > 0;
@@ -107,7 +109,7 @@ export function tonightViews(t: TonightFile): GraveView[] {
       thawing: false,
       emergeDelay: 0.15 + (i % 24) * 0.07,
       grave: null, scar: s,
-      score: 0.45 * (s.size / maxSize) + 0.55 * (maxLate > 0 ? s.late / maxLate : 0),
+      score: n ? (n - (rank.get(s.id) ?? n - 1)) / n : 0,
     };
   });
 }
@@ -155,14 +157,14 @@ export function countList(scene: SceneKey, views: GraveView[], t: TonightFile | 
 
 // --- tabs ---------------------------------------------------------------------------------------
 
-export function tabList(data: SeasonsFile, t: TonightFile | null, scene: SceneKey) {
+export function tabList(data: SeasonsFile, t: TonightFile | null, scene: SceneKey, now = Date.parse(t?.asOf ?? '1970-01-01T00:00:00Z')) {
   const replay = SEASON_KEYS.map((k) => {
     const s = data.seasons[k];
     return { key: k as SceneKey, label: copy.tabs.replay(s.year), sub: copy.tabs.replaySub(s.risen, s.graves.length), on: scene === k, tonight: false, disabled: false };
   });
   return [...replay, {
     key: 'tonight' as SceneKey, label: copy.tabs.tonight,
-    sub: t ? copy.tabs.tonightSub(t.pointsThrough) : copy.tabs.tonightMissing,
+    sub: t ? tonightTab(t, now) : copy.tabs.tonightMissing,
     on: scene === 'tonight', tonight: true, disabled: t === null,
   }];
 }

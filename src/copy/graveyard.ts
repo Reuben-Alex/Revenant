@@ -19,7 +19,6 @@ export const tabs = {
   replay: (year: number) => `Spring ${year}`,
   replaySub: (risen: number, graves: number) => `${risen} OF ${graves} ROSE`,
   tonight: 'Tonight',
-  tonightSub: (pointsThrough: string) => `LIVE · ${fmtIso(pointsThrough).toUpperCase()}`,
   tonightMissing: 'NO LIVE DATA YET',
 };
 
@@ -90,7 +89,7 @@ export const list = {
   title: 'Graves to visit',
   sub: (year: number) => `scars of summer ${year - 1}`,
   tonightTitle: '2027 watch list',
-  tonightSub: 'ranked by size and late heat',
+  tonightSub: 'ranked by size and late heat · a guide, not a forecast',
   here: 'Here lies',
   epBuried: (year: number) => `Burned summer ${year - 1} · sleeping`,
   epRest: (year: number) => `Burned summer ${year - 1} · at rest`,

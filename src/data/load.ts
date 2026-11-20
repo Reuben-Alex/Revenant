@@ -77,8 +77,11 @@ export function parseTonight(raw: unknown, file = 'tonight.json'): TonightFile {
     need(typeof d[k] === 'string', file, `${k} is missing`);
   }
   need(isNum(d.static) && Array.isArray(d.sources), file, 'static/sources missing');
+  const watch = d.watch as unknown;
+  need(Array.isArray(watch) && watch.length === scars.length && watch.every((v) => Number.isInteger(v) && v >= 0 && v < scars.length)
+    && new Set(watch).size === scars.length, file, 'watch is not a ranking of the scars');
   return {
-    scars, clusters, static: d.static, asOf: d.as_of as string, frameDate: d.frame_date as string,
+    scars, watch: watch as number[], clusters, static: d.static, asOf: d.as_of as string, frameDate: d.frame_date as string,
     pointsThrough: d.points_through as string, sources: d.sources as string[], credit: d.credit as string,
   };
 }

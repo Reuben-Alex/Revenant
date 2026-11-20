@@ -31,6 +31,9 @@ import {
   NIGHT_MS, checkRiddle, clueCard, glitchText, huntView, introLine, lanternRadius, line, quiet, riddleCards, riddleHint, verdictView,
 } from '../data/gravekeeper';
 import { useGraveyard, type RisingEvent, type UIState } from './useGraveyard';
+import { useNow } from './useNow';
+import * as tcopy from '../copy/tonight';
+import { tonightFooter, tonightLine } from '../data/tonight';
 
 interface Props {
   data: SeasonsFile;
@@ -54,6 +57,7 @@ function footerSub(st: UIState): string {
 
 export function Graveyard({ data, tonight, focusHeadline = false, onRising, greet = false }: Props) {
   const { state: st, act } = useGraveyard({ seasons: data.seasons, onRising });
+  const now = useNow();
 
   // The Gravekeeper speaks at night arrival and at each season's start (spec 06 Requirements 2.1, 2.2).
   const greeted = useRef(false);
@@ -68,7 +72,9 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
     if (lastScene.current === st.scene) return;
     lastScene.current = st.scene;
     if (st.scene !== 'tonight') act({ type: 'say', line: line(introLine(data.seasons, st.scene), Date.now(), 7600) });
-  }, [st.scene, act, data]);
+    // Spec 07 Requirements 1.3 and 3.3: Tonight's line, or how stale the data is.
+    else if (tonight) act({ type: 'say', line: line(tonightLine(data.seasons, tonight, Date.now()), Date.now(), 7600) });
+  }, [st.scene, act, data, tonight]);
   const onLantern = useCallback(() => {
     if (!st.lantern.on) act({ type: 'say', line: line(gk.lanternLit, Date.now(), 4200) });
     act({ type: 'lantern' });
@@ -192,7 +198,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   return (
     <div style={{ width: '100%', minHeight: 900, boxSizing: 'border-box', background: '#050807', color: '#ECE6D6', fontFamily: 'var(--font-ui)', display: 'flex', flexDirection: 'column', position: 'relative' }}>
       <Header
-        tabs={tabList(data, tonight, scene)} onScene={(k) => act({ type: 'scene', scene: k })}
+        tabs={tabList(data, tonight, scene, now)} onScene={(k) => act({ type: 'scene', scene: k })}
         lanternOn={st.lantern.on} compareOn={st.compare && !isT} compareDisabled={isT} night={st.night}
         onLantern={onLantern} onCompare={() => act({ type: 'compare' })} onNight={() => act({ type: 'night' })}
       />
@@ -216,8 +222,9 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           <div style={{ position: 'absolute', inset: 0, overflowY: 'auto', boxSizing: 'border-box', padding: '18px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
       {wagerOpen && <Wager marks={marks} onSeal={onSeal} onWatch={onWatch} />}
           <Register rows={registerRows(data, scene)} note={registerNote(data)} onPick={(k) => act({ type: 'scene', scene: k })} glitch={gl} />
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginTop: 4 }}>
-            <h2 style={{ margin: 0, fontFamily: 'var(--font-fell-sc)', fontWeight: 400, fontSize: 24, letterSpacing: 1 }}>{isT ? copy.list.tonightTitle : copy.list.title}</h2>
+          {/* Wraps the sub under the title rather than squeezing the title (Tonight's sub is long). */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', justifyContent: 'space-between', gap: '2px 12px', marginTop: 4 }}>
+            <h2 style={{ margin: 0, fontFamily: 'var(--font-fell-sc)', fontWeight: 400, fontSize: 24, letterSpacing: 1, whiteSpace: 'nowrap' }}>{isT ? copy.list.tonightTitle : copy.list.title}</h2>
             <span style={{ fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 13, color: '#A3ADA8' }}>{isT ? copy.list.tonightSub : copy.list.sub(year)}</span>
           </div>
           {cardList(scene, views, year).map((c) => (
@@ -236,10 +243,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
       {/* overflowX clip: the flame's 140 px glow is centred on the playhead and would widen the page at Jul 1 */}
       <footer style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18, padding: '14px 28px 18px', borderTop: '1px solid #172120', boxSizing: 'border-box', background: 'linear-gradient(180deg, #080C0B, #040605)', overflowX: 'clip' }}>
         {isT ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 'none', minWidth: 160 }}>
-            <span style={{ fontFamily: 'var(--font-fell-sc)', fontSize: 24 }}>{copy.footer.tonightDate(tonight!.asOf)}</span>
-            <span style={{ fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 13, color: '#A3ADA8' }}>{copy.footer.tonightSub(year)}</span>
-          </div>
+          <TonightFooter f={tonightFooter(data.seasons, tonight!, now)} date={copy.footer.tonightDate(tonight!.asOf)} sub={copy.footer.tonightSub(year)} />
         ) : (
           <CandleTimeline
             speed={st.speed} day={st.day}
@@ -253,5 +257,33 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
         <span style={{ flexBasis: '100%', textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#7C8884' }}>{copy.footerCredit(isT ? tonight!.credit : data.meta.credit)}</span>
       </footer>
     </div>
+  );
+}
+
+/** Board `isTonight` footer (Main.dc.html L455–459, L484–490), with every value from the published file. */
+function TonightFooter({ f, date, sub }: { f: ReturnType<typeof tonightFooter>; date: string; sub: string }) {
+  const kick = (color: string): React.CSSProperties => ({ fontFamily: 'var(--font-fell-sc)', fontSize: 13, letterSpacing: 3, color });
+  const note: React.CSSProperties = { fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 14, color: '#C7CFCB' };
+  return (
+    <>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 'none', minWidth: 160 }}>
+        <span style={{ fontFamily: 'var(--font-fell-sc)', fontSize: 24 }}>{date}</span>
+        <span style={{ fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 13, color: '#A3ADA8' }}>{sub}</span>
+      </div>
+      <div style={{ flex: '1 1 420px', minWidth: 260, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px 26px' }}>
+        <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <span style={kick('#7FE0CF')}>{tcopy.footer.wake}</span>
+          <span style={{ fontFamily: 'var(--font-fell-sc)', fontSize: 22 }}>{f.wake.window}</span>
+          {f.wake.nights && <span style={note}>{f.wake.pace} · {f.wake.nights}</span>}
+        </span>
+        <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <span style={kick('#A3ADA8')}>{tcopy.footer.orbit}</span>
+          <span style={note}>{f.snapshot}</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: f.stale ? '#E8A07A' : '#8E9994' }}>
+            {f.asOf}{f.stale && <> · <b style={{ fontWeight: 600 }}>{f.stale}</b></>}
+          </span>
+        </span>
+      </div>
+    </>
   );
 }

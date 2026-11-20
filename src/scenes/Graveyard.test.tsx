@@ -144,7 +144,8 @@ it('the wager holds day 0; marks, clues and the seal; the thaw waits for silence
     expect(verdictView(DATA.seasons.s2026, [], false).bells).toBe(1);
   });
 
-  it('dragging the candle past day 0 counts as Just watch (spec 06 Req 4.6)', () => {    render(<Graveyard data={DATA} tonight={TONIGHT} />);
+  it('dragging the candle past day 0 counts as Just watch (spec 06 Req 4.6)', () => {
+    render(<Graveyard data={DATA} tonight={TONIGHT} />);
     fireEvent.click(screen.getByRole('button', { name: 'Mark grave G-01' }));
     fireEvent.change(screen.getByLabelText(/Replay day/i), { target: { value: '5' } });
     expect(screen.queryByRole('region', { name: "The Gravekeeper's wager" })).toBeNull();

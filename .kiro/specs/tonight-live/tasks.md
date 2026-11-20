@@ -22,14 +22,15 @@ Task 1 needs a live `tonight` run, which uses the FIRMS key. Task 8 needs steps 
   - as_of 2026-11-20T12:31:07Z, points through Nov 19, frame Nov 16; 9 still warm, 10 buried; `watch` opens G-24, G-01, G-02; still-warm top three G-24, G-02, G-16.
   - _Requirements: 2.1_
 
-- [ ] 2. Tonight, live
-- [ ] 2.1 `src/data/tonight.ts` + `src/copy/tonight.ts`: `staleness`, `meltSpread`, `wakeView`, `tonightLine`, `watchList`; types and loader read `watch`; `derive.ts` stops computing a score
+- [x] 2. Tonight, live
+- [x] 2.1 `src/data/tonight.ts` + `src/copy/tonight.ts`: `staleness`, `meltSpread`, `wakeView`, `tonightLine`, `watchList`; types and loader read `watch`; `derive.ts` stops computing a score
   - _Requirements: 1.1–1.4, 2.3, 2.4, 3.1–3.4_
-- [ ] 2.2 Graveyard: footer ("They will wake", "Seen from orbit", "Data as of"), the stale tab and footer, the Tonight Gravekeeper line on entry, the subline, and the list sub
+- [x] 2.2 Graveyard: footer ("They will wake", "Seen from orbit", "Data as of"), the stale tab and footer, the Tonight Gravekeeper line on entry, the subline, and the list sub
+  - The subline already used the published buried count (spec 03). `useNow` ticks once a minute. The list heading now wraps its longer sub under the title.
   - _Requirements: 1.1–1.3, 3.1–3.4_
-- [ ] 2.3 Tests: fast-check Properties 2 and 3; a component test with a fixed clock (fresh and stale)
+- [x] 2.3 Tests: fast-check Properties 2 and 3; a component test with a fixed clock (fresh and stale)
   - _Requirements: 1.3, 3.1, 3.2_
-- [ ] 2.4 **Checkpoint:** Tonight screenshots at 1440 × 1000, fresh and stale; link for the user
+- [x] 2.4 **Checkpoint:** Tonight screenshots at 1440 × 1000, fresh and stale; link for the user
   - _Requirements: 9.3_
 
 - [ ] 3. Keep watch

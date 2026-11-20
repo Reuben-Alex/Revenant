@@ -65,6 +65,8 @@ export interface TonightScar {
 
 export interface TonightFile {
   scars: TonightScar[];
+  /** Published 2027 watch ranking: indices of \scars\, best first (spec 07 Requirement 2). */
+  watch: number[];
   clusters: [number, number, number][]; // x, y, point count
   static: number;
   asOf: string;
