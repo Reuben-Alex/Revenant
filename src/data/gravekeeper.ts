@@ -156,6 +156,22 @@ export function lanternRadius(s: SeasonData, marks: string[], day: number, seale
 /** Lantern hunt: a fire is found when the lantern centre is within the radius − 10 (board names rule). */
 export const fireFound = (f: NewFire, lx: number, ly: number, r: number) => Math.hypot(f.x - lx, f.y - ly) < r - 10;
 
+export interface HuntView {
+  /** Fires drawn while the lantern is on: already found, or inside the light (Requirement 6.1). */
+  shown: NewFire[];
+  /** Fires the lantern finds at this position, not found before (Requirement 6.2). */
+  fresh: NewFire[];
+  found: number;
+  total: number;
+}
+
+/** The lantern hunt at one lantern position. `visible` are the season's fires with first day ≤ the current day. */
+export function huntView(visible: NewFire[], found: string[], lx: number, ly: number, r: number, lit: boolean): HuntView {
+  const shown = visible.filter((f) => found.includes(f.id) || Math.hypot(f.x - lx, f.y - ly) < r);
+  const fresh = lit ? visible.filter((f) => !found.includes(f.id) && fireFound(f, lx, ly, r)) : [];
+  return { shown, fresh, found: visible.filter((f) => found.includes(f.id)).length, total: visible.length };
+}
+
 export interface VerdictView {
   kicker: string;
   title: string;

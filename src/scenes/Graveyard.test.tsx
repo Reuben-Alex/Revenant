@@ -92,6 +92,23 @@ it('the wager holds day 0; marks, clues and the seal; the thaw waits for silence
     expect(document.querySelectorAll('.rv-pick')).toHaveLength(3);
   });
 
+  it('the lantern hunt: fires hide in the dark, a focused fire draws the lantern and is found, the counter counts (spec 06 Req 6)', () => {
+    render(<Graveyard data={DATA} tonight={TONIGHT} />);
+    fireEvent.change(screen.getByLabelText(/Replay day/i), { target: { value: '60' } });
+    const visible = DATA.seasons.s2024.fires.filter((f) => f.day <= 60);
+    fireEvent.click(screen.getByRole('button', { name: 'Lantern' }));
+    const counter = () => screen.getAllByRole('status').map((e) => e.textContent ?? '').find((t) => /new fires found/.test(t));
+    expect(counter()).toBe(`0 of ${visible.length} new fires found`);
+    const dark = screen.getAllByRole('button', { name: 'Something in the dark. Bring the lantern here.' });
+    expect(dark).toHaveLength(visible.length);
+    fireEvent.focus(dark[0]!);
+    const live = screen.getAllByRole('status').map((e) => e.textContent ?? '').join(' | ');
+    expect(live).toMatch(/The Gravekeeper: That one is not mine\. F-\d\d burned more than about 15 km from every scar\./);
+    const n = Number(/^(\d+) of/.exec(counter() ?? '')?.[1]);
+    expect(n).toBeGreaterThan(0);
+    expect(screen.getAllByRole('button', { name: /^New fire F-\d\d, not a revenant$/ })).toHaveLength(n);
+  });
+
   it('dragging the candle past day 0 counts as Just watch (spec 06 Req 4.6)', () => {
     render(<Graveyard data={DATA} tonight={TONIGHT} />);
     fireEvent.click(screen.getByRole('button', { name: 'Mark grave G-01' }));

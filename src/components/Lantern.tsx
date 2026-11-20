@@ -1,7 +1,8 @@
 // Lantern mode and the before/after split (Main.dc.html L268–289, L338–341; renderVals() L1093–1119).
 import * as copy from '../copy/graveyard';
 import { H, W } from '../data/derive';
-import { lanternFlame, lanternIcon } from '../data/geometry';
+import { fireFlame, fireTriangle, lanternFlame, lanternIcon } from '../data/geometry';
+import type { NewFire } from '../data/types';
 
 interface LanternProps {
   x: number;
@@ -10,9 +11,13 @@ interface LanternProps {
   inside: boolean;
   src: string;
   names: { id: string; text: string; x: number; y: number }[];
+  /** Spec 06 lantern hunt: new fires found or inside the light, drawn above it. */
+  fires?: NewFire[];
+  /** The hunt counter, announced politely (Requirement 6.4). */
+  counter?: string;
 }
 
-export function Lantern({ x, y, r, inside, src, names }: LanternProps) {
+export function Lantern({ x, y, r, inside, src, names, fires = [], counter }: LanternProps) {
   const lpx = ((x / W) * 100).toFixed(2);
   const lpy = ((y / H) * 100).toFixed(2);
   return (
@@ -22,6 +27,12 @@ export function Lantern({ x, y, r, inside, src, names }: LanternProps) {
       <img className="rv-img" src={src} alt="" style={{ pointerEvents: 'none', zIndex: 4, clipPath: `circle(${r * 0.9}px at ${lpx}% ${lpy}%)`, filter: 'sepia(0.25) saturate(1.1) brightness(1.08)' }} />
       <svg viewBox="0 0 1060 716" aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible', zIndex: 4 }}>
         <circle cx={x} cy={y} r={r} style={{ fill: 'none', stroke: '#FFD9A0', strokeOpacity: 0.35, strokeWidth: 1.5 }} />
+        {fires.map((f) => (
+          <g key={f.id}>
+            <path className="rv-appear" d={fireTriangle(f.x, f.y)} style={{ fill: '#F2C14E', stroke: '#050807', strokeWidth: 1 }} />
+            <path className="rv-candle" d={fireFlame(f.x, f.y)} style={{ fill: '#FFE7A3', opacity: 0.9 }} />
+          </g>
+        ))}
         {inside && (
           <g>
             <path d={lanternIcon(x, y)} style={{ fill: 'none', stroke: '#FFE7C2', strokeWidth: 1.4, strokeLinejoin: 'round' }} />
@@ -33,6 +44,15 @@ export function Lantern({ x, y, r, inside, src, names }: LanternProps) {
         <span key={n.id} style={{ position: 'absolute', zIndex: 4, left: `${((n.x / W) * 100).toFixed(2)}%`, top: `${((n.y / H) * 100).toFixed(2)}%`,
           fontFamily: 'var(--font-fell-sc)', fontSize: 15, color: '#FFE7C2', textShadow: '0 0 4px #050807, 0 0 8px #050807', pointerEvents: 'none', whiteSpace: 'nowrap' }}>{n.text}</span>
       ))}
+      {counter !== undefined && (
+        <span role="status" aria-live="polite" style={{ position: 'absolute', top: 12, left: 12, zIndex: 6, pointerEvents: 'none',
+          display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: '14px 14px 3px 3px',
+          background: 'linear-gradient(180deg, rgba(42,36,24,0.95), rgba(14,12,9,0.95))', border: '1px solid #5A4A32',
+          fontFamily: 'var(--font-fell-sc)', fontSize: 15, letterSpacing: 1, color: '#E6D6AE' }}>
+          <svg width="12" height="14" viewBox="-7 -16 14 22" aria-hidden="true"><path d={fireTriangle(0, 0)} style={{ fill: '#F2C14E' }} /></svg>
+          {counter}
+        </span>
+      )}
     </>
   );
 }

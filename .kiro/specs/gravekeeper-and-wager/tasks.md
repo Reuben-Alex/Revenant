@@ -40,10 +40,11 @@ These tasks add the Gravekeeper, the three puzzles, quiet years and the verdict.
 - [x] 4.2 **Checkpoint:** riddle screenshots (open, wrong pick with hint, solved)
   - _Requirements: 9.1_
 
-- [ ] 5. Lantern hunt
-- [ ] 5.1 Hidden fires under the lantern, found set, the lines, the counter
+- [x] 5. Lantern hunt
+- [x] 5.1 Hidden fires under the lantern, found set, the lines, the counter
+  - The lantern draws the fires it shows above its light (the light's image covered the map's fire marks). By keyboard, an unfound fire's button is named "Something in the dark. Bring the lantern here." and focusing it carries the lantern there.
   - _Requirements: 6.1–6.4_
-- [ ] 5.2 **Checkpoint:** lantern hunt screenshot
+- [x] 5.2 **Checkpoint:** lantern hunt screenshot
   - _Requirements: 9.1_
 
 - [ ] 6. Verdict and quiet years

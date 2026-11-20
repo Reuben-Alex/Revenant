@@ -177,6 +177,23 @@ describe('useGraveyard clock and risings (fake timers)', () => {
     expect(result.current.state.day).toBe(18);
   });
 
+  it('the lantern hunt finds a fire when the lantern comes near, names it, and resets with the season (spec 06 Req 6)', () => {
+    const { result } = renderHook(() => useGraveyard({ seasons: DATA.seasons }));
+    act(() => result.current.act({ type: 'day', day: 60 }));
+    act(() => result.current.act({ type: 'lantern' }));
+    const f = DATA.seasons.s2024.fires.find((x) => x.day <= 60)!;
+    act(() => result.current.act({ type: 'lanternMove', x: f.x + 300, y: f.y, inside: true }));
+    expect(result.current.state.found).not.toContain(f.id);
+    act(() => result.current.act({ type: 'lanternMove', x: f.x + 20, y: f.y, inside: true }));
+    expect(result.current.state.found).toContain(f.id);
+    expect(result.current.state.say?.text).toMatch(/not mine|found\. Not one/);
+    const n = result.current.state.found.length;
+    act(() => result.current.act({ type: 'lanternMove', x: f.x + 21, y: f.y, inside: true }));
+    expect(result.current.state.found).toHaveLength(n); // never found twice
+    act(() => result.current.act({ type: 'scene', scene: 's2024' }));
+    expect(result.current.state.found).toEqual([]);
+  });
+
   it('a scrub across risings gives the sting only, without a beat', () => {
     const onRising = vi.fn();
     const { result } = renderHook(() => useGraveyard({ seasons: DATA.seasons, onRising }));

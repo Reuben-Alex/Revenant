@@ -25,7 +25,7 @@ import { Gravekeeper, GravekeeperLive } from '../components/Gravekeeper';
 import * as gk from '../copy/gravekeeper';
 import { ClueCard, Wager } from '../components/Wager';
 import { Riddle } from '../components/Riddle';
-import { NIGHT_MS, checkRiddle, clueCard, introLine, lanternRadius, line, riddleCards, riddleHint } from '../data/gravekeeper';
+import { NIGHT_MS, checkRiddle, clueCard, huntView, introLine, lanternRadius, line, riddleCards, riddleHint } from '../data/gravekeeper';
 import { useGraveyard, type RisingEvent, type UIState } from './useGraveyard';
 
 interface Props {
@@ -97,6 +97,12 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
     <ClueCard title={tip.title} clue={clueCard(hovV.grave, year)} marked={marks.includes(hovV.id)} left={tip.left} top={tip.top} />
   ) : null;
   const lr = season ? lanternRadius(season, st.wager.marks, st.day, st.wager.sealed) : LANTERN_R;
+  // Spec 06 Requirement 6: the lantern hunt. While the lantern is on, new fires hide unless lit or found.
+  const hunting = st.lantern.on && !isT;
+  const hunt = huntView(fires, st.found, st.lantern.x, st.lantern.y, lr, false);
+  // Moving the lantern (pointer or keyboard focus) finds fires; useGraveyard checks each move (Requirement 6.2).
+  const moveLantern = (x: number, y: number) => act({ type: 'lanternMove', x, y, inside: true });
+  const huntCounter = hunting ? (hunt.total === 0 ? gk.hunt.none : gk.hunt.counter(hunt.found, hunt.total)) : undefined;
 
   const comparing = st.compare && !isT;
   const shownWeights = comparing ? fr.map((_, i) => (i === fr.length - 1 ? 1 : 0)) : weights;
@@ -140,12 +146,17 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!st.lantern.on) return;
     const r = e.currentTarget.getBoundingClientRect();
-    act({ type: 'lanternMove', x: Math.round(((e.clientX - r.left) / r.width) * W), y: Math.round(((e.clientY - r.top) / r.height) * H), inside: true });
+    moveLantern(Math.round(((e.clientX - r.left) / r.width) * W), Math.round(((e.clientY - r.top) / r.height) * H));
   };
   const onFocusGrave = (id: string) => {
     if (!st.lantern.on) return;
     const v = views.find((g) => g.id === id);
-    if (v) act({ type: 'lanternMove', x: v.cx, y: v.cy, inside: true });
+    if (v) moveLantern(v.cx, v.cy);
+  };
+  const onFocusFire = (id: string) => {
+    if (!st.lantern.on) return;
+    const f = fires.find((g) => g.id === id);
+    if (f) moveLantern(f.x, f.y);
   };
 
   const overlays = (
@@ -157,7 +168,8 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
       )}
       {st.lantern.on && (
         <Lantern x={st.lantern.x} y={st.lantern.y} r={lr} inside={st.lantern.inside} src={fr[topFrame]!.src}
-          names={lanternNames(views, st.lantern.x, st.lantern.y, lr)} />
+          names={lanternNames(views, st.lantern.x, st.lantern.y, lr)}
+          fires={hunting ? hunt.shown : []} counter={huntCounter} />
       )}
     </>
   );
@@ -178,7 +190,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           callout={callout} tip={tip} flakes={flakeCount(scene, st.day)} credit={creditLine(scene, st.day, tonight, year)}
           cam={isT ? null : st.cam} sting={isT ? null : st.sting}
           onGrave={onStone} onFire={(id) => act({ type: 'selectFire', id })} onHover={(id) => act({ type: 'hover', id })}
-          onFocusGrave={onFocusGrave} onMove={onMove}
+          onFocusGrave={onFocusGrave} onMove={onMove} hunting={hunting} found={st.found} onFocusFire={onFocusFire}
           onLeave={() => st.lantern.on && act({ type: 'lanternMove', x: st.lantern.x, y: st.lantern.y, inside: false })}
           cursor={st.lantern.on ? 'none' : 'default'} overlays={overlays} wagerOpen={wagerOpen} marks={marks} clue={clue}
           panel={ex && <Exhumation ex={ex} onClose={closeEx} />}

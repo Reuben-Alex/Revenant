@@ -8,9 +8,9 @@ import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import { playBell } from '../audio/bell';
 import { playBoom } from '../audio/boom';
 import { currentAudio } from '../audio/context';
-import { PERIOD_MS, type Speed } from '../data/derive';
+import { PERIOD_MS, visibleFires, type Speed } from '../data/derive';
 import * as gk from '../copy/gravekeeper';
-import { checkRiddle, firstThaw, line, risingLine, type Line } from '../data/gravekeeper';
+import { checkRiddle, firstThaw, huntView, lanternRadius, line, risingLine, type Line } from '../data/gravekeeper';
 import { planRising, stingView, type RisingPlan, type StingView } from '../data/rising';
 import type { SceneKey, SeasonData, SeasonKey } from '../data/types';
 
@@ -55,6 +55,8 @@ export interface UIState {
   woke: boolean;
   rot: number;
   riddle: Riddle | null;
+  /** Spec 06 Requirement 6: new fires found under the lantern this replay. */
+  found: string[];
 }
 
 export type Action =
@@ -85,7 +87,8 @@ export type Action =
   | { type: 'rot' }
   | { type: 'riddlePick'; key: string }
   | { type: 'riddleDig' }
-  | { type: 'riddleLeave' };
+  | { type: 'riddleLeave' }
+  | { type: 'found'; ids: string[] };
 
 const SCENES: SceneKey[] = ['s2024', 's2025', 's2026', 'tonight'];
 
@@ -112,7 +115,7 @@ export function initialState(start: Start = DEFAULT_START): UIState {
     speed: '1', night: true, lantern: { on: false, x: 530, y: 358, inside: false },
     compare: false, split: 50, ex: null, hover: null, fireSel: null,
     cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null,
-    say: null, woke: false, rot: 0, riddle: null,
+    say: null, woke: false, rot: 0, riddle: null, found: [],
   };
 }
 
@@ -141,7 +144,7 @@ function step(s: UIState, a: Action): UIState {
       return withWager({
         ...s, scene: a.scene, day: 0, running: a.scene !== 'tonight', selected: 'G-01', ex: null, fireSel: null, hover: null,
         compare: a.scene === 'tonight' ? false : s.compare,
-        cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null, woke: false, riddle: null,
+        cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null, woke: false, riddle: null, found: [],
       }, freshWager(a.scene, 0));
     case 'day': {
       const day = Math.max(0, Math.min(102, a.day));
@@ -222,6 +225,10 @@ function step(s: UIState, a: Action): UIState {
       if (r.picked.length < 3) return { ...s, riddle: { ...r, hint: 'three' } };
       if (!checkRiddle(r.picked)) return { ...s, riddle: { ...r, hint: 'decoy' } };
       return { ...s, riddle: { ...r, hint: null, open: false, done: true }, ex: r.id, selected: r.id, fireSel: null, cam: null };
+    }
+    case 'found': {
+      const add = a.ids.filter((id) => !s.found.includes(id));
+      return add.length ? { ...s, found: [...s.found, ...add] } : s;
     }
     case 'riddleLeave':
       return s.riddle?.open ? { ...s, riddle: { ...s.riddle, open: false, done: true } } : s;
@@ -316,6 +323,23 @@ export function useGraveyard(opts: Options = {}) {
       camera: plan.camera !== null, season: season.key, year: season.year,
     });
   }, [state.day, state.scene]);
+
+  // Lantern hunt (spec 06 Requirement 6): each lantern move may find new fires; the Gravekeeper names the first,
+  // or counts them all when the last is found.
+  const { on: lit, x: lx, y: ly, inside } = state.lantern;
+  useEffect(() => {
+    const s = ref.current;
+    if (!lit || !inside || s.scene === 'tonight') return;
+    const season = seasonsRef.current?.[s.scene];
+    if (!season) return;
+    const r = lanternRadius(season, s.wager.marks, s.day, s.wager.sealed);
+    const h = huntView(visibleFires(season.fires, s.day), s.found, lx, ly, r, true);
+    if (!h.fresh.length) return;
+    const ids = h.fresh.map((f) => f.id);
+    dispatch({ type: 'found', ids });
+    const all = h.found + ids.length === h.total;
+    dispatch({ type: 'say', line: line(all ? gk.hunt.all(h.total) : gk.hunt.found(ids[0]!), Date.now()) });
+  }, [lit, lx, ly, inside]);
 
   // The camera and the sting end on their own timers.
   useEffect(() => {

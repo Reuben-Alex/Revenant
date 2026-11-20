@@ -5,7 +5,7 @@ import seasonsRaw from '../../public/data/seasons.json';
 import * as copy from '../copy/gravekeeper';
 import { fmtDay, km2, lat, word } from './format';
 import {
-  WHISPER_DAYS, ZOMBIE_FACTOR, checkRiddle, clueCard, firstThaw, glitchOn, glitchText, gravekeeperGuess, introLine, lanternRadius, line,
+  WHISPER_DAYS, ZOMBIE_FACTOR, checkRiddle, clueCard, firstThaw, glitchOn, huntView, glitchText, gravekeeperGuess, introLine, lanternRadius, line,
   margin, riddleCards, risingLine, verdictView, wagerScore, whisperAt,
 } from './gravekeeper';
 import { parseSeasons } from './load';
@@ -133,6 +133,23 @@ describe('Correctness properties', () => {
     let on = 0;
     for (let t = 0; t < 46 * 110 * 20; t += 110) if (glitchOn(t)) on++;
     expect(on).toBe(3 * 20);
+  });
+});
+
+describe('Lantern hunt (Req 6.1, 6.2)', () => {
+  const fireArb = fc.uniqueArray(fc.record({ x: fc.integer({ min: 0, max: 1059 }), y: fc.integer({ min: 0, max: 715 }), day: fc.integer({ min: 0, max: 102 }) }), { maxLength: 24, selector: (f) => `${f.x},${f.y}` })
+    .map((fs) => fs.map((f, i) => ({ ...f, id: `F-${String(i + 1).padStart(2, '0')}` })));
+  it('shows found or lit fires only, finds within r − 10, never refinds, counts the visible', () => {
+    fc.assert(fc.property(fireArb, fc.integer({ min: 0, max: 1059 }), fc.integer({ min: 0, max: 715 }), fc.constantFrom(130, 160, 190, 220), fc.boolean(), fc.func(fc.boolean()),
+      (fires, lx, ly, r, lit, pick) => {
+        const found = fires.filter((f) => pick(f.id)).map((f) => f.id);
+        const h = huntView(fires, found, lx, ly, r, lit);
+        const d = (f: { x: number; y: number }) => Math.hypot(f.x - lx, f.y - ly);
+        for (const f of fires) expect(h.shown.includes(f)).toBe(found.includes(f.id) || d(f) < r);
+        for (const f of h.fresh) { expect(found).not.toContain(f.id); expect(d(f)).toBeLessThan(r - 10); }
+        if (!lit) expect(h.fresh).toEqual([]);
+        expect([h.found, h.total]).toEqual([found.length, fires.length]);
+      }), RUNS);
   });
 });
 

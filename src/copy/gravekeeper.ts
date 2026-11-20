@@ -99,6 +99,8 @@ export const hunt = {
   counter: (found: number, total: number) => `${found} of ${total} new fires found`,
   all: (total: number) => `All ${w(total)} found. Not one of them was mine.`,
   none: 'No new fires yet this spring.',
+  /** A fire's button while it is still hidden in the dark: no id, no place. */
+  dark: 'Something in the dark. Bring the lantern here.',
 };
 
 export const verdict = {

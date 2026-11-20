@@ -52,6 +52,11 @@ interface Props {
   wagerOpen?: boolean;
   marks?: string[];
   clue?: ReactNode;
+  /** Spec 06 lantern hunt: the base fire marks hide (the lantern draws the ones it shows), unfound fires keep an
+   *  unrevealing name, and focusing a fire's button carries the lantern there, so the hunt works by keyboard. */
+  hunting?: boolean;
+  found?: string[];
+  onFocusFire?: (id: string) => void;
 }
 
 export function MapStack(p: Props) {
@@ -101,7 +106,7 @@ export function MapStack(p: Props) {
         )}
 
         <svg viewBox="0 0 1060 716" aria-hidden="true" style={{ ...SVG, overflow: 'visible' }}>
-          {p.fires.map((f) => {
+          {!p.hunting && p.fires.map((f) => {
             const sel = p.fireSel === f.id;
             return (
               <g key={f.id}>
@@ -143,7 +148,9 @@ export function MapStack(p: Props) {
         {p.callout && <Callout c={p.callout} />}
 
         {p.fires.map((f) => (
-          <button key={f.id} type="button" className="rv-hit" aria-label={copy.map.fireAria(f.id)} aria-pressed={p.fireSel === f.id} onClick={() => p.onFire(f.id)}
+          <button key={f.id} type="button" className="rv-hit" aria-pressed={p.fireSel === f.id} onClick={() => p.onFire(f.id)}
+            aria-label={p.hunting && !p.found?.includes(f.id) ? gk.hunt.dark : copy.map.fireAria(f.id)}
+            onFocus={() => p.onFocusFire?.(f.id)}
             style={{ position: 'absolute', left: pct(f.x, W), top: pct(f.y, H), width: 28, height: 28, margin: '-16px 0 0 -14px', borderRadius: 14, background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} />
         ))}
         {p.graves.map((v) => {
