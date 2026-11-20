@@ -47,14 +47,16 @@ These tasks add the Gravekeeper, the three puzzles, quiet years and the verdict.
 - [x] 5.2 **Checkpoint:** lantern hunt screenshot
   - _Requirements: 9.1_
 
-- [ ] 6. Verdict and quiet years
-- [ ] 6.1 `Verdict.tsx` (the board card, detail, margin, wager line, Dig them up again) and the verdict line and bell
+- [x] 6. Verdict and quiet years
+- [x] 6.1 `Verdict.tsx` (the board card, detail, margin, wager line, Dig them up again) and the verdict line and bell
+  - The verdict comes only when the replay plays through to day 102 (as the board); dragging the candle to Jul 1 does not give it. The callout gives way to the card. The sealed wager's ranked line follows the spoken verdict, as on the board.
   - _Requirements: 7.1–7.6_
-- [ ] 6.2 Whispers on days 22 / 48 / 76, the glitch (map jitter, narrator and Register substitution, unglitched accessible text), reduced motion off
+- [x] 6.2 Whispers on days 22 / 48 / 76, the glitch (map jitter, narrator and Register substitution, unglitched accessible text), reduced motion off
+  - `src/motion/useGlitch.ts` ticks every 110 ms only while a quiet replay runs or its verdict shows, and never under reduced motion.
   - _Requirements: 3.1–3.4_
-- [ ] 6.3 Component tests (fake timers): the wager gates day 0; the riddle opens at beat 1 and holds the clock; the verdict in 2024 and 2026
+- [x] 6.3 Component tests (fake timers): the wager gates day 0; the riddle opens at beat 1 and holds the clock; the verdict in 2024 and 2026
   - _Requirements: 3, 4.1, 5.1, 7.1_
-- [ ] 6.4 **Checkpoint:** zombie and quiet verdicts, a whisper with the glitch
+- [x] 6.4 **Checkpoint:** zombie and quiet verdicts, a whisper with the glitch
   - _Requirements: 9.1_
 
 - [ ] 7. Final check

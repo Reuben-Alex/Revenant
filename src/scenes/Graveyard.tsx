@@ -25,7 +25,11 @@ import { Gravekeeper, GravekeeperLive } from '../components/Gravekeeper';
 import * as gk from '../copy/gravekeeper';
 import { ClueCard, Wager } from '../components/Wager';
 import { Riddle } from '../components/Riddle';
-import { NIGHT_MS, checkRiddle, clueCard, huntView, introLine, lanternRadius, line, riddleCards, riddleHint } from '../data/gravekeeper';
+import { Verdict } from '../components/Verdict';
+import { useGlitch } from '../motion/useGlitch';
+import {
+  NIGHT_MS, checkRiddle, clueCard, glitchText, huntView, introLine, lanternRadius, line, quiet, riddleCards, riddleHint, verdictView,
+} from '../data/gravekeeper';
 import { useGraveyard, type RisingEvent, type UIState } from './useGraveyard';
 
 interface Props {
@@ -85,7 +89,8 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   // The board only hides the callout for exhumation and lantern; under the before/after split it showed
   // as a sliver at the divider, so it is hidden there too.
   // Spec 05: while the camera holds, the sting carries the news; a callout or tooltip would be scaled 2.4× with the map.
-  const overlayOpen = st.ex !== null || st.lantern.on || (st.compare && !isT) || st.cam !== null;
+  // Spec 06: the verdict card sits where the callout would, so the callout gives way to it.
+  const overlayOpen = st.ex !== null || st.lantern.on || (st.compare && !isT) || st.cam !== null || (st.verdict && !isT);
   const callout = overlayOpen ? null : fireSel ? fireCallout(fireSel, year) : graveCallout(selV, year);
   const hovV = st.hover && !st.lantern.on && !st.cam ? views.find((v) => v.id === st.hover) : undefined;
   const tip = hovV ? tooltipFor(hovV, scene, year) : null;
@@ -102,6 +107,15 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   const hunt = huntView(fires, st.found, st.lantern.x, st.lantern.y, lr, false);
   // Moving the lantern (pointer or keyboard focus) finds fires; useGraveyard checks each move (Requirement 6.2).
   const moveLantern = (x: number, y: number) => act({ type: 'lanternMove', x, y, inside: true });
+  // Spec 06 Requirements 3 and 7: quiet years glitch while the replay runs or the verdict shows; the verdict at day 102.
+  const isQuiet = !!season && quiet(season);
+  const glitch = useGlitch(isQuiet && ((st.running && st.startGate) || st.verdict));
+  const gl = glitch.on ? (s: string) => glitchText(s, glitch.seed) : undefined;
+  const verdict = st.verdict && season ? verdictView(season, st.wager.marks, st.wager.sealed) : null;
+  const onAgain = useCallback(() => {
+    act({ type: 'again' });
+    act({ type: 'say', line: line(gk.verdict.againLine, Date.now(), 5000) });
+  }, [act]);
   const huntCounter = hunting ? (hunt.total === 0 ? gk.hunt.none : gk.hunt.counter(hunt.found, hunt.total)) : undefined;
 
   const comparing = st.compare && !isT;
@@ -171,6 +185,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           names={lanternNames(views, st.lantern.x, st.lantern.y, lr)}
           fires={hunting ? hunt.shown : []} counter={huntCounter} />
       )}
+      {verdict && !isT && <Verdict v={verdict} onAgain={onAgain} glitch={gl} />}
     </>
   );
 
@@ -190,17 +205,17 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           callout={callout} tip={tip} flakes={flakeCount(scene, st.day)} credit={creditLine(scene, st.day, tonight, year)}
           cam={isT ? null : st.cam} sting={isT ? null : st.sting}
           onGrave={onStone} onFire={(id) => act({ type: 'selectFire', id })} onHover={(id) => act({ type: 'hover', id })}
-          onFocusGrave={onFocusGrave} onMove={onMove} hunting={hunting} found={st.found} onFocusFire={onFocusFire}
+          onFocusGrave={onFocusGrave} onMove={onMove} hunting={hunting} found={st.found} onFocusFire={onFocusFire} glitch={glitch.on}
           onLeave={() => st.lantern.on && act({ type: 'lanternMove', x: st.lantern.x, y: st.lantern.y, inside: false })}
           cursor={st.lantern.on ? 'none' : 'default'} overlays={overlays} wagerOpen={wagerOpen} marks={marks} clue={clue}
           panel={ex && <Exhumation ex={ex} onClose={closeEx} />}
-          narrator={<>{st.say && <Gravekeeper key={st.say.start} say={st.say} raised={st.cam !== null} />}<GravekeeperLive say={st.say} /></>}
+          narrator={<>{st.say && <Gravekeeper key={st.say.start} say={st.say} raised={st.cam !== null} glitch={gl} />}<GravekeeperLive say={st.say} /></>}
         />
         {/* The aside takes the map's height and scrolls inside it (its content would otherwise stretch the row). */}
         <aside aria-label="Graves and parish register" style={{ flex: '1 1 340px', position: 'relative', minHeight: 480, background: '#070C0B' }}>
           <div style={{ position: 'absolute', inset: 0, overflowY: 'auto', boxSizing: 'border-box', padding: '18px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {wagerOpen && <Wager marks={marks} onSeal={onSeal} onWatch={onWatch} />}
-          <Register rows={registerRows(data, scene)} note={registerNote(data)} onPick={(k) => act({ type: 'scene', scene: k })} />
+      {wagerOpen && <Wager marks={marks} onSeal={onSeal} onWatch={onWatch} />}
+          <Register rows={registerRows(data, scene)} note={registerNote(data)} onPick={(k) => act({ type: 'scene', scene: k })} glitch={gl} />
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginTop: 4 }}>
             <h2 style={{ margin: 0, fontFamily: 'var(--font-fell-sc)', fontWeight: 400, fontSize: 24, letterSpacing: 1 }}>{isT ? copy.list.tonightTitle : copy.list.title}</h2>
             <span style={{ fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 13, color: '#A3ADA8' }}>{isT ? copy.list.tonightSub : copy.list.sub(year)}</span>

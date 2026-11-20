@@ -4,7 +4,15 @@ import type { SeasonKey } from '../data/types';
 
 interface Row { key: SeasonKey; year: number; on: boolean; obs: number; chance: number; zombie: boolean; text: string }
 
-export function Register({ rows, note, onPick }: { rows: Row[]; note: string; onPick: (k: SeasonKey) => void }) {
+interface Props {
+  rows: Row[];
+  note: string;
+  onPick: (k: SeasonKey) => void;
+  /** Spec 06 quiet-year glitch: the current row's text only, visual only (board L1223). */
+  glitch?: (s: string) => string;
+}
+
+export function Register({ rows, note, onPick, glitch }: Props) {
   return (
     <section aria-label={copy.register.aria} style={{
       position: 'relative', borderRadius: 4, padding: '16px 18px 14px', display: 'flex', flexDirection: 'column', gap: 9,
@@ -27,7 +35,9 @@ export function Register({ rows, note, onPick }: { rows: Row[]; note: string; on
               <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${(r.chance * 100).toFixed(1)}%`, background: 'repeating-linear-gradient(90deg, #B8A880 0, #B8A880 6px, rgba(0,0,0,0) 6px, rgba(0,0,0,0) 9px)', opacity: 0.7 }} />
             </span>
           </span>
-          <span style={{ fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 14, minWidth: 92, flex: 'none', textAlign: 'right', whiteSpace: 'nowrap', color: '#E6D6AE' }}>{r.text}</span>
+          <span style={{ fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 14, minWidth: 92, flex: 'none', textAlign: 'right', whiteSpace: 'nowrap', color: '#E6D6AE' }}>
+            {glitch && r.on ? <><span aria-hidden="true">{glitch(r.text)}</span><span className="rv-sr">{r.text}</span></> : r.text}
+          </span>
         </button>
       ))}
       <span style={{ fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 13, lineHeight: 1.45, color: '#B8A880' }}>{note}</span>

@@ -10,7 +10,7 @@ import { playBoom } from '../audio/boom';
 import { currentAudio } from '../audio/context';
 import { PERIOD_MS, visibleFires, type Speed } from '../data/derive';
 import * as gk from '../copy/gravekeeper';
-import { checkRiddle, firstThaw, huntView, lanternRadius, line, risingLine, type Line } from '../data/gravekeeper';
+import { checkRiddle, firstThaw, huntView, lanternRadius, line, risingLine, verdictView, wagerScore, whisperAt, type Line } from '../data/gravekeeper';
 import { planRising, stingView, type RisingPlan, type StingView } from '../data/rising';
 import type { SceneKey, SeasonData, SeasonKey } from '../data/types';
 
@@ -57,6 +57,8 @@ export interface UIState {
   riddle: Riddle | null;
   /** Spec 06 Requirement 6: new fires found under the lantern this replay. */
   found: string[];
+  /** Spec 06 Requirement 7: the replay played through to day 102. */
+  verdict: boolean;
 }
 
 export type Action =
@@ -88,7 +90,8 @@ export type Action =
   | { type: 'riddlePick'; key: string }
   | { type: 'riddleDig' }
   | { type: 'riddleLeave' }
-  | { type: 'found'; ids: string[] };
+  | { type: 'found'; ids: string[] }
+  | { type: 'again' };
 
 const SCENES: SceneKey[] = ['s2024', 's2025', 's2026', 'tonight'];
 
@@ -115,7 +118,7 @@ export function initialState(start: Start = DEFAULT_START): UIState {
     speed: '1', night: true, lantern: { on: false, x: 530, y: 358, inside: false },
     compare: false, split: 50, ex: null, hover: null, fireSel: null,
     cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null,
-    say: null, woke: false, rot: 0, riddle: null, found: [],
+    say: null, woke: false, rot: 0, riddle: null, found: [], verdict: false,
   };
 }
 
@@ -144,11 +147,11 @@ function step(s: UIState, a: Action): UIState {
       return withWager({
         ...s, scene: a.scene, day: 0, running: a.scene !== 'tonight', selected: 'G-01', ex: null, fireSel: null, hover: null,
         compare: a.scene === 'tonight' ? false : s.compare,
-        cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null, woke: false, riddle: null, found: [],
+        cam: null, sting: null, beats: 0, lastFlash: -Infinity, lastStep: null, woke: false, riddle: null, found: [], verdict: false,
       }, freshWager(a.scene, 0));
     case 'day': {
       const day = Math.max(0, Math.min(102, a.day));
-      const next: UIState = { ...s, day, running: s.scene !== 'tonight' && day < 102, cam: null, lastStep: 'scrub' };
+      const next: UIState = { ...s, day, running: s.scene !== 'tonight' && day < 102, cam: null, lastStep: 'scrub', verdict: false };
       // Dragging the candle past day 0 while the wager is open counts as Just watch (Requirement 4.6).
       return s.wager.open && day > 0 ? withWager(next, { marks: [], sealed: false, open: false }) : next;
     }
@@ -177,7 +180,7 @@ function step(s: UIState, a: Action): UIState {
     case 'advance': {
       if (!s.running || s.scene === 'tonight') return s;
       const day = Math.min(102, s.day + 1);
-      return { ...s, day, running: day < 102, lastStep: 'play' };
+      return { ...s, day, running: day < 102, lastStep: 'play', verdict: day === 102 };
     }
     case 'speed':
       return { ...s, speed: a.speed };
@@ -226,6 +229,9 @@ function step(s: UIState, a: Action): UIState {
       if (!checkRiddle(r.picked)) return { ...s, riddle: { ...r, hint: 'decoy' } };
       return { ...s, riddle: { ...r, hint: null, open: false, done: true }, ex: r.id, selected: r.id, fireSel: null, cam: null };
     }
+    case 'again':
+      // Requirement 7.6: the same season from day 0, with the wager open again.
+      return s.scene === 'tonight' ? s : { ...step(s, { type: 'scene', scene: s.scene }), selected: s.selected };
     case 'found': {
       const add = a.ids.filter((id) => !s.found.includes(id));
       return add.length ? { ...s, found: [...s.found, ...add] } : s;
@@ -301,9 +307,13 @@ export function useGraveyard(opts: Options = {}) {
     const season = seasonsRef.current?.[s.scene];
     if (!season) return;
     const now = Date.now();
+    let silent = s.say === null || now >= s.say.until;
+    // Quiet years (spec 06 Requirement 3.2): a whisper on days 22, 48 and 76, if nothing is being said.
+    const whisper = s.lastStep === 'play' && silent ? whisperAt(season, state.day) : null;
+    if (whisper) { dispatch({ type: 'say', line: line(whisper, now, 3800, 'whisper') }); silent = false; }
     // First thaw (spec 06 Requirement 2.3): once per replay, while playing, and only when nothing else is being
     // said, so it never cuts off the night or season line. A rising on the same step speaks over it.
-    if (s.lastStep === 'play' && !s.woke && (s.say === null || now >= s.say.until)) {
+    if (s.lastStep === 'play' && !s.woke && silent) {
       const w = firstThaw(season, state.day);
       if (w) { dispatch({ type: 'woke' }); dispatch({ type: 'say', line: line(gk.firstThaw(w.id), now) }); }
     }
@@ -323,6 +333,19 @@ export function useGraveyard(opts: Options = {}) {
       camera: plan.camera !== null, season: season.key, year: season.year,
     });
   }, [state.day, state.scene]);
+
+  // The verdict (spec 06 Requirement 7.1, 7.3): once the replay plays through to day 102. It is declared after the
+  // step effect, so it speaks over a rising on the last day. Bells: 3 in a zombie year, 1 otherwise.
+  useEffect(() => {
+    if (!state.verdict) return;
+    const s = ref.current;
+    const season = s.scene === 'tonight' ? undefined : seasonsRef.current?.[s.scene];
+    if (!season) return;
+    const v = verdictView(season, s.wager.marks, s.wager.sealed);
+    const ranked = s.wager.sealed ? ' ' + gk.verdict.ranked[wagerScore(season, s.wager.marks).k] : '';
+    dispatch({ type: 'say', line: line(v.line + ranked, Date.now(), 10000) });
+    playBell(currentAudio(), v.bells);
+  }, [state.verdict]);
 
   // Lantern hunt (spec 06 Requirement 6): each lantern move may find new fires; the Gravekeeper names the first,
   // or counts them all when the last is found.

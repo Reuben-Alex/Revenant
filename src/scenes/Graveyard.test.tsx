@@ -7,7 +7,7 @@ import seasonsRaw from '../../public/data/seasons.json';
 import tonightRaw from '../../public/data/tonight.json';
 import { PERIOD_MS } from '../data/derive';
 import { parseSeasons, parseTonight } from '../data/load';
-import { clueCard, firstThaw, riddleCards, riddleHint } from '../data/gravekeeper';
+import { clueCard, firstThaw, riddleCards, riddleHint, verdictView, whisperAt } from '../data/gravekeeper';
 import { HOLD_BEAT_MS } from '../data/rising';
 import { Graveyard } from './Graveyard';
 
@@ -109,8 +109,42 @@ it('the wager holds day 0; marks, clues and the seal; the thaw waits for silence
     expect(screen.getAllByRole('button', { name: /^New fire F-\d\d, not a revenant$/ })).toHaveLength(n);
   });
 
-  it('dragging the candle past day 0 counts as Just watch (spec 06 Req 4.6)', () => {
+  it('the 2024 verdict: a zombie year, from published values; Dig them up again reopens the wager at day 0 (spec 06 Req 7)', () => {
     render(<Graveyard data={DATA} tonight={TONIGHT} />);
+    fireEvent.change(screen.getByLabelText(/Replay day/i), { target: { value: '101' } });
+    tick(DAY_MS);
+    expect(day()).toBe(102);
+    const v = verdictView(DATA.seasons.s2024, [], false);
+    const live = screen.getAllByRole('status').map((e) => e.textContent ?? '').join(' | ');
+    expect(live).toContain(`${v.kicker}. Fourteen of 24 rose.`);
+    expect(live).toContain('The same shapes laid on unburned ground caught heat 26% of the time. These scars woke 2.2 times as often as chance: a zombie year, after the fires of 2023.');
+    expect(live).toContain('The Gravekeeper: Fourteen of twenty-four rose. Chance alone would have raised six. This was a zombie year.');
+    expect(v.bells).toBe(3);
+    fireEvent.click(screen.getByRole('button', { name: 'Dig them up again' }));
+    expect(day()).toBe(0);
+    expect(screen.getByRole('region', { name: "The Gravekeeper's wager" })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Dig them up again' })).toBeNull();
+    expect(screen.getAllByRole('status').map((e) => e.textContent ?? '').join(' | ')).toContain('Again, then. Mark three, or just watch.');
+  });
+
+  it('Spring 2026 is quiet: a whisper on day 22, and a verdict that does not cry wolf (spec 06 Req 3, 7)', () => {
+    render(<Graveyard data={DATA} tonight={TONIGHT} />);
+    fireEvent.click(screen.getByRole('button', { name: /Spring 2026/ }));
+    tick(8000); // let the season's intro line end, so the whisper finds silence
+    fireEvent.change(screen.getByLabelText(/Replay day/i), { target: { value: '21' } });
+    tick(DAY_MS);
+    expect(day()).toBe(22);
+    const live = () => screen.getAllByRole('status').map((e) => e.textContent ?? '').join(' | ');
+    expect(live()).toContain(`A voice under the snow: ${whisperAt(DATA.seasons.s2026, 22)}`);
+    fireEvent.change(screen.getByLabelText(/Replay day/i), { target: { value: '101' } });
+    tick(DAY_MS);
+    expect(live()).toContain('Two of 24 rose.');
+    expect(live()).toContain('These scars woke no more often than chance. Revenant says so, rather than cry wolf.');
+    expect(live()).toContain('These were ordinary spring fires, not the dead walking. I do not cry wolf.');
+    expect(verdictView(DATA.seasons.s2026, [], false).bells).toBe(1);
+  });
+
+  it('dragging the candle past day 0 counts as Just watch (spec 06 Req 4.6)', () => {    render(<Graveyard data={DATA} tonight={TONIGHT} />);
     fireEvent.click(screen.getByRole('button', { name: 'Mark grave G-01' }));
     fireEvent.change(screen.getByLabelText(/Replay day/i), { target: { value: '5' } });
     expect(screen.queryByRole('region', { name: "The Gravekeeper's wager" })).toBeNull();

@@ -57,6 +57,8 @@ interface Props {
   hunting?: boolean;
   found?: string[];
   onFocusFire?: (id: string) => void;
+  /** Spec 06 quiet-year glitch: the map jitters (board mapClass rv-glitch). */
+  glitch?: boolean;
 }
 
 export function MapStack(p: Props) {
@@ -70,7 +72,7 @@ export function MapStack(p: Props) {
     transition: `transform ${cam ? '1.15s cubic-bezier(.6,.05,.25,1)' : '1.5s cubic-bezier(.45,0,.2,1)'}`,
   };
   return (
-    <div onMouseMove={p.onMove} onMouseLeave={p.onLeave} className={p.sting ? 'rv-shake' : undefined}
+    <div onMouseMove={p.onMove} onMouseLeave={p.onLeave} className={[p.sting ? 'rv-shake' : '', p.glitch ? 'rv-glitch' : ''].filter(Boolean).join(' ') || undefined}
       // alignSelf keeps the 1060:716 box: if the row stretched it, the images would distort while the
       // SVG layers (viewBox, letterboxed) would not, and graves would drift off their scars.
       style={{ flex: '999 1 560px', minWidth: 0, alignSelf: 'flex-start', position: 'relative', aspectRatio: '1060 / 716', overflow: 'hidden', borderRight: '1px solid #172120', background: '#060A09', cursor: p.cursor ?? 'default' }}>
