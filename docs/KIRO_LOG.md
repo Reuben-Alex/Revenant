@@ -1,10 +1,6 @@
 # Kiro log
 
 Feeds the "how Kiro was used" write-up. Newest entries last.
-
-## 2026-11-02
-- **Claude Code** set up this repo: `.kiro` steering, hooks, skills and the `gravekeeper` agent; spec prompts; docs aligned with the Official Rules. No specs or app code yet.
-- **Claude Code** checked the melt rule against `data/seasons.json`: it reproduces 70 of 72 stored melt days and all Risen counts (15, 8, 4). The other two graves differ because the stored series is rounded; both are noted in spec prompt 01.
 - Specs are to be generated in Kiro from `spec-prompts/`.
 ## 2026-11-11
 - **Spec 01 zombie-rule-engine done** (Kiro spec, 8 tasks): pure Python rule engine in `pipeline/rules/`, 108 tests green under `HYPOTHESIS_PROFILE=ci` (Hypothesis, 1000 examples per property). It reproduces the research results: Risen 15/8/4, every stored rise, 70/72 stored melt days (the 2 rounding exceptions asserted), zombie flags 2024 yes / 2025 and 2026 no.
