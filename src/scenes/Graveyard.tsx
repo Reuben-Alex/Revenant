@@ -250,7 +250,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           onFocusGrave={onFocusGrave} onMove={onMove} hunting={hunting} found={st.found} onFocusFire={onFocusFire} glitch={glitch.on}
           onLeave={() => st.lantern.on && act({ type: 'lanternMove', x: st.lantern.x, y: st.lantern.y, inside: false })}
           cursor={st.lantern.on ? 'none' : 'default'} overlays={overlays} wagerOpen={wagerOpen} marks={marks} clue={clue} lanterns={lanterns} stoneAria={stoneAria}
-          panel={ex && <Exhumation ex={ex} onClose={closeEx} />}
+          panel={ex && <Exhumation ex={ex} onClose={closeEx} dossier={isT ? undefined : `dossier.html#${scene}/${ex.id}`} />}
           narrator={<>{st.say && <Gravekeeper key={st.say.start} say={st.say} raised={st.cam !== null} glitch={gl} />}<GravekeeperLive say={st.say} /></>}
         />
         {/* The aside takes the map's height and scrolls inside it (its content would otherwise stretch the row). */}

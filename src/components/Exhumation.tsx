@@ -4,7 +4,8 @@ import { useEffect, useRef } from 'react';
 import * as copy from '../copy/graveyard';
 import type { ExhumeView } from '../data/derive';
 
-export function Exhumation({ ex, onClose }: { ex: ExhumeView; onClose: () => void }) {
+/** \dossier\: the grave's dossier page (spec 07 Requirement 5.9), for replay graves; it opens in a new tab. */
+export function Exhumation({ ex, onClose, dossier }: { ex: ExhumeView; onClose: () => void; dossier?: string }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null;
@@ -77,7 +78,11 @@ export function Exhumation({ ex, onClose }: { ex: ExhumeView; onClose: () => voi
           </li>
         ))}
       </ul>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#7C8884', textAlign: 'center' }}>{ex.coords}</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#8E9994', textAlign: 'center' }}>{ex.coords}</span>
+      {dossier && (
+        <a className="rv-btn" href={dossier} target="_blank" rel="noopener" style={{ alignSelf: 'center', display: 'flex', alignItems: 'center', minHeight: 40, padding: '0 16px', borderRadius: 3, border: '1px solid #2E3734', color: '#BFC6C2', textDecoration: 'none', fontFamily: 'var(--font-fell-sc)', fontSize: 14, letterSpacing: 1 }}>
+          {copy.exhume.dossier}<span className="rv-sr"> {copy.exhume.newTab}</span></a>
+      )}
     </section>
   );
 }

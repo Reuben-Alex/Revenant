@@ -180,6 +180,8 @@ export const compare = {
 export const exhume = {
   aria: (id: string) => `Exhumation of grave ${id}`,
   close: 'Close exhumation',
+  dossier: 'Open the dossier',
+  newTab: '(opens in a new tab)',
   here: 'Here lies',
   cropAlt: (id: string, label: string, year: number) => `Satellite crop of ${id}, ${label} ${year}`,
   checksAria: 'Rule checks',

@@ -45,18 +45,21 @@ Task 1 needs a live `tonight` run, which uses the FIRMS key. Task 8 needs steps 
 - [x] 3.4 **Checkpoint:** Keep watch sealed, and the PNG card
   - _Requirements: 9.3_
 
-- [ ] 4. Multi-page build
-- [ ] 4.1 `vite.config.ts` `rollupOptions.input` for the four pages; `vercel.json` (`dist`, `cleanUrls`, `git.deploymentEnabled: false`); the Property 9 bundle scan (the `index.html` bundle reads no URL)
+- [x] 4. Multi-page build
+- [x] 4.1 `vite.config.ts` `rollupOptions.input` for the four pages; `vercel.json` (`dist`, `cleanUrls`, `git.deploymentEnabled: false`); the Property 9 bundle scan (the `index.html` bundle reads no URL)
+  - `scripts/check-bundle.mjs` walks every chunk `index.html` loads (scripts, preloads, static imports) and is now the last step of `npm run gate`. The three new pages start as placeholders for tasks 5–7.
   - _Requirements: 8.2, 8.3_
 
-- [ ] 5. The grave dossier
-- [ ] 5.1 `src/data/dossier.ts` + `src/copy/dossier.ts`: `dossierView`, `lateSnowBands`, `kml`, `parseHash`
+- [x] 5. The grave dossier
+- [x] 5.1 `src/data/dossier.ts` + `src/copy/dossier.ts`: `dossierView`, `lateSnowBands`, `kml`, `parseHash`
   - _Requirements: 5.1–5.8_
-- [ ] 5.2 `Dossier.tsx` + `dossier.html`: hero, crops, rule checks, snow chart, life and afterlife, sightings, Export KML, Send to field crew; "Open the dossier" in the exhumation panel
+- [x] 5.2 `Dossier.tsx` + `dossier.html`: hero, crops, rule checks, snow chart, life and afterlife, sightings, Export KML, Send to field crew; "Open the dossier" in the exhumation panel
+  - Graves that did not rise get "Why it did not rise", a ✕ on the unmet checks, and "Laid to rest" or "Never stirred". The crop captions are the published snow % that day and the days to or from the thaw. The rise label sits above the 15 % line.
   - _Requirements: 5.1–5.9_
-- [ ] 5.3 Tests: Properties 5, 6 and 8; a component test for 2024 G-03 (Apr 15, May 26, 41 days, northern Alberta)
+- [x] 5.3 Tests: Properties 5, 6 and 8; a component test for 2024 G-03 (Apr 15, May 26, 41 days, northern Alberta)
+  - Property 5 runs over all 72 published graves.
   - _Requirements: 5.2–5.8_
-- [ ] 5.4 **Checkpoint:** dossier for 2024 G-03 at 1440 wide, next to the board
+- [x] 5.4 **Checkpoint:** dossier for 2024 G-03 at 1440 wide, next to the board
   - _Requirements: 9.3_
 
 - [ ] 6. The field-crew phone
