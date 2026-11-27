@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import { playBell } from '../audio/bell';
 import { panFor, playBoom } from '../audio/boom';
 import { playHeartbeat } from '../audio/heart';
+import { hushWind } from '../audio/wind';
 import { currentAudio } from '../audio/context';
 import { PERIOD_MS, visibleFires, type Speed } from '../data/derive';
 import * as gk from '../copy/gravekeeper';
@@ -139,7 +140,8 @@ export function clockMayAdvance(s: UIState, now: number): boolean {
 function settle(s: UIState): UIState {
   const r = s.riddle;
   if (!r || r.open || r.done) return s;
-  if (s.cam !== null || s.ex !== null || s.lantern.on || s.compare || s.wager.open || s.scene === 'tonight') return s;
+  // The rising's banner holds the view too, so the riddle never opens underneath it.
+  if (s.cam !== null || s.sting !== null || s.ex !== null || s.lantern.on || s.compare || s.wager.open || s.scene === 'tonight') return s;
   return { ...s, riddle: { ...r, open: true } };
 }
 
@@ -348,7 +350,9 @@ export function useGraveyard(opts: Options = {}) {
     if (!plan.beat) dispatch({ type: 'rot' });
     // The boom comes from the grave's side of the map, so it is heard before the camera gets there.
     if (plan.flash) playBoom(currentAudio(), Math.random, panFor(plan.lead.rise!.x));
-    // A heartbeat under the camera push, quickening until the hand breaks through.
+    // A heartbeat under the camera push, quickening until the hand breaks through. On the season's first rising (the
+    // one that starts in the dark) the wind falls silent first and returns as the dark lifts.
+    if (plan.camera && plan.beat === 1) hushWind(currentAudio());
     if (plan.camera) playHeartbeat(currentAudio());
     if (plan.bells > 0) playBell(currentAudio(), plan.bells);
     risingCb.current?.({

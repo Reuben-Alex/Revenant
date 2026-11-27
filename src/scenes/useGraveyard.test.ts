@@ -63,7 +63,11 @@ describe('graveyard state', () => {
     let s = reducer({ ...watched, day: 17 }, { type: 'rising', plan, sting: stingView(plan, 2024), now: 1000 });
     expect(s.riddle).toEqual({ id: 'G-10', picked: [], hint: null, open: false, done: false });
     expect(clockMayAdvance({ ...s, cam: null }, 0)).toBe(true); // pending does not hold the clock by itself
+    // The banner holds the view as well as the camera: the riddle waits for both.
+    const stingUntil = s.sting!.until;
     s = reducer(s, { type: 'endCam', until: s.cam!.until });
+    expect(s.riddle?.open).toBe(false);
+    s = reducer(s, { type: 'endSting', until: stingUntil });
     expect(s.riddle?.open).toBe(true);
     expect(clockMayAdvance(s, 0)).toBe(false);
     for (const key of ['t0', 'd']) s = reducer(s, { type: 'riddlePick', key });

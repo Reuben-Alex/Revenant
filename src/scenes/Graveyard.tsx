@@ -104,7 +104,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   const wx = weather(views);
   // While the replay plays, the side panel steps back and a chip on the map keeps the chance comparison in view.
   const playing = !isT && st.running && st.startGate && st.ex === null && !st.lantern.on && !st.compare && !st.dragging && !st.riddle?.open && !st.verdict;
-  const chip = playing && season ? copy.register.chip(views.filter((v) => v.risen).length, season.chance, season.graves.length) : null;
+  const chip = playing && season && !st.sting ? copy.register.chip(views.filter((v) => v.risen).length, season.chance, season.graves.length) : null;
   useHauntedTab(awayLine(views, isT), dayCopy.docTitle.night);
   // The page fits one screen: the map's height is capped at what the header, headline and timeline leave.
   const rootRef = useRef<HTMLDivElement>(null);
@@ -118,9 +118,11 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   // as a sliver at the divider, so it is hidden there too.
   // Spec 05: while the camera holds, the sting carries the news; a callout or tooltip would be scaled 2.4× with the map.
   // Spec 06: the verdict card sits where the callout would, so the callout gives way to it.
-  const overlayOpen = st.ex !== null || st.lantern.on || (st.compare && !isT) || st.cam !== null || (st.verdict && !isT);
+  // A rising's banner (the sting) can show without the camera (later risings, 2× speed); the callout gives way to it
+  // too, so their letters never cross.
+  const overlayOpen = st.ex !== null || st.lantern.on || (st.compare && !isT) || st.cam !== null || (st.sting !== null && !isT) || (st.verdict && !isT);
   const callout = overlayOpen ? null : fireSel ? fireCallout(fireSel, year) : graveCallout(selV, year);
-  const hovV = st.hover && !st.lantern.on && !st.cam ? views.find((v) => v.id === st.hover) : undefined;
+  const hovV = st.hover && !st.lantern.on && !st.cam && !st.sting ? views.find((v) => v.id === st.hover) : undefined;
   const tip = hovV ? tooltipFor(hovV, scene, year) : null;
   // Spec 06 Requirement 4: the wager at day 0. While it is open a stone marks instead of opening, and the
   // hover card shows the clues (published values only).

@@ -57,6 +57,24 @@ export function startWind(ac: AudioContext | null): void {
   }
 }
 
+/** The silence before a rising (added): the wind drops out in 0.15 s, stays out for `holdS`, and comes back over
+ *  `returnS`. Used for the season's first rising, so its boom and heartbeat land in a quiet room. */
+export const HUSH = { fallS: 0.15, holdS: 2.4, returnS: 3 } as const;
+export function hushWind(ac: AudioContext | null, holdS: number = HUSH.holdS): void {
+  if (!ac || !wind) return;
+  try {
+    const g = wind.gain.gain;
+    const t = ac.currentTime;
+    g.cancelScheduledValues(t);
+    g.setValueAtTime(g.value, t);
+    g.linearRampToValueAtTime(0.0001, t + HUSH.fallS);
+    g.setValueAtTime(0.0001, t + holdS);
+    g.linearRampToValueAtTime(WIND.gain, t + holdS + HUSH.returnS);
+  } catch {
+    /* audio unavailable */
+  }
+}
+
 /** Cleanup for tests and hot reload only; no control in the UI calls this. */
 export function stopWind(): void {
   try {
