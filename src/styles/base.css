@@ -39,6 +39,20 @@ input {
   background: #f4eee2 !important;
 }
 
+/* The graveyard's side panel: 340–400 px beside the map; full width once the row wraps under the map. */
+.rv-aside {
+  flex: 0 1 400px;
+  min-width: 340px;
+  max-width: 400px;
+}
+@media (max-width: 899px) {
+  .rv-aside {
+    flex: 1 1 100%;
+    min-width: 0;
+    max-width: none;
+  }
+}
+
 /* Shown only on small screens (the graveyard's note pointing phones to the crew view). */
 @media (min-width: 760px) {
   .rv-small-only { display: none !important; }

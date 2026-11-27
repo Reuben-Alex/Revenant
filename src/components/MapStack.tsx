@@ -80,7 +80,7 @@ export function MapStack(p: Props) {
       // SVG layers (viewBox, letterboxed) would not, and graves would drift off their scars.
       // maxWidth: the height is capped at the window less the page's header and timeline (--rv-chrome, set by
       // Graveyard), so everything fits on one screen. It never goes below the 560 px basis.
-      style={{ flex: '999 1 560px', minWidth: 0, maxWidth: 'max(560px, calc((100dvh - var(--rv-chrome, 310px)) * 1060 / 716))', alignSelf: 'flex-start', position: 'relative', aspectRatio: '1060 / 716', overflow: 'hidden', borderRight: '1px solid #172120', background: '#060A09', cursor: p.cursor ?? 'default' }}>
+      style={{ flex: '1 1 560px', minWidth: 0, maxWidth: 'max(560px, calc((100dvh - var(--rv-chrome, 310px)) * 1060 / 716))', alignSelf: 'flex-start', position: 'relative', aspectRatio: '1060 / 716', overflow: 'hidden', borderRight: '1px solid #172120', background: '#060A09', cursor: p.cursor ?? 'default' }}>
       <div className="rv-cam" style={camStyle}>
         {p.frames.map((f, i) => (
           <img key={f.src} className="rv-img" src={f.src} alt="" style={{ filter: grade, opacity: +(p.weights[i] ?? 0).toFixed(3) }} />

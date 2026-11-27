@@ -253,7 +253,9 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
       </p>
       <HeadlineBand headline={head.headline} subline={head.subline} glow={head.glow} counts={countList(scene, views, tonight)} focusOnMount={focusHeadline} />
 
-      <div ref={rowRef} style={{ display: 'flex', flexWrap: 'wrap', flex: '1 1 auto', alignItems: 'stretch' }}>
+      {/* The map takes all the width the panel (≤ 400 px) leaves, up to its height limit; past that the two are
+          centred together on dark gutters, so the graveyard stays the main thing on screen. */}
+      <div ref={rowRef} style={{ display: 'flex', flexWrap: 'wrap', flex: '1 1 auto', alignItems: 'stretch', justifyContent: 'center', background: '#020403' }}>
         <MapStack
           frames={fr} weights={shownWeights} night={st.night} maskClass={MASK_CLASS[scene]} graves={views} fires={fires}
           fireSel={st.fireSel} clusters={isT ? tonight!.clusters : []} selected={st.selected} hover={st.hover}
@@ -267,8 +269,8 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           narrator={<>{st.say && <Gravekeeper key={st.say.start} say={st.say} raised={st.cam !== null} glitch={gl} />}<GravekeeperLive say={st.say} /></>}
         />
         {/* The aside takes the map's height and scrolls inside it (its content would otherwise stretch the row). */}
-        <aside aria-label="Graves and parish register" style={{ flex: '1 1 340px', position: 'relative', minHeight: 360, background: '#070C0B' }}>
-          <div style={{ position: 'absolute', inset: 0, overflowY: 'auto', boxSizing: 'border-box', padding: '18px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <aside aria-label="Graves and parish register" className="rv-aside" style={{ position: 'relative', minHeight: 360, background: '#070C0B' }}>
+          <div style={{ position: 'absolute', inset: 0, overflowY: 'auto', scrollbarColor: '#3A4446 #070C0B', scrollbarWidth: 'thin', boxSizing: 'border-box', padding: '18px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
       {wagerOpen && <Wager marks={marks} onSeal={onSeal} onWatch={onWatch} />}
           {keep && tonight && (
             <KeepWatch year={year + 1} need={need} marks={keep.marks} sealed={keep.sealed} saving={saving}

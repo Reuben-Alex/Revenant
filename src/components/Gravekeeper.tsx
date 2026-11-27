@@ -39,7 +39,8 @@ export function Gravekeeper({ say, raised, glitch }: Props) {
 
   return (
     <div className="rv-say" style={{
-      position: 'absolute', left: 16, bottom: raised ? '11%' : 16, width: 'min(640px, calc(100% - 32px))', boxSizing: 'border-box',
+      // At most 46 % of the map's width (360–560 px), so it hides as few stones as possible; full width on phones.
+      position: 'absolute', left: 16, bottom: raised ? '11%' : 16, width: 'min(calc(100% - 32px), clamp(360px, 46%, 560px))', boxSizing: 'border-box',
       display: 'flex', alignItems: 'flex-start', gap: 14, padding: '14px 18px 12px 14px', zIndex: 6, pointerEvents: 'none',
       background: 'linear-gradient(180deg, rgba(14,12,9,0.95), rgba(6,6,5,0.95))', border: '1px solid #4A3E2C', borderRadius: 6,
       boxShadow: '0 10px 40px rgba(0,0,0,0.7), inset 0 0 20px rgba(0,0,0,0.5)',
