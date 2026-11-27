@@ -24,12 +24,18 @@ export const tab = {
 };
 
 export const keeper = {
-  /** Board: "…Thirteen of them were still warm when the first snow came.\nI will be watching them in April." */
+  /** Board: "…Thirteen of them were still warm when the first snow came.\nI will be watching them in April."
+   *  Revised 2026-11 (design feedback). "Still warm" is only what `late_hits_14d` measures: heat in the 14 days up to
+   *  the latest data, which may be slash-pile burning, so the line says crews confirm. It makes no claim about snow
+   *  on the scars or about heat right now. */
   line: (year: number, warm: number, month: string | null) =>
-    `Tonight I am burying the fires of ${year}. ${word(warm)} of them ${warm === 1 ? 'was' : 'were'} still warm in the last two weeks.\n` +
-    `I will be watching them in ${month ?? 'spring'}.`,
+    warm === 0
+      ? `Tonight I bury the fires of ${year}. None of them was warm in the last two weeks.\nI will watch in ${month ?? 'spring'} all the same.`
+      : `Tonight I bury the fires of ${year}. ${word(warm)} of them ${warm === 1 ? 'was' : 'were'} still warm in the last two weeks.\n` +
+        `${warm === 1 ? 'It may be a slash pile' : 'Some may be slash piles'}; crews confirm. I will watch in ${month ?? 'spring'}.`,
+  /** The published file is `days` old; what is shown is from `through` (the latest heat data). */
   stale: (days: number, through: string) =>
-    `The satellites have not spoken to me for ${w(days)} ${days === 1 ? 'day' : 'days'}. What you see is from ${through}.`,
+    `I have heard nothing new for ${w(days)} ${days === 1 ? 'day' : 'days'}.\nWhat you see is from ${through}.`,
 };
 
 /** Keep watch, puzzle 4 (spec 07 Requirement 4). Lantern marks go only on still-warm scars, as the brief says. Every

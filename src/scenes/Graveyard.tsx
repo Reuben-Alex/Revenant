@@ -70,7 +70,13 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   useEffect(() => {
     if (greeted.current || !greet) return;
     greeted.current = true;
-    act({ type: 'say', line: line(gk.night(data.seasons.s2024.graves.length, data.seasons.s2024.year - 1), Date.now(), NIGHT_MS) });
+    const nightLine = () => act({ type: 'say', line: line(gk.night(data.seasons.s2024.graves.length, data.seasons.s2024.year - 1), Date.now(), NIGHT_MS) });
+    // If the viewer's own clock says it is night (from 19:00, when the agency's night shift starts, to 06:00), the
+    // Gravekeeper notices first. True by construction: it reads only the viewer's clock.
+    if (!afterDarkNow(new Date())) { nightLine(); return; }
+    act({ type: 'say', line: line(gk.afterDark, Date.now(), AFTER_DARK_MS) });
+    // Not cleared on unmount: StrictMode's rehearsal unmount would otherwise drop the night line.
+    setTimeout(nightLine, AFTER_DARK_MS);
   }, [greet, act, data]);
   // Compare with the last scene seen, not a first-run flag, so StrictMode's repeated mount effect stays silent.
   const lastScene = useRef(st.scene);
@@ -337,6 +343,10 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
     </div>
   );
 }
+
+const AFTER_DARK_MS = 3000;
+/** The viewer's local clock reads 19:00–05:59. */
+export const afterDarkNow = (d: Date) => d.getHours() >= 19 || d.getHours() < 6;
 
 /** Sets `--rv-chrome` on the page: the height above the map row plus the footer, so the map (MapStack's
  *  max-width) can keep the header, map and candle timeline on one screen. Updates as they wrap or resize. */

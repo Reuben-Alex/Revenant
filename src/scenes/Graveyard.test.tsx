@@ -50,6 +50,7 @@ describe('Graveyard rising', () => {
 
 it('the wager holds day 0; marks, clues and the seal; the thaw waits for silence; "Your mark" at the beat (spec 06 Req 1, 2, 4)', () => {
     // StrictMode, as in main.tsx: the repeated mount effects must not replace the night line with the season intro.
+    vi.setSystemTime(new Date(2026, 10, 20, 12, 0)); // midday on the viewer's clock: no after-dark line first
     render(<StrictMode><Graveyard data={DATA} tonight={TONIGHT} greet /></StrictMode>);
     const live = () => screen.getAllByRole('status').map((e) => e.textContent ?? '').join(' | ');
     expect(live()).toContain('The Gravekeeper: You were looking at fire scars. Look again. These are graves, twenty-four of them, from the summer of 2023.');
@@ -87,7 +88,7 @@ it('the wager holds day 0; marks, clues and the seal; the thaw waits for silence
     expect(live()).toContain(`The Gravekeeper: The snow is leaving ${w?.id}. Fifty days, now.`);
     tick((17 - quietDay) * DAY_MS);
     expect(day()).toBe(17);
-    expect(live()).toContain('Your mark. G-10. I buried it last autumn, under the fires of 2023. The snow let go of it 16 days ago. It was not ready to stay down.');
+    expect(live()).toContain('Yours. G-10. I buried it after the fires of 2023. The snow left it 16 days ago. It did not stay down.');
     expect(document.querySelector('.rv-say')).not.toBeNull();
     expect(document.querySelectorAll('.rv-pick')).toHaveLength(3);
   });
@@ -140,7 +141,7 @@ it('the wager holds day 0; marks, clues and the seal; the thaw waits for silence
     tick(DAY_MS);
     expect(live()).toContain('Two of 24 rose.');
     expect(live()).toContain('These scars woke no more often than chance. Revenant says so, rather than cry wolf.');
-    expect(live()).toContain('These were ordinary spring fires, not the dead walking. I do not cry wolf.');
+    expect(live()).toContain('A quiet year. Spring fires, nothing more. I do not cry wolf.');
     expect(verdictView(DATA.seasons.s2026, [], false).bells).toBe(1);
   });
 

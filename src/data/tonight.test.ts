@@ -59,9 +59,9 @@ describe('Published examples', () => {
     const fresh = tonightLine(DATA.seasons, T, Date.parse(T.asOf) + H);
     // The count changes every night (spec 02 Requirement 11), so it is read from the published file.
     expect(fresh).toBe(copy.keeper.line(2026, warm, 'April'));
-    expect(fresh).toMatch(/^Tonight I am burying the fires of 2026\. \w[\w-]* of them (was|were) still warm in the last two weeks\.\nI will be watching them in April\.$/);
+    expect(fresh).toMatch(/^Tonight I bury the fires of 2026\. \w[\w-]* of them (was|were) (still )?warm in the last two weeks\.\n.*I will watch in April/);
     const stale = tonightLine(DATA.seasons, T, Date.parse(T.asOf) + 3 * 24 * H + H);
-    expect(stale).toBe(`The satellites have not spoken to me for three days. What you see is from Nov ${T.pointsThrough.slice(8).replace(/^0/, '')}.`);
+    expect(stale).toBe(`I have heard nothing new for three days.\nWhat you see is from Nov ${T.pointsThrough.slice(8).replace(/^0/, '')}.`);
   });
 
   it('the footer stamps the data and says when it is stale', () => {

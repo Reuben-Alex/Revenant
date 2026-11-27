@@ -128,13 +128,29 @@ The replay runs by itself and waits whenever you stop to look. When a grave rise
   </tr>
 </table>
 
-When the replay reaches July 1, the Gravekeeper gives his **verdict** on a tombstone card: how many rose, against how many chance alone would raise. In a quiet year he says so, and the map glitches while voices under the snow whisper that *"it is only chance."*
+When the replay reaches July 1, the Gravekeeper gives his **verdict** on a tombstone card: how many rose, against how many chance alone would raise. In a quiet year he says so, and the map glitches while a voice under the snow whispers *"only spring fires."*
 
 <p align="center">
   <img src="docs/img/verdict.jpg" alt="The verdict of spring 2024: fourteen of 24 rose. The same shapes on unburned ground caught heat 26% of the time, so these scars woke 2.2 times as often as chance. A zombie year." width="100%">
 </p>
 
-Turn your sound on. The wind, drone, bell, boom and creak are all made live with WebAudio; there are no audio files.
+Turn your sound on. The wind, drone, bell, boom, heartbeat and creak are all made live with WebAudio; there are no audio files. The boom of a rising comes from the grave's side of the map, so you hear it before the camera gets there.
+
+### The dead notice you
+
+The weather is a readout too, and the legend says how:
+
+| You see | It means |
+|---|---|
+| 🌫️ Mist drifting over a scar | That scar is waking |
+| 🔥 Ash falling with the snow | Two flecks for every grave risen |
+| 🌑 The edges of the map closing in | It tightens with each rising |
+
+- **The first rising of a season starts in the dark.** The map goes black except for the grave's own glow, then lifts as the hand breaks through.
+- **The embers lean toward your pointer.** Hold the lantern still for 20 seconds, and the nearest grave that really rose reaches toward the light from where its heat came back.
+- **The tab notices you leave.** Switch tabs mid-replay and it reads *"They are awake (14)"* under a burning hand. On Tonight it reads *"Still warm (n)"*, counting that night's still-warm scars. Every count is the one on screen.
+- **The Gravekeeper notices the time.** Arrive after 19:00 by your own clock and he says *"You came after dark. So do they."*
+- **The side panel steps back while the replay plays,** so the graveyard runs like a film. A chip on the map keeps the chance comparison in view.
 
 ## Puzzles
 

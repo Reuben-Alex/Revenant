@@ -69,8 +69,10 @@ export function risingLine(r: RisingInput, rot: number, marks: string[]): string
 
 /** A whisper on days 22, 48 and 76 of a quiet year (Requirement 3.2). */
 export function whisperAt(season: SeasonData, day: number): string | null {
-  if (!quiet(season) || !(WHISPER_DAYS as readonly number[]).includes(day)) return null;
-  return copy.whispers[(day * 7) % copy.whispers.length]!;
+  const i = (WHISPER_DAYS as readonly number[]).indexOf(day);
+  if (!quiet(season) || i < 0) return null;
+  // One whisper per day, in order, so the three are all different.
+  return copy.whispers[i % copy.whispers.length]!;
 }
 
 const GLYPHS = '\u2593\u2592\u2591\u2588\u2042\u00a7';

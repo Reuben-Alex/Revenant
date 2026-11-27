@@ -46,19 +46,23 @@ Fonts: **IM Fell English** + **IM Fell English SC** (display, epitaphs, narrator
 ## Sound (WebAudio, no files)
 Wind: looped brown noise → low-pass 420 Hz with 0.08 Hz LFO. Rising: 70→32 Hz sine boom + high-pass crackle, panned to the grave's x (−0.8 west edge … 0.8 east edge, added); with the camera, a heartbeat of 4 lub-dub pairs (62→38 Hz sine thumps) at 0.12, 0.62, 0.98 and 1.22 s, ending before the hand at 1.45 s (added). Bell: 164 Hz partials ×1, 2.4, 3.0, 4.5, 3.4 s decay. Creak: band-passed saw 110→70 Hz. Nightfall drone: 55/82/110 Hz glide, 8 s.
 
-## Gravekeeper lines (verbatim)
-- Nightfall: "You were looking at fire scars. Look again. These are graves, twenty-four of them, from the summer of 2023. Wager with me: mark three you think will rise."
-- 2024 start: "Last autumn I buried twenty-four of them. The summer of 2023 burned more of this country than any I remember. Press play, and watch the snow."
-- 2025: "Twenty-four more, from the fires of 2024. A gentler summer. Let us see whether they stay down."
-- 2026: "The scars of 2025. Fewer, and smaller. I do not expect much from them. I will watch all the same."
-- Tonight: "Tonight I am burying the fires of 2026. Thirteen of them were still warm when the first snow came. I will be watching them in April."
-- First thaw: "The snow is leaving {id}. Fifty days, now. If it means to rise, it will rise soon."
-- Beat 1: "{id}. I buried it last autumn, under the fires of {Y-1}. The snow let go of it {n} days ago. It was not ready to stay down."
-- Beat 2: "{id} too. Each stone wakes when its own snow goes. Mark where the hand broke through: that is where the heat came back."
-- Beat 3: "{id}. From here I will let them rise on their own. Touch any stone and I will dig it up for you."
+## Gravekeeper lines (verbatim; revised 2026-11 after approved design feedback: shorter, second person)
+Every value in braces comes from the published data, or from the viewer's own clock for the after-dark line.
+
+- Night arrival, only when the viewer's clock reads 19:00–05:59 (3 s, then the nightfall line): "You came after dark. So do they."
+- Nightfall: "You were looking at fire scars. Look again. These are graves, {n} of them, from the summer of {Y-1}. Mark the three you think will rise."
+- 2024 start: "Last autumn I buried {n}. The summer of {Y-1} burned more of this country than any I remember. Mark three, or just watch."
+- 2025, 2026: "{N} more, from the fires of {Y-1}. A gentler summer | A harder summer: these cover about {km} km², where {Y-2}'s covered {km before}. Watch whether they stay down."
+- Tonight: "Tonight I bury the fires of {year}. {N} of them were still warm in the last two weeks. Some may be slash piles; crews confirm. I will watch in {month}." (one: "was" · "It may be a slash pile"; none: "None of them was warm in the last two weeks. I will watch in {month} all the same.")
+- Tonight, stale: "I have heard nothing new for {n} days. What you see is from {date}."
+- First thaw: "The snow is leaving {id}. Fifty days, now. Do not look away."
+- Beat 1: "{id}. I buried it after the fires of {Y-1}. The snow left it {n} days ago. It did not stay down." (0 days: "The snow left it this very day.")
+- Beat 2: "{id} too. Each wakes when its own snow goes. The hand marks where the heat came back."
+- Beat 3: "{id}. From here they rise on their own. Touch a stone, and I will dig it up for you."
 - Later risings (rotate): "The ground gives way at {id}." · "Another. {id}, {n} days after the thaw." · "{id} has risen." · "I hear {id} stirring. There." · "{id}. They are restless this spring."
-- Wager hit: "Your mark, {id}. It walks. My lantern burns brighter for you."
-- Verdict: "{N} of twenty-four rose. Chance alone would have raised {C}." + "This was a zombie year." | "These were ordinary spring fires, not the dead walking. I do not cry wolf."
+- Wager hit: "Your mark, {id}. It walks. My lantern burns brighter for you." At a beat, a marked grave's line starts "Yours. "
+- Lantern: "Hold the lantern low. Not all that burns out there is mine."
+- Verdict: "{N} of {n} rose. Chance alone would have raised {C}." + "This was a zombie year. Too many would not stay buried." | "A quiet year. Spring fires, nothing more. I do not cry wolf."
 - Wager verdicts (0–3 hits): "The dead keep their secrets from you." · "Beginner's luck." · "You have been here before." · "You have the gift. Stay away from my graveyard."
-- Whispers (quiet years, "A voice under the snow"): "the dead are lying to you" · "these are only spring fires" · "nothing is buried here. nothing." · "chance. it is only chance."
+- Whispers (quiet years, days 22, 48 and 76 in order, "A voice under the snow"): "no one is down here" · "only spring fires" · "nothing under you. nothing." (the fourth, "chance. only chance.", is spare)
 - Epitaph template: "Here lies some {km} km² of {region}, burned in the summer of {Y-1}. Buried by winter. The snow let go on {melt}; {n} days later it rose."

@@ -180,8 +180,8 @@ describe('Examples from the published file', () => {
 
   it('builds the intros from the published sizes; 2025 and 2026 were gentler, by area', () => {
     expect(introLine(DATA.seasons, 's2024')).toContain('burned more of this country than any I remember');
-    expect(introLine(DATA.seasons, 's2025')).toMatch(/^Twenty-four more, from the fires of 2024\. A gentler summer: these twenty-four cover about 13,500 km², where 2023's covered 34,600\./);
-    expect(introLine(DATA.seasons, 's2026')).toMatch(/A gentler summer: these twenty-four cover about 11,600 km², where 2024's covered 13,500\./);
+    expect(introLine(DATA.seasons, 's2025')).toMatch(/^Twenty-four more, from the fires of 2024\. A gentler summer: these cover about 13,500 km², where 2023's covered 34,600\./);
+    expect(introLine(DATA.seasons, 's2026')).toMatch(/A gentler summer: these cover about 11,600 km², where 2024's covered 13,500\./);
   });
 
   it('2025 beats chance by a thin margin of two graves; 2024 and 2026 have none', () => {
@@ -193,7 +193,7 @@ describe('Examples from the published file', () => {
 
   it('2026 is the quiet year; 2024 and 2025 are zombie years', () => {
     expect([s2024.zombie, s2025.zombie, s2026.zombie]).toEqual([true, true, false]);
-    expect(verdictView(s2026, [], false).line).toBe(`${word(2)} of twenty-four rose. Chance alone would have raised three.\nThese were ordinary spring fires, not the dead walking. I do not cry wolf.`);
+    expect(verdictView(s2026, [], false).line).toBe(`${word(2)} of twenty-four rose. Chance alone would have raised three.\nA quiet year. Spring fires, nothing more. I do not cry wolf.`);
     expect(verdictView(s2024, [], false).detail).toContain('These scars woke 2.2 times as often as chance: a zombie year, after the fires of 2023.');
   });
 
@@ -204,7 +204,7 @@ describe('Examples from the published file', () => {
 
   it('beat 1 names the lead and its own day count; a line lasts long enough to read', () => {
     expect(risingLine({ ids: ['G-10'], lead: 'G-10', days: [16], beat: 1, year: 2024 }, 0, [])).toBe(
-      'G-10. I buried it last autumn, under the fires of 2023. The snow let go of it 16 days ago.\nIt was not ready to stay down.');
+      'G-10. I buried it after the fires of 2023.\nThe snow left it 16 days ago. It did not stay down.');
     expect(risingLine({ ids: ['G-13', 'G-24'], lead: 'G-13', days: [0, 26], beat: null, year: 2024 }, 1, [])).toBe('Another. G-13, 0 days after the thaw.');
     expect(risingLine({ ids: ['G-10'], lead: 'G-10', days: [16], beat: null, year: 2024 }, 0, ['G-10'])).toBe('Your mark, G-10. It walks. My lantern burns brighter for you.');
     const l = line('abc', 1000);
