@@ -1,0 +1,91 @@
+# Spec 02 Requirement 11: refresh Tonight every night, then redeploy.
+# - Runs `python -m pipeline tonight` at 10:00 UTC and by hand, with FIRMS_MAP_KEY from repository secrets.
+# - Caches pipeline/cache/ (FIRMS pages and GIBS frames) between runs.
+# - Publishing validates each file first (scripts/validate-data.mjs, via pipeline/publish.py), so a bad night keeps
+#   the previous files. If anything fails, nothing is committed and the run fails.
+# - Commits only Tonight's outputs, and only when they changed. A push made with GITHUB_TOKEN starts no other
+#   workflow, so this one calls deploy.yml with the new commit; the deploy runs the full gate before going live.
+name: nightly
+
+on:
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          python-version: '3.12'
+
+      - name: Restore the pipeline cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: pipeline/cache
+          # A new key each run saves the night's downloads; the prefix restores the latest one.
+          key: pipeline-cache-${{ github.run_id }}
+          restore-keys: pipeline-cache-
+
+      - name: Check the FIRMS key is set
+        env:
+          FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
+        run: |
+          if [ -z "$FIRMS_MAP_KEY" ]; then echo "::error::Repository secret FIRMS_MAP_KEY is not set"; exit 1; fi
+
+      - name: Build Tonight
+        env:
+          FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
+        run: uv run --frozen --python 3.12 python -m pipeline tonight
+
+      - name: Commit Tonight's outputs if they changed
+        id: commit
+        run: |
+          year=$(date -u +%Y)
+          files="public/data/tonight.json public/img/viirs-latest.webp public/img/scars-$year.png"
+          git add -- $files
+          if git diff --cached --quiet; then
+            echo "No change tonight."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "Tonight: nightly refresh $(date -u +%Y-%m-%d)" -- $files
+          git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: refresh
+    if: needs.refresh.outputs.changed == 'true'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/deploy.yml
+    with:
+      ref: ${{ needs.refresh.outputs.sha }}
+    secrets:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

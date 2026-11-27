@@ -157,13 +157,18 @@ it('the wager holds day 0; marks, clues and the seal; the thaw waits for silence
     fireEvent.click(screen.getByRole('button', { name: /Close exhumation/i }));
     const seal = screen.getByRole('button', { name: 'Seal the watch' });
     expect(seal.getAttribute('aria-disabled')).toBe('true');
-    const picks = warm.slice(-3).map((s) => s.id); // the three least-ranked warm scars in file order
+    // The data changes nightly: the watch needs three lanterns, or every warm scar on a night with fewer.
+    const need = Math.min(3, warm.length);
+    if (need === 0) return;
+    const picks = warm.slice(-need).map((s) => s.id); // the least-ranked warm scars in file order
     for (const id of picks) fireEvent.click(screen.getByRole('button', { name: `Set a lantern on ${id}` }));
     expect(screen.getByRole('button', { name: `Take the lantern from ${picks[0]}` }).getAttribute('aria-pressed')).toBe('true');
-    fireEvent.click(screen.getByRole('button', { name: `Set a lantern on ${warm[0]!.id}` })); // a fourth is refused
-    expect(screen.queryByRole('button', { name: `Take the lantern from ${warm[0]!.id}` })).toBeNull();
+    if (warm.length > need) {
+      fireEvent.click(screen.getByRole('button', { name: `Set a lantern on ${warm[0]!.id}` })); // one more is refused
+      expect(screen.queryByRole('button', { name: `Take the lantern from ${warm[0]!.id}` })).toBeNull();
+    }
     fireEvent.click(seal);
-    const top = TONIGHT.watch.map((i) => TONIGHT.scars[i]!).filter((s) => s.late > 0).slice(0, 3).map((s) => s.id);
+    const top = TONIGHT.watch.map((i) => TONIGHT.scars[i]!).filter((s) => s.late > 0).slice(0, need).map((s) => s.id);
     const k = picks.filter((id) => top.includes(id)).length;
     const panel = screen.getByRole('region', { name: 'Keep watch' }).textContent ?? '';
     expect(panel).toContain(`(${top.join(', ')})`);

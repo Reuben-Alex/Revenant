@@ -12,6 +12,12 @@ on:
   # A push made with the workflow's GITHUB_TOKEN starts no other workflow, so the nightly data job
   # (spec 02 task 11) calls this one after it commits (Requirement 8.4).
   workflow_call:
+    inputs:
+      # The caller's own event SHA is the commit before its data commit, so it passes the new one.
+      ref:
+        type: string
+        required: false
+        default: ''
     secrets:
       VERCEL_TOKEN:
         required: true
@@ -23,14 +29,14 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: deploy-production
-  cancel-in-progress: false
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # Job-level, so it also holds when the nightly workflow calls this one.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -39,6 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ inputs.ref || github.sha }}
           persist-credentials: false
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0

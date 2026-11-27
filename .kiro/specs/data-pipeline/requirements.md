@@ -157,7 +157,7 @@ points and NBAC polygons. That gives a real 1 km "on the scar" test instead of ~
 
 1. THE workflow `.github/workflows/nightly.yml` SHALL run `python -m pipeline tonight` daily at 10:00 UTC and on manual dispatch, with `FIRMS_MAP_KEY` from repository secrets.
 2. THE workflow SHALL cache `pipeline/cache/` between runs.
-3. WHEN the run succeeds and outputs changed, THE workflow SHALL commit only `public/data/tonight.json` and `public/img/viirs-latest.webp`.
+3. WHEN the run succeeds and outputs changed, THE workflow SHALL commit only `public/data/tonight.json`, `public/img/viirs-latest.webp` and this year's scar mask `public/img/scars-{year}.png` (the Tonight map draws it), then redeploy through `deploy.yml`, which runs the gate first.
 4. IF the run fails, THEN THE workflow SHALL commit nothing and fail visibly.
 5. THE workflow SHALL use least-privilege permissions (`contents: write` only).
 

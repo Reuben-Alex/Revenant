@@ -58,7 +58,6 @@ describe('Published examples', () => {
     const warm = T.scars.filter((s) => s.late > 0).length;
     const fresh = tonightLine(DATA.seasons, T, Date.parse(T.asOf) + H);
     // The count changes every night (spec 02 Requirement 11), so it is read from the published file.
-    expect(warm).toBeGreaterThan(0);
     expect(fresh).toBe(copy.keeper.line(2026, warm, 'April'));
     expect(fresh).toMatch(/^Tonight I am burying the fires of 2026\. \w[\w-]* of them (was|were) still warm in the last two weeks\.\nI will be watching them in April\.$/);
     const stale = tonightLine(DATA.seasons, T, Date.parse(T.asOf) + 3 * 24 * H + H);
@@ -105,15 +104,16 @@ describe('Keep watch (spec 07 Requirement 4)', () => {
 
   it('the ranking held to the same choice: the first three still-warm scars of `watch`', () => {
     const top = rankedWarm(T);
-    expect(top).toHaveLength(3);
+    expect(top).toHaveLength(keepNeed(T));
     expect(top.every((id) => warmIds.includes(id))).toBe(true);
     const order = T.watch.map((i) => T.scars[i]!.id).filter((id) => warmIds.includes(id));
-    expect(top).toEqual(order.slice(0, 3));
-    expect(keepWatchScore(top, T).k).toBe(3);
+    expect(top).toEqual(order.slice(0, keepNeed(T)));
+    expect(keepWatchScore(top, T).k).toBe(keepNeed(T));
   });
 
   it('Property 5: the card carries only published numbers (Req 4.5)', () => {
-    fc.assert(fc.property(fc.subarray(warmIds, { minLength: 3, maxLength: 3 }), (marks) => {
+    const need = keepNeed(T);
+    fc.assert(fc.property(fc.subarray(warmIds, { minLength: need, maxLength: need }), (marks) => {
       const l = cardLines(marks, T);
       const allowed = new Set<string>();
       const add = (s: string) => (s.replace(/(\d),(\d)/g, '$1$2').match(/\d+(\.\d+)?/g) ?? []).forEach((n) => allowed.add(n));
