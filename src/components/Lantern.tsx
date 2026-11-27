@@ -1,7 +1,8 @@
 // Lantern mode and the before/after split (Main.dc.html L268–289, L338–341; renderVals() L1093–1119).
 import * as copy from '../copy/graveyard';
 import { H, W } from '../data/derive';
-import { fireFlame, fireTriangle, lanternFlame, lanternIcon } from '../data/geometry';
+import { fireFlame, fireTriangle, handPath, lanternFlame, lanternIcon } from '../data/geometry';
+import type { Reach } from '../data/reach';
 import type { NewFire } from '../data/types';
 
 interface LanternProps {
@@ -15,9 +16,11 @@ interface LanternProps {
   fires?: NewFire[];
   /** The hunt counter, announced politely (Requirement 6.4). */
   counter?: string;
+  /** Idle for 20 s: the nearest risen grave reaches toward the light, from its real hotspot. */
+  reach?: Reach | null;
 }
 
-export function Lantern({ x, y, r, inside, src, names, fires = [], counter }: LanternProps) {
+export function Lantern({ x, y, r, inside, src, names, fires = [], counter, reach }: LanternProps) {
   const lpx = ((x / W) * 100).toFixed(2);
   const lpy = ((y / H) * 100).toFixed(2);
   return (
@@ -33,6 +36,15 @@ export function Lantern({ x, y, r, inside, src, names, fires = [], counter }: La
             <path className="rv-candle" d={fireFlame(f.x, f.y)} style={{ fill: '#FFE7A3', opacity: 0.9 }} />
           </g>
         ))}
+        {reach && (
+          <g key={reach.id} data-reach={reach.id} transform={`rotate(${reach.angle} ${reach.x} ${reach.y})`}>
+            <g className="rv-reach">
+              <circle cx={reach.x} cy={reach.y} r={30} style={{ fill: 'var(--ember)', fillOpacity: 0.2 }} />
+              <path d={handPath(reach.x, reach.y, 1.8)} style={{ fill: 'none', stroke: 'var(--ember)', strokeWidth: 3.2, strokeLinecap: 'round', strokeLinejoin: 'round', filter: 'drop-shadow(0 0 6px #FF6B2C)' }} />
+              <path d={handPath(reach.x, reach.y, 1.8)} style={{ fill: 'none', stroke: '#FFE1B0', strokeWidth: 1, strokeLinecap: 'round', strokeLinejoin: 'round' }} />
+            </g>
+          </g>
+        )}
         {inside && (
           <g>
             <path d={lanternIcon(x, y)} style={{ fill: 'none', stroke: '#FFE7C2', strokeWidth: 1.4, strokeLinejoin: 'round' }} />

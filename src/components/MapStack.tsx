@@ -62,6 +62,8 @@ interface Props {
   stoneAria?: (v: GraveView) => { label: string; pressed: boolean } | null;
   /** Spec 06 quiet-year glitch: the map jitters (board mapClass rv-glitch). */
   glitch?: boolean;
+  /** The season's first rising: it starts in the dark. */
+  darkLead?: boolean;
 }
 
 export function MapStack(p: Props) {
@@ -74,8 +76,24 @@ export function MapStack(p: Props) {
     transform: t ? `translate(${t.tx.toFixed(2)}%, ${t.ty.toFixed(2)}%) scale(${t.scale})` : 'translate(0%, 0%) scale(1)',
     transition: `transform ${cam ? '1.15s cubic-bezier(.6,.05,.25,1)' : '1.5s cubic-bezier(.45,0,.2,1)'}`,
   };
+  // The pointer in grid units, as CSS variables for the embers (no re-render). Read against the camera layer, so it
+  // stays right while the map is zoomed.
+  const aim = (e: React.MouseEvent<HTMLDivElement>) => {
+    const layer = e.currentTarget.querySelector<HTMLElement>('.rv-cam');
+    if (layer) {
+      const r = layer.getBoundingClientRect();
+      e.currentTarget.style.setProperty('--mx', ((e.clientX - r.left) / r.width * W).toFixed(0));
+      e.currentTarget.style.setProperty('--my', ((e.clientY - r.top) / r.height * H).toFixed(0));
+    }
+    p.onMove?.(e);
+  };
+  const unaim = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.currentTarget.style.removeProperty('--mx');
+    e.currentTarget.style.removeProperty('--my');
+    p.onLeave?.();
+  };
   return (
-    <div onMouseMove={p.onMove} onMouseLeave={p.onLeave} className={[p.sting ? 'rv-shake' : '', p.glitch ? 'rv-glitch' : ''].filter(Boolean).join(' ') || undefined}
+    <div onMouseMove={aim} onMouseLeave={unaim} className={[p.sting ? 'rv-shake' : '', p.glitch ? 'rv-glitch' : ''].filter(Boolean).join(' ') || undefined}
       // alignSelf keeps the 1060:716 box: if the row stretched it, the images would distort while the
       // SVG layers (viewBox, letterboxed) would not, and graves would drift off their scars.
       // maxWidth: the height is capped at the window less the page's header and timeline (--rv-chrome, set by
@@ -128,7 +146,7 @@ export function MapStack(p: Props) {
           <Tombstone key={v.id} v={v} selected={p.selected === v.id} hovered={p.hover === v.id} hideHand={cam?.id === v.id} marked={p.marks?.includes(v.id)} lantern={p.lanterns?.includes(v.id)} />
         ))}
 
-        {cam && <Cinematic key={`${cam.id}-${cam.until}`} x={cam.x} y={cam.y} />}
+        {cam && <Cinematic key={`${cam.id}-${cam.until}`} x={cam.x} y={cam.y} dark={p.darkLead} />}
 
         <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
           {Array.from({ length: p.flakes }, (_, i) => {

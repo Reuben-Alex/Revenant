@@ -11,10 +11,27 @@ export function crackleNoise(length: number, random: () => number = Math.random)
   return d;
 }
 
-export function playBoom(ac: AudioContext | null, random: () => number = Math.random): void {
+/** Stereo position for a grid x (0..1060): −0.8 at the west edge to 0.8 at the east, so the sound comes from the
+ *  grave's side of the map without leaving one ear silent. */
+export function panFor(x: number): number {
+  return +Math.max(-0.8, Math.min(0.8, (x / 1060) * 1.6 - 0.8)).toFixed(3);
+}
+
+/** The node to connect sounds to: a stereo panner at `pan` when one is given and supported, else the speakers. */
+function outFor(ac: AudioContext, pan: number | undefined): AudioNode {
+  if (pan === undefined || typeof ac.createStereoPanner !== 'function') return ac.destination;
+  const p = ac.createStereoPanner();
+  p.pan.value = pan;
+  p.connect(ac.destination);
+  return p;
+}
+
+/** `pan` (−1 west … 1 east, from `panFor`) places the boom and crackle where the grave is. */
+export function playBoom(ac: AudioContext | null, random: () => number = Math.random, pan?: number): void {
   if (!ac) return;
   try {
     const t = ac.currentTime;
+    const out = outFor(ac, pan);
     const osc = ac.createOscillator();
     osc.type = 'sine';
     osc.frequency.setValueAtTime(BOOM.fromHz, t);
@@ -24,7 +41,7 @@ export function playBoom(ac: AudioContext | null, random: () => number = Math.ra
     g.gain.exponentialRampToValueAtTime(BOOM.peak, t + BOOM.attackS);
     g.gain.exponentialRampToValueAtTime(0.0001, t + BOOM.releaseS);
     osc.connect(g);
-    g.connect(ac.destination);
+    g.connect(out);
     osc.start(t);
     osc.stop(t + BOOM.stopS);
 
@@ -40,7 +57,7 @@ export function playBoom(ac: AudioContext | null, random: () => number = Math.ra
     cg.gain.value = CRACKLE.gain;
     crackle.connect(hp);
     hp.connect(cg);
-    cg.connect(ac.destination);
+    cg.connect(out);
     crackle.start(t + CRACKLE.delayS);
   } catch {
     /* audio unavailable */

@@ -115,3 +115,21 @@
   .rv-cam{transition:none !important}
   .rv-spark{display:none}
 }
+
+/* Added (not on the boards; docs/design-reference.md "Motion").
+   The season's first rising starts in the dark: black in 0.2 s, held through the camera push, lifted from the hand
+   burst (1.45 s) to 2.4 s. Under reduced motion there is no dark at all. */
+@keyframes rv-dark{0%{opacity:0}8%{opacity:1}60%{opacity:1}100%{opacity:0}}
+.rv-dark{animation:rv-dark 2.4s ease-in-out 1 both}
+/* Embers on risen graves drift toward the pointer: --ex/--ey (set per ember from the pointer, MapStack) bend the
+   70 px rise. Without a pointer they rise straight up, as before. */
+@keyframes rv-ember-drift{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(var(--ex,0px),calc(var(--ey,0px) - 70px));opacity:0}}
+.rv-ember-drift{animation:rv-ember-drift 3.2s ease-out infinite}
+/* The idle hand at the lantern's edge (a real risen grave reaching toward the light). */
+@keyframes rv-reach{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
+.rv-reach{animation:rv-reach 1.8s ease-out 1 both;transform-box:fill-box;transform-origin:center bottom}
+@media (prefers-reduced-motion: reduce){
+  .rv-dark{display:none}
+  .rv-ember-drift{animation:none}
+  .rv-reach{animation:none;opacity:1}
+}

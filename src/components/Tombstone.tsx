@@ -17,6 +17,15 @@ interface Props {
   lantern?: boolean;
 }
 
+/** A risen grave's embers lean toward the pointer (--mx/--my, grid units, set on the map by MapStack), at most 30
+ *  units off their straight rise. With no pointer over the map they rise straight up. */
+function drift(rx: number, ry: number): React.CSSProperties {
+  return {
+    ['--ex' as string]: `clamp(-30px, calc((var(--mx, ${rx}) - ${rx}) * 0.14px), 30px)`,
+    ['--ey' as string]: `clamp(-30px, calc((var(--my, ${ry}) - ${ry}) * 0.14px), 30px)`,
+  };
+}
+
 export function Tombstone({ v, selected, hovered, hideHand = false, marked = false, lantern = false }: Props) {
   const { cx, cy, rx, ry } = v;
   return (
@@ -78,12 +87,12 @@ export function Tombstone({ v, selected, hovered, hideHand = false, marked = fal
         </g>
       )}
       {(v.risen || v.warm) && (
-        <circle className="rv-ember" cx={rx - 8} cy={ry - 6} r={1.8} style={{ fill: v.risen ? ACC : '#E8A07A', animationDelay: v.risen ? '0s' : '.4s' }} />
+        <circle className={v.risen ? 'rv-ember-drift' : 'rv-ember'} cx={rx - 8} cy={ry - 6} r={1.8} style={{ fill: v.risen ? ACC : '#E8A07A', animationDelay: v.risen ? '0s' : '.4s', ...(v.risen ? drift(rx, ry) : null) }} />
       )}
       {v.risen && (
         <>
-          <circle className="rv-ember" cx={rx + 5} cy={ry - 9} r={1.4} style={{ fill: '#FFB86B', animationDelay: '1.1s' }} />
-          <circle className="rv-ember" cx={rx + 10} cy={ry - 3} r={2} style={{ fill: ACC, animationDelay: '2.2s' }} />
+          <circle className="rv-ember-drift" cx={rx + 5} cy={ry - 9} r={1.4} style={{ fill: '#FFB86B', animationDelay: '1.1s', ...drift(rx, ry) }} />
+          <circle className="rv-ember-drift" cx={rx + 10} cy={ry - 3} r={2} style={{ fill: ACC, animationDelay: '2.2s', ...drift(rx, ry) }} />
         </>
       )}
       {selected && <circle cx={cx} cy={cy} r={22} style={{ fill: 'none', stroke: '#ECE6D6', strokeWidth: 1.2, strokeDasharray: '2 3' }} />}

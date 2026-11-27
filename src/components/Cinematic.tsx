@@ -6,10 +6,18 @@ const SVG: React.CSSProperties = { position: 'absolute', inset: 0, width: '100%'
 const pct = (n: number, of: number) => `${((n / of) * 100).toFixed(2)}%`;
 
 /** Underglow, fissures and their hot core, heave ring, burning hand and sparks at the hotspot. */
-export function Cinematic({ x, y }: { x: number; y: number }) {
+export function Cinematic({ x, y, dark = false }: { x: number; y: number; dark?: boolean }) {
   const fissures = fissuresPath(x, y + 6);
   return (
     <>
+      {/* The season's first rising starts in the dark: the map blacks out but for the grave's own glow, then lifts
+          as the hand breaks through (1.45 s). Off under reduced motion (motion.css). */}
+      {dark && (
+        <div aria-hidden="true" className="rv-dark" style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: `radial-gradient(circle at ${pct(x, 1060)} ${pct(y, 716)}, rgba(120,32,4,0.35) 0, rgba(40,10,2,0.6) 2.5%, rgba(2,3,3,0.97) 9%, rgba(1,2,2,0.985) 100%)`,
+        }} />
+      )}
       {/* The base transform centres the glow; rv-glowup animates it, and keeps it centred under reduced motion. */}
       <div aria-hidden="true" className="rv-underglow" style={{
         position: 'absolute', left: pct(x, 1060), top: pct(y + 6, 716), width: '11%', aspectRatio: '1.6', borderRadius: '50%',

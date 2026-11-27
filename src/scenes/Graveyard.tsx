@@ -34,6 +34,7 @@ import { useGraveyard, type RisingEvent, type UIState } from './useGraveyard';
 import { useNow } from './useNow';
 import { useHauntedTab } from './useHauntedTab';
 import { awayLine } from '../data/tab';
+import { IDLE_MS, reachFor } from '../data/reach';
 import * as dayCopy from '../copy/daylight';
 import * as tcopy from '../copy/tonight';
 import { cardLines, keepNeed, keepWatchScore, tonightClue, tonightFooter, tonightLine, tonightYear } from '../data/tonight';
@@ -137,6 +138,16 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   const hunt = huntView(fires, st.found, st.lantern.x, st.lantern.y, lr, false);
   // Moving the lantern (pointer or keyboard focus) finds fires; useGraveyard checks each move (Requirement 6.2).
   const moveLantern = (x: number, y: number) => act({ type: 'lanternMove', x, y, inside: true });
+  // The idle hand: once the lantern has been still for 20 s, the nearest risen grave reaches toward it. The timer
+  // restarts on every move; `idleAt` remembers where the lantern stood when it fired.
+  const lanternAt = `${st.lantern.x},${st.lantern.y}`;
+  const [idleAt, setIdleAt] = useState<string | null>(null);
+  useEffect(() => {
+    if (!hunting) return;
+    const t = setTimeout(() => setIdleAt(lanternAt), IDLE_MS);
+    return () => clearTimeout(t);
+  }, [hunting, lanternAt]);
+  const reach = hunting && idleAt === lanternAt ? reachFor(views, st.lantern.x, st.lantern.y) : null;
   // Spec 06 Requirements 3 and 7: quiet years glitch while the replay runs or the verdict shows; the verdict at day 102.
   const isQuiet = !!season && quiet(season);
   const glitch = useGlitch(isQuiet && ((st.running && st.startGate) || st.verdict));
@@ -234,7 +245,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
       {st.lantern.on && (
         <Lantern x={st.lantern.x} y={st.lantern.y} r={lr} inside={st.lantern.inside} src={fr[topFrame]!.src}
           names={lanternNames(views, st.lantern.x, st.lantern.y, lr)}
-          fires={hunting ? hunt.shown : []} counter={huntCounter} />
+          fires={hunting ? hunt.shown : []} counter={huntCounter} reach={reach} />
       )}
       {verdict && !isT && <Verdict v={verdict} onAgain={onAgain} glitch={gl} />}
     </>
@@ -260,7 +271,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           frames={fr} weights={shownWeights} night={st.night} maskClass={MASK_CLASS[scene]} graves={views} fires={fires}
           fireSel={st.fireSel} clusters={isT ? tonight!.clusters : []} selected={st.selected} hover={st.hover}
           callout={callout} tip={tip} flakes={flakeCount(scene, st.day)} credit={creditLine(scene, st.day, tonight, year)}
-          cam={isT ? null : st.cam} sting={isT ? null : st.sting}
+          cam={isT ? null : st.cam} sting={isT ? null : st.sting} darkLead={st.beats === 1}
           onGrave={onStone} onFire={(id) => act({ type: 'selectFire', id })} onHover={(id) => act({ type: 'hover', id })}
           onFocusGrave={onFocusGrave} onMove={onMove} hunting={hunting} found={st.found} onFocusFire={onFocusFire} glitch={glitch.on}
           onLeave={() => st.lantern.on && act({ type: 'lanternMove', x: st.lantern.x, y: st.lantern.y, inside: false })}

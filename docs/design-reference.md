@@ -36,10 +36,13 @@ Fonts: **IM Fell English** + **IM Fell English SC** (display, epitaphs, narrator
 | Replay speed | ½× 1× 2× = 0.75 / 1.5 / 3 days per second |
 | Daylight slips (added, not on the boards) | First at 14 s, then every 18–28 s, one at a time in turn: headline smears one letter (0.24 s, screen readers keep the real text) · one marker shows as a stone (0.28 s) · map dims to night (0.16 s). No value changes. Off during dusk and under reduced motion |
 | Gravekeeper's gaze (added) | Eyes turn toward the pointer, up to 2.6 × 1.8 hood units, 0.35 s ease-out. Still under reduced motion |
-| Haunted tab (added) | Night only: while the page is hidden, the tab title is a line from the graves on screen and the icon is lit (`public/icon-haunted.svg`); both restore on return |
+| Haunted tab (added) | Night only, while the page is hidden. Once graves have risen: "They are awake (n)", n = risen on screen, under a burning-hand icon (`public/icon-risen.svg`). Before that: the latest thaw still waking, or buried / at rest (`icon-haunted.svg`). Tonight: "Still warm (n)". Both restore on return |
+| First rising in the dark (added) | The season's first rising only: the map goes black in 0.2 s except the grave's own ember glow, holds through the camera push, and lifts from the hand burst (1.45 s) to 2.4 s. Off under reduced motion |
+| Embers toward the pointer (added) | Risen graves' embers bend up to 30 grid units toward the pointer as they rise. Straight up with no pointer; still under reduced motion |
+| Idle hand (added) | Lantern on and still for 20 s: the nearest risen grave's hand appears at its published hotspot, turned toward the lantern, 1.8 s rise. Gone on the next move. No risen grave, no hand |
 
 ## Sound (WebAudio, no files)
-Wind: looped brown noise → low-pass 420 Hz with 0.08 Hz LFO. Rising: 70→32 Hz sine boom + high-pass crackle; with the camera, a heartbeat of 4 lub-dub pairs (62→38 Hz sine thumps) at 0.12, 0.62, 0.98 and 1.22 s, ending before the hand at 1.45 s (added). Bell: 164 Hz partials ×1, 2.4, 3.0, 4.5, 3.4 s decay. Creak: band-passed saw 110→70 Hz. Nightfall drone: 55/82/110 Hz glide, 8 s.
+Wind: looped brown noise → low-pass 420 Hz with 0.08 Hz LFO. Rising: 70→32 Hz sine boom + high-pass crackle, panned to the grave's x (−0.8 west edge … 0.8 east edge, added); with the camera, a heartbeat of 4 lub-dub pairs (62→38 Hz sine thumps) at 0.12, 0.62, 0.98 and 1.22 s, ending before the hand at 1.45 s (added). Bell: 164 Hz partials ×1, 2.4, 3.0, 4.5, 3.4 s decay. Creak: band-passed saw 110→70 Hz. Nightfall drone: 55/82/110 Hz glide, 8 s.
 
 ## Gravekeeper lines (verbatim)
 - Nightfall: "You were looking at fire scars. Look again. These are graves, twenty-four of them, from the summer of 2023. Wager with me: mark three you think will rise."
