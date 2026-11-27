@@ -211,7 +211,7 @@ export function MapStack(p: Props) {
           <button key={f.id} type="button" className="rv-hit" aria-pressed={p.fireSel === f.id} onClick={() => p.onFire(f.id)}
             aria-label={p.hunting && !p.found?.includes(f.id) ? gk.hunt.dark : copy.map.fireAria(f.id)}
             onFocus={() => p.onFocusFire?.(f.id)}
-            style={{ position: 'absolute', left: pct(f.x, W), top: pct(f.y, H), width: 28, height: 28, margin: '-16px 0 0 -14px', borderRadius: 14, background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} />
+            style={{ position: 'absolute', left: pct(f.x, W), top: pct(f.y, H), width: 40, height: 40, margin: '-22px 0 0 -20px', borderRadius: 20, background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} />
         ))}
         {p.graves.map((v) => {
           const marked = !!p.marks?.includes(v.id);

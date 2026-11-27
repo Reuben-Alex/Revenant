@@ -74,3 +74,19 @@ Feeds the "how Kiro was used" write-up. Newest entries last.
   - **Contrast:** 20 text pairs on the new panels, measured against each panel's lightest stop, range from 6.6:1 (the wager hint) to 16.9:1.
   - **Reduced motion:** Playwright found no running animation on the wager, riddle, verdict or hunt.
   - **Copy review:** the honesty-review hook runs only on an editor save, so `src/copy/gravekeeper.ts` was reviewed by hand against honesty.md and the voice guide. Every number in it is a template filled from published fields. It has no exclamation marks and no line with more than one break.
+## 2026-11-27
+- **Spec 07 tonight-live done** (Kiro spec, 9 tasks). Revenant is live at https://revenant-wheat.vercel.app, deployed by GitHub Actions only after `npm run gate` passes (Vercel's own Git deploys are off). The spec 02 nightly job refreshes Tonight at 10:00 UTC, commits the new data, and calls the deploy. Its first cold run hit the FIRMS key's 5,000-per-10-minutes limit, so the job now keeps its cache on failure and waits for the next window.
+- **Tests that would have broken the nightly deploy:** several tests had the Nov 20 counts written in ("Nine scars", three warm scars for Keep watch). The first refresh (5 warm) failed them, which would have blocked every nightly deploy. They now read the counts from the published file and scale to nights with fewer warm scars.
+- **Review fixes:**
+  - The graveyard fits one screen from 1280 × 800 to 2560 × 1440. The side panel is capped at 400 px and the Gravekeeper box at 46 % of the map.
+  - The site has share cards (og:/twitter: tags with a 1200 × 630 image), a themed 404, an `/opening` page that scales to fit, and a note on phones pointing to the crew view.
+  - A rising's banner now hides the grave callout, the tooltip and the chance chip, and the riddle waits for it to end. Before, a two-grave rising printed its banner straight through the callout.
+- **Scare pass (honest by construction):**
+  - **Sound:** the boom is panned to the grave's side of the map, and a heartbeat plays under the camera push.
+  - **The season's first rising:** the map goes dark and the wind falls silent.
+  - **Weather as a readout:** ash falls in proportion to the graves risen, the vignette closes in with each rising, and mist drifts over waking scars. Each has a legend line.
+  - **Pointer and idle:** embers lean toward the pointer. When the lantern sits still, the hand comes from a real risen grave, never a made-up one.
+  - **The tab:** it reads "They are awake (n)" with the count on screen.
+  - **The Gravekeeper:** a shorter, second-person rewrite by the `gravekeeper` agent, plus "You came after dark" on the viewer's own clock.
+  - **What was declined:** "Right now. Under the snow." became "were still warm in the last two weeks … crews confirm", because the data can't say "right now".
+- **Final pass (task 9):** a Playwright audit of all eight pages checked targets (40 px, 48 on the phone), focus rings, credits, a method link on every data page, AA contrast on solid backgrounds, and that no animation runs under reduced motion. It found 28 px new-fire targets (raised to 40) and missing or too-small method links (added at 40 to 48 px). The opening frame keeps its specified credit line and shows no method link, since it's a video still.

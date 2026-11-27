@@ -250,7 +250,8 @@ export const errors = {
   detail: (file: string) => `${file} is missing or damaged. Nothing is shown rather than guessed.`,
 };
 
-export const footerCredit = (credit: string) => `${credit} · method: docs/method.md`;
+export const footerCredit = (credit: string) => `${credit} · `;
+export const methodLink = { text: 'Method and caveats', href: 'https://github.com/Reuben-Alex/Revenant/blob/main/docs/method.md' };
 
 /** Small screens only (under 760 px): the graveyard map is too small there, and the crew view is built for phones. */
 export const smallScreen = {

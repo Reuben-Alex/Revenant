@@ -79,7 +79,7 @@ export const card = {
   title: 'My lanterns',
   row: (late: number, where: string) => `${late} late ${late === 1 ? 'hotspot' : 'hotspots'} · ${where}`,
   sealedOn: (date: string) => `Sealed ${date}, from data as of that day`,
-  /** Filled in when the site is hosted (spec 07 task 8). */
-  site: '',
+  /** The public site (spec 07 task 8), printed on the saved card. */
+  site: 'revenant-wheat.vercel.app',
   file: (year: number) => `revenant-keep-watch-${year}.png`,
 };

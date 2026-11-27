@@ -222,7 +222,10 @@ export function Phone() {
         </section>
       )}
 
-      <p style={{ margin: '16px 20px 8px', ...MONO, fontSize: 10, color: '#8E9994' }}>{tonight && v.scene === 'tonight' ? tonight.credit : copy.footer}</p>
+      <p style={{ margin: '16px 20px 8px', ...MONO, fontSize: 10, color: '#8E9994', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0 8px' }}>
+        <span>{tonight && v.scene === 'tonight' ? tonight.credit : copy.footer}</span>
+        <a className="rv-btn" href={copy.methodHref} target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', minHeight: 48, color: '#7FE0CF' }}>{copy.method}</a>
+      </p>
 
       <nav aria-label={copy.nav.aria} style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-around', borderTop: '1px solid #1A2422', padding: '8px 10px 22px', background: '#080D0C', position: 'sticky', bottom: 0 }}>
         {(['map', 'graves'] as const).map((k) => (

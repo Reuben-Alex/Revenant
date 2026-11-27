@@ -9,6 +9,7 @@
 </p>
 
 <p align="center">
+  <a href="https://revenant-wheat.vercel.app"><img alt="Open the graveyard: revenant-wheat.vercel.app" src="https://img.shields.io/badge/%F0%9F%AA%A6_open_the_graveyard-revenant--wheat.vercel.app-FF6B2C?style=for-the-badge&labelColor=050807"></a>
   <a href="https://kiroween.devpost.com/"><img alt="Kiroween 2026: Costume Contest" src="https://img.shields.io/badge/Kiroween_2026-Costume_Contest-FF6B2C?style=for-the-badge&labelColor=050807"></a>
   <a href="https://kiro.dev"><img alt="Built with Kiro" src="https://img.shields.io/badge/built_with-Kiro-7FE0CF?style=for-the-badge&labelColor=050807"></a>
 </p>
@@ -44,7 +45,7 @@ Some wildfires don't go out in the fall. They smoulder all winter in peat and de
 **Revenant** is an early-warning map for them across northeast British Columbia and northern Alberta, built on NASA satellite data. It's dressed as a graveyard: every burn scar is a grave, and every spooky thing on screen is a data rule.
 
 > [!NOTE]
-> Revenant is an entry in the [Kiroween 2026](https://kiroween.devpost.com/) Costume Contest. The graveyard, all three spring replays, Tonight (live) and the field pages work today; the public site and the nightly refresh are next. See [Status](#status).
+> Revenant is an entry in the [Kiroween 2026](https://kiroween.devpost.com/) Costume Contest. **It's live at [revenant-wheat.vercel.app](https://revenant-wheat.vercel.app)**, and Tonight refreshes every night from NASA FIRMS and GIBS. Best on a laptop, with sound on. See [Status](#status).
 
 ## Two realities
 
@@ -183,7 +184,7 @@ The fourth tab is this autumn, read from the latest nightly data. The 24 largest
   <img src="docs/img/tonight.jpg" alt="Tonight, Nov 19, 2026: they are going to sleep. Nine of 24 scars of 2026 showed heat in the last two weeks; ten already lie under snow. Three lanterns are set on G-24, G-02 and G-16 in the Keep watch panel." width="100%">
 </p>
 
-- **Buried, snow settling, still warm:** each scar's state comes from that night's snow cover and its heat over the last 14 days. On the Nov 20 run, 9 of 24 were still warm and 10 already lay under snow.
+- **Buried, snow settling, still warm:** each scar's state comes from that night's snow cover and its heat over the last 14 days. The screenshot is the Nov 20 run, when 9 of 24 were still warm; the counts change every night.
 - **Heat clusters:** the last 7 days of FIRMS points, with recurring industrial sources removed.
 - **The 2027 watch list** ranks the scars by size and late heat. It's a guide for where to look in spring, not a forecast.
 - **They will wake:** the likely thaw window comes from the 72 melt days already published, not from a guess.
@@ -294,8 +295,8 @@ The build log is in [docs/KIRO_LOG.md](docs/KIRO_LOG.md).
 - [x] Lantern hunt, the verdict and quiet-year whispers
 - [x] Tonight (live) and Keep watch
 - [x] The grave dossier, the field-crew phone and the opening frame
-- [ ] Public site on Vercel, deployed by GitHub Actions after the checks pass
-- [ ] Nightly data refresh with GitHub Actions
+- [x] Public site on Vercel, deployed by GitHub Actions after the checks pass
+- [x] Nightly Tonight refresh with GitHub Actions (10:00 UTC), which commits the new data and redeploys
 - [ ] Puzzle 5: *Is it chance?*
 
 ## Honest caveats

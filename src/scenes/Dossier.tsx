@@ -189,7 +189,7 @@ export function Dossier() {
 
         <footer style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 10, fontFamily: 'var(--font-mono)', fontSize: 11, color: '#8E9994' }}>
           <span>{copy.footer.credit}</span>
-          <a href={copy.footer.methodHref} style={{ color: '#A3ADA8' }}>{copy.footer.method}</a>
+          <a className="rv-btn" href={copy.footer.methodHref} target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', minHeight: 40, margin: '-12px 0', color: '#7FE0CF' }}>{copy.footer.method}</a>
         </footer>
       </main>
     </div>

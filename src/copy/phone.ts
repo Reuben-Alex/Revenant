@@ -62,3 +62,5 @@ export const list = {
 };
 
 export const footer = 'NASA FIRMS · NASA GIBS/VIIRS · NBAC (NRCan) · Scholten et al. 2021';
+export const method = 'Method and caveats';
+export const methodHref = 'https://github.com/Reuben-Alex/Revenant/blob/main/docs/method.md';

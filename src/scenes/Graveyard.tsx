@@ -340,7 +340,11 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
             onScrubStart={() => act({ type: 'scrubStart' })} onScrubEnd={() => act({ type: 'scrubEnd' })}
           />
         )}
-        <span style={{ flexBasis: '100%', textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#7C8884' }}>{copy.footerCredit(isT ? tonight!.credit : data.meta.credit)}</span>
+        <span style={{ flexBasis: '100%', textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#8E9994' }}>
+          {copy.footerCredit(isT ? tonight!.credit : data.meta.credit)}
+          {/* A 40 px target without growing the footer (negative margins). */}
+          <a className="rv-btn" href={copy.methodLink.href} target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', minHeight: 40, margin: '-14px 0', color: '#7FE0CF' }}>{copy.methodLink.text}</a>
+        </span>
       </footer>
     </div>
   );
