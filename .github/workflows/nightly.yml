@@ -22,7 +22,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
     permissions:
       contents: write
     outputs:
@@ -41,11 +41,12 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Restore and save are separate steps so the downloads are kept even when the run fails (the combined
+      # action only saves after a successful job, and a cold cache needs several FIRMS windows to fill).
       - name: Restore the pipeline cache
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: pipeline/cache
-          # A new key each run saves the night's downloads; the prefix restores the latest one.
           key: pipeline-cache-${{ github.run_id }}
           restore-keys: pipeline-cache-
 
@@ -55,10 +56,28 @@ jobs:
         run: |
           if [ -z "$FIRMS_MAP_KEY" ]; then echo "::error::Repository secret FIRMS_MAP_KEY is not set"; exit 1; fi
 
+      # The pipeline stops before the FIRMS key's 5000-per-10-minutes limit and keeps what it fetched. On that stop
+      # only, wait for the next window and carry on (up to 5 windows); any other failure fails at once.
       - name: Build Tonight
         env:
           FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
-        run: uv run --frozen --python 3.12 python -m pipeline tonight
+        run: |
+          set -o pipefail
+          for attempt in 1 2 3 4 5; do
+            if uv run --frozen --python 3.12 python -m pipeline tonight 2>&1 | tee "$RUNNER_TEMP/tonight.log"; then
+              exit 0
+            fi
+            if ! grep -q "FIRMS budget" "$RUNNER_TEMP/tonight.log" || [ "$attempt" = 5 ]; then exit 1; fi
+            echo "::notice::FIRMS window full (attempt $attempt); waiting 10 minutes"
+            sleep 610
+          done
+
+      - name: Save the pipeline cache
+        if: always()
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: pipeline/cache
+          key: pipeline-cache-${{ github.run_id }}
 
       - name: Commit Tonight's outputs if they changed
         id: commit
