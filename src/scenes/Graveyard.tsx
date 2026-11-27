@@ -5,7 +5,7 @@ import * as copy from '../copy/graveyard';
 import {
   H, LANTERN_R, W, cardList, countList, creditLine, crossfade, exhumation, fireCallout, flakeCount, frames, graveCallout,
   graveViews, headlineFor, lanternNames, legendItems, registerNote, registerRows, riseMarks, sceneYear, tabList,
-  tonightViews, tooltipFor, visibleFires, windowBand,
+  tonightViews, tooltipFor, visibleFires, weather, windowBand,
 } from '../data/derive';
 import { Exhumation } from '../components/Exhumation';
 import { Compare, Lantern } from '../components/Lantern';
@@ -95,6 +95,10 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   const weights = isT ? [1] : crossfade(st.day, fr.map((f) => f.day));
   const fires = season ? visibleFires(season.fires, st.day) : [];
   const head = headlineFor(scene, views, year);
+  const wx = weather(views);
+  // While the replay plays, the side panel steps back and a chip on the map keeps the chance comparison in view.
+  const playing = !isT && st.running && st.startGate && st.ex === null && !st.lantern.on && !st.compare && !st.dragging && !st.riddle?.open && !st.verdict;
+  const chip = playing && season ? copy.register.chip(views.filter((v) => v.risen).length, season.chance, season.graves.length) : null;
   useHauntedTab(awayLine(views, isT), dayCopy.docTitle.night);
   // The page fits one screen: the map's height is capped at what the header, headline and timeline leave.
   const rootRef = useRef<HTMLDivElement>(null);
@@ -248,6 +252,13 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           fires={hunting ? hunt.shown : []} counter={huntCounter} reach={reach} />
       )}
       {verdict && !isT && <Verdict v={verdict} onAgain={onAgain} glitch={gl} />}
+      {chip && (
+        <span aria-hidden="true" style={{
+          position: 'absolute', right: 12, top: 12, zIndex: 5, pointerEvents: 'none', padding: '6px 12px', borderRadius: '14px 14px 3px 3px',
+          background: 'linear-gradient(180deg, rgba(42,36,24,0.92), rgba(14,12,9,0.92))', border: '1px solid #5A4A32',
+          fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 14, color: '#E6D6AE', whiteSpace: 'nowrap',
+        }}>{chip}</span>
+      )}
     </>
   );
 
@@ -271,7 +282,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           frames={fr} weights={shownWeights} night={st.night} maskClass={MASK_CLASS[scene]} graves={views} fires={fires}
           fireSel={st.fireSel} clusters={isT ? tonight!.clusters : []} selected={st.selected} hover={st.hover}
           callout={callout} tip={tip} flakes={flakeCount(scene, st.day)} credit={creditLine(scene, st.day, tonight, year)}
-          cam={isT ? null : st.cam} sting={isT ? null : st.sting} darkLead={st.beats === 1}
+          cam={isT ? null : st.cam} sting={isT ? null : st.sting} darkLead={st.beats === 1} weather={isT ? null : wx}
           onGrave={onStone} onFire={(id) => act({ type: 'selectFire', id })} onHover={(id) => act({ type: 'hover', id })}
           onFocusGrave={onFocusGrave} onMove={onMove} hunting={hunting} found={st.found} onFocusFire={onFocusFire} glitch={glitch.on}
           onLeave={() => st.lantern.on && act({ type: 'lanternMove', x: st.lantern.x, y: st.lantern.y, inside: false })}
@@ -280,7 +291,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           narrator={<>{st.say && <Gravekeeper key={st.say.start} say={st.say} raised={st.cam !== null} glitch={gl} />}<GravekeeperLive say={st.say} /></>}
         />
         {/* The aside takes the map's height and scrolls inside it (its content would otherwise stretch the row). */}
-        <aside aria-label="Graves and parish register" className="rv-aside" style={{ position: 'relative', minHeight: 360, background: '#070C0B' }}>
+        <aside aria-label="Graves and parish register" className={playing ? 'rv-aside rv-dim' : 'rv-aside'} style={{ position: 'relative', minHeight: 360, background: '#070C0B' }}>
           <div style={{ position: 'absolute', inset: 0, overflowY: 'auto', scrollbarColor: '#3A4446 #070C0B', scrollbarWidth: 'thin', boxSizing: 'border-box', padding: '18px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
       {wagerOpen && <Wager marks={marks} onSeal={onSeal} onWatch={onWatch} />}
           {keep && tonight && (

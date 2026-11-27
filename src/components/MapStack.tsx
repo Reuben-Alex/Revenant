@@ -4,7 +4,7 @@
 import type { ReactNode } from 'react';
 import * as copy from '../copy/graveyard';
 import * as gk from '../copy/gravekeeper';
-import type { CalloutView, GraveView } from '../data/derive';
+import type { CalloutView, GraveView, weather } from '../data/derive';
 import { H, W } from '../data/derive';
 import { fireFlame, fireTriangle } from '../data/geometry';
 import type { Keyframe } from '../data/imagery';
@@ -64,7 +64,11 @@ interface Props {
   glitch?: boolean;
   /** The season's first rising: it starts in the dark. */
   darkLead?: boolean;
+  /** The weather readout (replays): mist on waking scars, ash per risen grave, a vignette that closes in. */
+  weather?: Weather | null;
 }
+
+type Weather = ReturnType<typeof weather>;
 
 export function MapStack(p: Props) {
   const grade = p.night ? 'brightness(0.62) saturate(0.75) contrast(1.15)' : 'none';
@@ -142,6 +146,18 @@ export function MapStack(p: Props) {
           })}
         </svg>
 
+        {p.weather && p.weather.mist.length > 0 && (
+          <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+            {p.weather.mist.map((m, i) => (
+              <div key={m.id} className="rv-mist" style={{
+                position: 'absolute', left: pct(m.x, W), top: pct(m.y, H), width: '12%', aspectRatio: '2.2', transform: 'translate(-50%, -50%)',
+                borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(214,228,228,0.26), rgba(214,228,228,0.1) 55%, rgba(214,228,228,0))',
+                animationDelay: `-${((i * 2.3) % 9).toFixed(1)}s`,
+              }} />
+            ))}
+          </div>
+        )}
+
         {p.graves.map((v) => (
           <Tombstone key={v.id} v={v} selected={p.selected === v.id} hovered={p.hover === v.id} hideHand={cam?.id === v.id} marked={p.marks?.includes(v.id)} lantern={p.lanterns?.includes(v.id)} />
         ))}
@@ -159,12 +175,31 @@ export function MapStack(p: Props) {
               }} />
             );
           })}
+          {/* Ash: ASH_PER_RISEN flecks per risen grave, greyer and slower than the snow; every fourth still burns. */}
+          {Array.from({ length: p.weather?.ash ?? 0 }, (_, i) => {
+            const size = 1.6 + (i % 3) * 0.8;
+            const dur = 11 + (i % 5) * 1.9;
+            const delay = (i * 1.73) % dur;
+            const hot = i % 4 === 0;
+            return (
+              <div key={`a${i}`} className="rv-ash" style={{
+                left: `${((i * 53.7 + 11) % 100).toFixed(2)}%`, width: size, height: size, borderRadius: size,
+                background: hot ? '#FF8A4C' : '#9A8F86', boxShadow: hot ? '0 0 4px #FF6B2C' : 'none', opacity: hot ? 0.85 : 0.55 + (i % 3) * 0.1,
+                animationDuration: `${dur}s`, animationDelay: `-${delay.toFixed(2)}s`,
+                ['--rest' as string]: `${((delay / dur) * 100).toFixed(1)}%`,
+              }} />
+            );
+          })}
         </div>
 
         <svg viewBox="0 0 1060 716" aria-hidden="true" style={SVG}>
           <defs>
             <filter id="rv-grain"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves={2} stitchTiles="stitch" /><feColorMatrix type="saturate" values="0" /></filter>
-            <radialGradient id="rv-vignette" cx="0.5" cy="0.5" r="0.78"><stop offset="0.55" stopColor="#000000" stopOpacity="0" /><stop offset="1" stopColor="#000000" stopOpacity="0.75" /></radialGradient>
+            {/* The board's vignette (0.55 clear, 0.75 edge), closing in with each rising (derive.weather). */}
+            <radialGradient id="rv-vignette" cx="0.5" cy="0.5" r="0.78">
+              <stop offset={p.weather?.vignette.clear ?? 0.55} stopColor="#000000" stopOpacity="0" style={{ transition: 'offset 1.4s' }} />
+              <stop offset="1" stopColor="#000000" stopOpacity={p.weather?.vignette.edge ?? 0.75} />
+            </radialGradient>
           </defs>
           <rect x="0" y="0" width="1060" height="716" style={{ filter: 'url(#rv-grain)', opacity: 0.06 }} />
           {p.night && <rect x="0" y="0" width="1060" height="716" style={{ fill: 'url(#rv-vignette)' }} />}

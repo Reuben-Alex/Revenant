@@ -106,6 +106,9 @@ export const register = {
   title: 'The Parish Register',
   sub: 'of how often the dead walk',
   row: (risen: number, chance: number, graves: number) => `${risen} rose · ${Math.round(chance * graves)} by chance`,
+  /** On the map while the side panel is dimmed for the replay, so the chance comparison stays in view. */
+  chip: (risenNow: number, chance: number, graves: number) =>
+    `${risenNow} risen so far · chance alone would raise ${Math.round(chance * graves)} this spring`,
   aria: 'The parish register: how often the dead walk',
   /** Built from the published zombie flags, never a fixed claim. */
   note: (zombieYears: number[]) => {
@@ -125,6 +128,10 @@ export const legend = {
   risen: (km: number) => ['Risen', `hotspot within ≈ ${km} km of the scar, in the window`] as const,
   fire: ['New fire', 'hotspot more than ~15 km from every scar'] as const,
   rest: ['Laid to rest', '50 days passed with no heat'] as const,
+  /** The weather is a readout too (added; docs/design-reference.md "Motion"). */
+  mist: ['Mist', 'drifts over each waking scar'] as const,
+  ash: ['Ash', 'falls with the snow: two flecks for every grave risen'] as const,
+  dark: ['Closing dark', 'the map’s edges darken with each rising'] as const,
   tonightScar: (year: number) => ['Scar', `where VIIRS saw fire, May–Oct ${year}`] as const,
   tonightBuried: ['Buried', 'snow cover on the scar ≥ 50%'] as const,
   tonightWarm: ['Still warm', 'heat on the scar in the last 14 days'] as const,

@@ -13,6 +13,9 @@ const SW: Record<Swatch, CSSProperties> = {
   rest: { borderRadius: '8px 8px 2px 2px', background: '#0D1210', border: '1.5px solid #4D5753', opacity: 0.6 },
   warm: { borderRadius: 8, background: 'rgba(232,160,122,0.2)', border: '1px solid #E8A07A' },
   hotspot: { borderRadius: 8, background: '#F2C14E' },
+  mist: { borderRadius: 8, background: 'radial-gradient(closest-side, rgba(220,232,232,0.7), rgba(220,232,232,0))' },
+  ash: { borderRadius: 8, background: 'radial-gradient(circle at 30% 35%, #FF8A4C 0 2px, transparent 2.5px), radial-gradient(circle at 70% 65%, #9A8F86 0 2px, transparent 2.5px)' },
+  dark: { borderRadius: 3, background: 'radial-gradient(closest-side, rgba(0,0,0,0) 30%, #000 100%), #3A4446' },
 };
 
 export function Legend({ items, note }: { items: { swatch: Swatch; text: readonly [string, string] }[]; note: string }) {

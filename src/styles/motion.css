@@ -133,3 +133,17 @@
   .rv-ember-drift{animation:none}
   .rv-reach{animation:none;opacity:1}
 }
+/* The weather readout (added). Ash falls slower than snow and sways; under reduced motion each fleck holds where the
+   fall shows it at t = 0 (--rest), so it stays spread over the map. Mist drifts over each waking scar. */
+@keyframes rv-ash{0%{transform:translate(0,-30px)}50%{transform:translate(18px,350px)}100%{transform:translate(-10px,780px)}}
+.rv-ash{position:absolute;top:0;animation:rv-ash linear infinite}
+@keyframes rv-mist{0%{transform:translate(-62%,-50%);opacity:.55}100%{transform:translate(-38%,-50%);opacity:1}}
+.rv-mist{animation:rv-mist 9s ease-in-out infinite alternate}
+/* The side panel steps back while the replay plays; it returns on hover, on focus, or when anything stops the clock. */
+.rv-aside{transition:opacity .8s ease}
+.rv-aside.rv-dim{opacity:.3}
+.rv-aside.rv-dim:hover,.rv-aside.rv-dim:focus-within{opacity:1}
+@media (prefers-reduced-motion: reduce){
+  .rv-ash{animation:none;top:var(--rest,0)}
+  .rv-mist{animation:none}
+}

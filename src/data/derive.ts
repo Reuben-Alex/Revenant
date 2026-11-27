@@ -279,7 +279,19 @@ export function registerNote(data: SeasonsFile): string {
   return copy.register.note(SEASON_KEYS.filter((k) => data.seasons[k].zombie).map((k) => data.seasons[k].year));
 }
 
-export type Swatch = 'scar' | 'buried' | 'waking' | 'risen' | 'fire' | 'rest' | 'warm' | 'hotspot';
+export type Swatch = 'scar' | 'buried' | 'waking' | 'risen' | 'fire' | 'rest' | 'warm' | 'hotspot' | 'mist' | 'ash' | 'dark';
+
+/** The weather readout (replays). Ash: two flecks per risen grave. The vignette's clear centre shrinks by 0.012 per
+ *  rising (0.55 → 0.26 at 24 risen) and its edge deepens. Mist: one patch per waking scar. */
+export const ASH_PER_RISEN = 2;
+export function weather(views: GraveView[]) {
+  const risen = views.filter((v) => v.risen).length;
+  return {
+    ash: risen * ASH_PER_RISEN,
+    vignette: { clear: +(0.55 - 0.012 * risen).toFixed(3), edge: +Math.min(0.92, 0.75 + 0.007 * risen).toFixed(3) },
+    mist: views.filter((v) => v.st === 'waking').map((v) => ({ id: v.id, x: v.cx, y: v.cy })),
+  };
+}
 
 export function legendItems(scene: SceneKey, data: SeasonsFile, t: TonightFile | null, year: number) {
   if (isTonight(scene) && t) {
@@ -303,6 +315,9 @@ export function legendItems(scene: SceneKey, data: SeasonsFile, t: TonightFile |
       { swatch: 'risen' as Swatch, text: copy.legend.risen(data.meta.proximity_km) },
       { swatch: 'fire' as Swatch, text: copy.legend.fire },
       { swatch: 'rest' as Swatch, text: copy.legend.rest },
+      { swatch: 'mist' as Swatch, text: copy.legend.mist },
+      { swatch: 'ash' as Swatch, text: copy.legend.ash },
+      { swatch: 'dark' as Swatch, text: copy.legend.dark },
     ],
     note: copy.legend.staticNote(data.static),
   };
