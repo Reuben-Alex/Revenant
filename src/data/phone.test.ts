@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import seasonsRaw from '../../public/data/seasons.json';
 import tonightRaw from '../../public/data/tonight.json';
 import { Phone } from '../scenes/Phone';
-import { lat, lon } from './format';
+import { lat, lon, word } from './format';
 import { parseSeasons, parseTonight } from './load';
 import { haversineKm, nearest, parsePhoneHash, phoneView, shareText } from './phone';
 
@@ -31,7 +31,8 @@ describe('Spec 07 phone properties', () => {
     const v = phoneView(DATA, T, 'tonight', null, null);
     const warm = T.watch.map((i) => T.scars[i]!).filter((s) => s.late > 0).map((s) => s.id);
     expect(v.items.map((i) => i.id)).toEqual(warm);
-    expect(v.title).toBe('Nine scars were still warm in the last two weeks.');
+    // The count changes every night, so it comes from the published file.
+    expect(v.title).toBe(`${word(warm.length)} ${warm.length === 1 ? 'scar was' : 'scars were'} still warm in the last two weeks.`);
     expect(v.cardLabel).toBe('TOP OF THE LIST');
     expect(v.items.every((i) => i.line2.includes('crews confirm'))).toBe(true);
     const s = phoneView(DATA, T, 's2024', null, null);

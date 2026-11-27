@@ -57,8 +57,10 @@ describe('Published examples', () => {
   it('the Gravekeeper counts the still-warm scars, or says the data is stale', () => {
     const warm = T.scars.filter((s) => s.late > 0).length;
     const fresh = tonightLine(DATA.seasons, T, Date.parse(T.asOf) + H);
-    expect(fresh).toMatch(new RegExp(`^Tonight I am burying the fires of 2026\\. \\w[\\w-]* of them were still warm in the last two weeks\\.\\nI will be watching them in April\\.$`));
-    expect(warm).toBe(9);
+    // The count changes every night (spec 02 Requirement 11), so it is read from the published file.
+    expect(warm).toBeGreaterThan(0);
+    expect(fresh).toBe(copy.keeper.line(2026, warm, 'April'));
+    expect(fresh).toMatch(/^Tonight I am burying the fires of 2026\. \w[\w-]* of them (was|were) still warm in the last two weeks\.\nI will be watching them in April\.$/);
     const stale = tonightLine(DATA.seasons, T, Date.parse(T.asOf) + 3 * 24 * H + H);
     expect(stale).toBe(`The satellites have not spoken to me for three days. What you see is from Nov ${T.pointsThrough.slice(8).replace(/^0/, '')}.`);
   });
