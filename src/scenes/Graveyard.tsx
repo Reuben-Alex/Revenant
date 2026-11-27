@@ -95,6 +95,11 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   const fires = season ? visibleFires(season.fires, st.day) : [];
   const head = headlineFor(scene, views, year);
   useHauntedTab(awayLine(views, isT), dayCopy.docTitle.night);
+  // The page fits one screen: the map's height is capped at what the header, headline and timeline leave.
+  const rootRef = useRef<HTMLDivElement>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const footRef = useRef<HTMLElement>(null);
+  useFitChrome(rootRef, rowRef, footRef);
 
   const selV = views.find((v) => v.id === st.selected) ?? views[0]!;
   const fireSel = season && st.fireSel ? season.fires.find((f) => f.id === st.fireSel) ?? null : null;
@@ -236,15 +241,19 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
   );
 
   return (
-    <div style={{ width: '100%', minHeight: 900, boxSizing: 'border-box', background: '#050807', color: '#ECE6D6', fontFamily: 'var(--font-ui)', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <div ref={rootRef} style={{ width: '100%', minHeight: '100dvh', boxSizing: 'border-box', background: '#050807', color: '#ECE6D6', fontFamily: 'var(--font-ui)', display: 'flex', flexDirection: 'column', position: 'relative' }}>
       <Header
         tabs={tabList(data, tonight, scene, now)} onScene={(k) => act({ type: 'scene', scene: k })}
         lanternOn={st.lantern.on} compareOn={st.compare && !isT} compareDisabled={isT} night={st.night}
         onLantern={onLantern} onCompare={() => act({ type: 'compare' })} onNight={() => act({ type: 'night' })}
       />
+      <p className="rv-small-only" style={{ margin: 0, padding: '10px 20px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '4px 12px', borderBottom: '1px solid #172120', background: '#0A110F', fontFamily: 'var(--font-fell)', fontStyle: 'italic', fontSize: 15, color: '#C7CFCB' }}>
+        {copy.smallScreen.text}
+        <a href="phone.html" style={{ display: 'inline-flex', alignItems: 'center', minHeight: 44, fontStyle: 'normal', fontFamily: 'var(--font-fell-sc)', fontSize: 16, color: '#7FE0CF' }}>{copy.smallScreen.link} →</a>
+      </p>
       <HeadlineBand headline={head.headline} subline={head.subline} glow={head.glow} counts={countList(scene, views, tonight)} focusOnMount={focusHeadline} />
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', flex: '1 1 auto', alignItems: 'stretch' }}>
+      <div ref={rowRef} style={{ display: 'flex', flexWrap: 'wrap', flex: '1 1 auto', alignItems: 'stretch' }}>
         <MapStack
           frames={fr} weights={shownWeights} night={st.night} maskClass={MASK_CLASS[scene]} graves={views} fires={fires}
           fireSel={st.fireSel} clusters={isT ? tonight!.clusters : []} selected={st.selected} hover={st.hover}
@@ -258,7 +267,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
           narrator={<>{st.say && <Gravekeeper key={st.say.start} say={st.say} raised={st.cam !== null} glitch={gl} />}<GravekeeperLive say={st.say} /></>}
         />
         {/* The aside takes the map's height and scrolls inside it (its content would otherwise stretch the row). */}
-        <aside aria-label="Graves and parish register" style={{ flex: '1 1 340px', position: 'relative', minHeight: 480, background: '#070C0B' }}>
+        <aside aria-label="Graves and parish register" style={{ flex: '1 1 340px', position: 'relative', minHeight: 360, background: '#070C0B' }}>
           <div style={{ position: 'absolute', inset: 0, overflowY: 'auto', boxSizing: 'border-box', padding: '18px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
       {wagerOpen && <Wager marks={marks} onSeal={onSeal} onWatch={onWatch} />}
           {keep && tonight && (
@@ -286,7 +295,7 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
       )}
 
       {/* overflowX clip: the flame's 140 px glow is centred on the playhead and would widen the page at Jul 1 */}
-      <footer style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18, padding: '14px 28px 18px', borderTop: '1px solid #172120', boxSizing: 'border-box', background: 'linear-gradient(180deg, #080C0B, #040605)', overflowX: 'clip' }}>
+      <footer ref={footRef} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18, padding: '14px 28px 18px', borderTop: '1px solid #172120', boxSizing: 'border-box', background: 'linear-gradient(180deg, #080C0B, #040605)', overflowX: 'clip' }}>
         {isT ? (
           <TonightFooter f={tonightFooter(data.seasons, tonight!, now)} date={copy.footer.tonightDate(tonight!.asOf)} sub={copy.footer.tonightSub(year)} />
         ) : (
@@ -303,6 +312,20 @@ export function Graveyard({ data, tonight, focusHeadline = false, onRising, gree
       </footer>
     </div>
   );
+}
+
+/** Sets `--rv-chrome` on the page: the height above the map row plus the footer, so the map (MapStack's
+ *  max-width) can keep the header, map and candle timeline on one screen. Updates as they wrap or resize. */
+function useFitChrome(root: React.RefObject<HTMLDivElement | null>, row: React.RefObject<HTMLDivElement | null>, foot: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const r = root.current, w = row.current, f = foot.current;
+    if (!r || !w || !f || typeof ResizeObserver === 'undefined') return;
+    const set = () => r.style.setProperty('--rv-chrome', `${Math.ceil(w.offsetTop + f.offsetHeight)}px`);
+    const ro = new ResizeObserver(set);
+    for (const el of [r, f, ...Array.from(r.children)]) ro.observe(el);
+    set();
+    return () => ro.disconnect();
+  }, [root, row, foot]);
 }
 
 /** Board `isTonight` footer (Main.dc.html L455–459, L484–490), with every value from the published file. */

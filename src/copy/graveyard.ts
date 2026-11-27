@@ -244,3 +244,9 @@ export const errors = {
 };
 
 export const footerCredit = (credit: string) => `${credit} · method: docs/method.md`;
+
+/** Small screens only (under 760 px): the graveyard map is too small there, and the crew view is built for phones. */
+export const smallScreen = {
+  text: 'The graveyard is best on a laptop.',
+  link: 'Open the field-crew view',
+};

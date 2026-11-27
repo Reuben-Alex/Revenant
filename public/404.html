@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href="/icon-night.svg" />
+    <title>This grave is empty · Revenant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=JetBrains+Mono:wght@400&display=swap" />
+    <style>
+      html, body { margin: 0; min-height: 100%; background: #050807; color: #ECE6D6; }
+      body { min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'IM Fell English', Georgia, serif; text-align: center; padding: 24px; box-sizing: border-box; }
+      main { display: flex; flex-direction: column; align-items: center; gap: 14px; max-width: 560px; }
+      .code { font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 4px; color: #8E9994; }
+      h1 { margin: 0; font-family: 'IM Fell English SC', Georgia, serif; font-weight: 400; font-size: clamp(36px, 7vw, 56px); line-height: 1.05; }
+      p { margin: 0; font-style: italic; font-size: 20px; line-height: 1.45; color: #C7CFCB; }
+      nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 10px; }
+      a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 8px; border: 1px solid #4D5A55; color: #ECE6D6; text-decoration: none; font-family: 'IM Fell English SC', Georgia, serif; font-size: 18px; letter-spacing: 1px; }
+      a.main { background: #ECE6D6; color: #070B0A; border-color: #ECE6D6; }
+      a:hover { border-color: #6F6250; }
+      a.main:hover { background: #F4EEE2; }
+      a:focus-visible { outline: 2px solid #ECE6D6; outline-offset: 2px; }
+      .glow { animation: breathe 3.4s ease-in-out infinite; }
+      @keyframes breathe { 0%, 100% { opacity: .5 } 50% { opacity: 1 } }
+      @media (prefers-reduced-motion: reduce) { .glow { animation: none; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <svg width="150" height="140" viewBox="0 0 150 140" aria-hidden="true">
+        <defs>
+          <radialGradient id="g" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#7FE0CF" stop-opacity="0.35" />
+            <stop offset="1" stop-color="#7FE0CF" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <ellipse class="glow" cx="75" cy="118" rx="70" ry="18" fill="url(#g)" />
+        <path d="M42 120 V58 A33 33 0 0 1 108 58 V120 Z" fill="#0F1416" stroke="#3A4446" stroke-width="2" />
+        <path d="M42 58 A33 33 0 0 1 108 58" fill="none" stroke="#DCE4E3" stroke-width="5" />
+        <path d="M30 121 H120" stroke="#2C3537" stroke-width="2" stroke-linecap="round" />
+        <path d="M58 121 Q75 104 92 121" fill="#050807" stroke="#4D5A55" stroke-width="1.5" />
+      </svg>
+      <span class="code">404 · NOTHING BURIED HERE</span>
+      <h1>This grave is empty.</h1>
+      <p>Whatever you came for is not in my ground. The twenty-four I keep are back at the graveyard.</p>
+      <nav aria-label="Where to go">
+        <a class="main" href="/">Back to the graveyard</a>
+        <a href="/phone">Field crew view</a>
+      </nav>
+    </main>
+  </body>
+</html>

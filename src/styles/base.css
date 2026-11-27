@@ -39,6 +39,11 @@ input {
   background: #f4eee2 !important;
 }
 
+/* Shown only on small screens (the graveyard's note pointing phones to the crew view). */
+@media (min-width: 760px) {
+  .rv-small-only { display: none !important; }
+}
+
 .rv-sr {
   position: absolute;
   width: 1px;

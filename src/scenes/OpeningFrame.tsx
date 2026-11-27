@@ -1,7 +1,7 @@
 // The video's opening frame (spec 07 Requirement 7): reference/design/Opening.dc.html at exactly 1920 × 1080.
 // Geometry and styles follow the board (its renderVals() rows and flakes, accent and snow at their defaults).
 // It shows no data; the only change from the board is the credit line (copy/opening.ts).
-import type { CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import * as copy from '../copy/opening';
 import '../styles/opening.css';
 
@@ -61,9 +61,27 @@ const EMBERS = [
 ];
 const MONO = "var(--font-mono)";
 
+/** Scale that fits the 1920 × 1080 frame inside the window (1 at exactly 1920 × 1080, so a capture is pixel-true). */
+const fit = () => (typeof window === 'undefined' ? 1 : Math.min(window.innerWidth / W, window.innerHeight / H));
+function useFit(): number {
+  const [k, setK] = useState(fit);
+  useEffect(() => {
+    const on = () => setK(fit());
+    window.addEventListener('resize', on);
+    return () => window.removeEventListener('resize', on);
+  }, []);
+  return k;
+}
+
 export function OpeningFrame() {
+  const k = useFit();
   return (
-    <main style={{ width: W, height: H, position: 'relative', overflow: 'hidden', background: '#05080A', color: '#ECE6D6', fontFamily: 'var(--font-fell)' }}>
+    // The frame is drawn at 1920 × 1080 and scaled to fit, centred on black.
+    <div style={{ position: 'fixed', inset: 0, overflow: 'hidden', background: '#05080A' }}>
+    <main style={{
+      width: W, height: H, position: 'absolute', left: '50%', top: '50%', transform: `translate(-50%, -50%) scale(${k})`,
+      overflow: 'hidden', background: '#05080A', color: '#ECE6D6', fontFamily: 'var(--font-fell)',
+    }}>
       <div aria-hidden="true" style={{ position: 'absolute', left: 1420, top: 110, width: 120, height: 120, borderRadius: 60, background: '#D8DFDD', opacity: 0.85, boxShadow: '0 0 120px 40px rgba(170,190,195,0.18)' }} />
       <div aria-hidden="true" style={{ position: 'absolute', left: 0, right: 0, top: 600, bottom: 0, background: 'linear-gradient(180deg, #11181A 0%, #0B1012 100%)' }} />
       <div aria-hidden="true" style={{ position: 'absolute', left: 0, right: 0, top: 596, height: 8, background: '#1E2729', opacity: 0.8 }} />
@@ -90,5 +108,6 @@ export function OpeningFrame() {
       <span style={{ position: 'absolute', left: 72, bottom: 56, fontFamily: MONO, fontSize: 20, letterSpacing: 4, color: '#8E9994' }}>{copy.contest}</span>
       <span style={{ position: 'absolute', right: 72, bottom: 56, fontFamily: MONO, fontSize: 18, color: '#75817C' }}>{copy.credit}</span>
     </main>
+    </div>
   );
 }
