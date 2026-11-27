@@ -91,8 +91,8 @@ tasks. The decisions at the end of `design.md` (dependencies, cloud masking, fol
 - [ ] 10.2 Live run: `uv run python -m pipeline compare`; review `docs/pipeline-vs-research.md` with the user
   - _Requirements: 12.1–12.4_
 
-- [ ] 11. Nightly GitHub Actions job
-- [ ] 11.1 Write `.github/workflows/nightly.yml`: daily at 10:00 UTC + manual dispatch, `astral-sh/setup-uv`, cache `pipeline/cache/`, `FIRMS_MAP_KEY` secret, run `tonight`, commit only the two outputs when changed, `permissions: contents: write`
+- [x] 11. Nightly GitHub Actions job
+- [x] 11.1 Write `.github/workflows/nightly.yml`: daily at 10:00 UTC + manual dispatch, `astral-sh/setup-uv`, cache `pipeline/cache/`, `FIRMS_MAP_KEY` secret, run `tonight`, commit only the two outputs when changed, `permissions: contents: write`
   - _Requirements: 11.1–11.5_
 
 - [ ] 12. Final checks
